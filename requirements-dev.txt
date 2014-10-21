@@ -1,0 +1,8 @@
+# If there are tools that a developer needs to work on your project.
+# Unit testing tools, mocking frameworks, debuggers, proxies, ...
+# These will be used for tox and other testing environments.
+-r requirements.txt
+coverage
+flake8
+mock
+pytest

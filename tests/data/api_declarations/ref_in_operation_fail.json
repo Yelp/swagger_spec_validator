@@ -1,0 +1,27 @@
+{
+    "swaggerVersion": "1.2",
+    "basePath": "http://localhost",
+    "apis": [
+        {
+            "path": "/foo",
+            "operations": [
+                {
+                    "method": "GET",
+                    "nickname": "foo",
+                    "parameters": [],
+                    "$ref": "bar"
+                }
+            ]
+        }
+    ],
+    "models": {
+        "bar": {
+            "id": "bar",
+            "properties": {
+                "baz": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

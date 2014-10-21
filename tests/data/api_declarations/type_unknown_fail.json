@@ -1,0 +1,17 @@
+{
+    "swaggerVersion": "1.2",
+    "basePath": "http://localhost",
+    "apis": [
+        {
+            "path": "/foo",
+            "operations": [
+                {
+                    "method": "GET",
+                    "nickname": "foo",
+                    "parameters": [],
+                    "type": "unknown"
+                }
+            ]
+        }
+    ]
+}

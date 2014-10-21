@@ -1,0 +1,35 @@
+{
+    "swaggerVersion": "1.2",
+    "basePath": "http://localhost",
+    "apis": [
+        {
+            "path": "/foo",
+            "operations": [
+                {
+                    "method": "GET",
+                    "nickname": "foo",
+                    "parameters": [],
+                    "type": "bar"
+                }
+            ]
+        }
+    ],
+    "models": {
+        "bar": {
+            "id": "bar",
+            "properties": {
+                "baz": {
+                    "type": "qux"
+                }
+            }
+        },
+        "qux": {
+            "id": "qux",
+            "properties": {
+                "quux": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

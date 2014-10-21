@@ -1,0 +1,7 @@
+*.pyc
+virtualenv_run
+.tox
+MANIFEST
+swagger_spec_validator.egg-info
+.coverage
+docs/build
