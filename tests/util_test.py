@@ -54,9 +54,9 @@ def test_http():
 
     with mock.patch('swagger_spec_validator.util.urllib2.urlopen',
                     side_effect=mock_responses) as mock_urlopen:
-        validate_resource_listing_url('http://localhost')
+        validate_resource_listing_url('http://localhost/api-docs')
 
         mock_urlopen.assert_has_calls([
-            mock.call('http://localhost', timeout=1),
-            mock.call('http://localhost/foo', timeout=1),
+            mock.call('http://localhost/api-docs', timeout=1),
+            mock.call('http://localhost/api-docs/foo', timeout=1),
         ])

@@ -1,7 +1,6 @@
 import json
 import logging
 import urllib2
-import urlparse
 
 from .validator import validate_resource_listing
 from .validator import validate_api_declaration
@@ -32,7 +31,7 @@ def validate_resource_listing_url(url):
     validate_resource_listing(resource_listing)
 
     for api in resource_listing['apis']:
-        path = urlparse.urljoin(url, api['path'])
+        path = url + api['path']
         log.info('Validating %s' % path)
         api_declaration = json.load(urllib2.urlopen(path, timeout=1))
         validate_api_declaration(api_declaration)

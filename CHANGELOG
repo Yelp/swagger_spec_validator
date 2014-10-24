@@ -1,3 +1,7 @@
+Version 1.0.2 (2014-10-24)
+-------------
+ * Bugfix for path construction in validate_resource_listing_url
+
 Version 1.0.1 (2014-10-24)
 -------------
  * Bugfix to including jsonschema files
