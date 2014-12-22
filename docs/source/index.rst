@@ -10,17 +10,12 @@ Introduction
 ============
 
 Swagger Spec Validator is a Python library that validates *Swagger Specs*
-against the `Swagger 1.2 Specification`_.  The validator aims to check
-for full compliance with the Specification.
+against the `Swagger 1.2`_ or `Swagger 2.0`_ specification.  The validator
+aims to check for full compliance with the Specification.
 
 
 Frequently Asked Questions
 ==========================
-
-Do you support Swagger 2.0?
----------------------------
-
-No, but this functionality is planned.
 
 Is the API stable?
 ------------------
@@ -42,4 +37,6 @@ API
 .. autofunction:: validate_api_declaration
 
 
-.. _Swagger 1.2 Specification: https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
+.. _Swagger 1.2: https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
+
+.. _Swagger 2.0: https://github.com/wordnik/swagger-spec/blob/master/versions/2.0.md

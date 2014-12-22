@@ -22,7 +22,10 @@ setup(
     author_email=about['__email__'],
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
-        'swagger_spec_validator': ['swagger_spec_validator/schemas/v1.2/*'],
+        'swagger_spec_validator': [
+            'swagger_spec_validator/schemas/v1.2/*',
+            'swagger_spec_validator/schemas/v2.0/*',
+        ],
     },
     include_package_data=True,
     install_requires=[

@@ -8,12 +8,7 @@
 #
 # https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
 
-import json
-
-import jsonschema
-from jsonschema.validators import RefResolver
-from pkg_resources import resource_filename
-
+from swagger_spec_validator.common import validate_json
 
 # Primitives (§4.3.1)
 PRIMITIVE_TYPES = ['integer', 'number', 'string', 'boolean']
@@ -21,16 +16,7 @@ PRIMITIVE_TYPES = ['integer', 'number', 'string', 'boolean']
 
 class SwaggerValidationError(Exception):
     """Exception raised in case of a validation error."""
-
     pass
-
-
-def validate_jsonschema(schema_name, value):
-    schema_path = resource_filename('swagger_spec_validator', 'schemas/v1.2/' + schema_name)
-    with open(schema_path) as schema_file:
-        schema = json.loads(schema_file.read())
-    resolver = RefResolver('file://{0}'.format(schema_path), schema)
-    jsonschema.validate(value, schema, resolver=resolver)
 
 
 def get_model_ids(api_declaration):
@@ -143,7 +129,7 @@ def validate_api_declaration(api_declaration):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
-    validate_jsonschema('apiDeclaration.json', api_declaration)
+    validate_json(api_declaration, 'schemas/v1.2/apiDeclaration.json')
 
     model_ids = get_model_ids(api_declaration)
 
@@ -167,4 +153,4 @@ def validate_resource_listing(resource_listing):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
-    validate_jsonschema('resourceListing.json', resource_listing)
+    validate_json(resource_listing, 'schemas/v1.2/resourceListing.json')
