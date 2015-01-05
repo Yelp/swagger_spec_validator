@@ -1,3 +1,7 @@
+Version 1.0.3 (2015-01-05)
+-------------
+ * Initial support for Swagger 2.0
+
 Version 1.0.2 (2014-10-24)
 -------------
  * Bugfix for path construction in validate_resource_listing_url
