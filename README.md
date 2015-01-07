@@ -2,13 +2,16 @@
 
 ## About
 
-Swagger Spec Validator is a Python library that validates *Swagger Specs* against the `Swagger 1.2`_ or `Swagger 2.0`_ specification.  The validator aims to check for full compliance with the Specification.
+Swagger Spec Validator is a Python library that validates Swagger Specs against the [Swagger 1.2](https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md) or [Swagger 2.0](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md) specification.  The validator aims to check for full compliance with the Specification.
 
 ## Example Usage
 
-    import swagger_spec_validator
+    # 1.2 spec
+    from swagger_spec_validator import validate_resource_listing_url
+    validate_resource_listing_url('http://petstore.swagger.wordnik.com/api/api-docs')
 
-    swagger_spec_validator.validate_resource_listing_url('http://petstore.swagger.wordnik.com/api/api-docs')
+    # 2.0 spec
+    TBD
 
 ## Documentation
 
@@ -30,4 +33,3 @@ More documentation is available at http://swagger_spec_validator.readthedocs.org
 
 Copyright (c) 2015, Yelp, Inc. All rights reserved.
 Apache v2
-
