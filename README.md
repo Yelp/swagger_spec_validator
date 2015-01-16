@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/Yelp/swagger_spec_validator.svg?branch=master)](https://travis-ci.org/Yelp/swagger_spec_validator)
-
 # swagger_spec_validator
+[![Build Status](https://travis-ci.org/Yelp/swagger_spec_validator.svg?branch=master)](https://travis-ci.org/Yelp/swagger_spec_validator) 
+[![Coverage Status](https://coveralls.io/repos/Yelp/swagger_spec_validator/badge.svg)](https://coveralls.io/r/Yelp/swagger_spec_validator)
 
 ## About
 
