@@ -9,4 +9,8 @@ install:
 script:
   - make test
 
-after_success: coveralls
+after_success:
+  - tox -e cover
+  - coveralls
+
+sudo: false
