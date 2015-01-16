@@ -1,0 +1,12 @@
+language: python
+
+env:
+  - TOX_ENV=py
+
+install:
+  - pip install tox coveralls
+
+script:
+  - make test
+
+after_success: coveralls
