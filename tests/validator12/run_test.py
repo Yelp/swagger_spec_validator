@@ -5,9 +5,9 @@ import os.path
 
 import jsonschema.exceptions
 
-from swagger_spec_validator.validator import validate_api_declaration
-from swagger_spec_validator.validator import validate_resource_listing
-from swagger_spec_validator.validator import SwaggerValidationError
+from swagger_spec_validator.validator12 import validate_api_declaration
+from swagger_spec_validator.validator12 import validate_resource_listing
+from swagger_spec_validator import SwaggerValidationError
 
 
 def run_json_tests_with_func(json_test_paths, func):
@@ -40,9 +40,9 @@ def test_main():
     my_dir = os.path.abspath(os.path.dirname(__file__))
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/api_declarations/*.json')),
+        glob.glob(os.path.join(my_dir, 'data/v1.2/api_declarations/*.json')),
         validate_api_declaration)
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/resource_listings/*.json')),
+        glob.glob(os.path.join(my_dir, 'data/v1.2/resource_listings/*.json')),
         validate_resource_listing)

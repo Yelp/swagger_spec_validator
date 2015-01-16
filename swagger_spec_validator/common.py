@@ -15,3 +15,8 @@ def validate_json(json_document, schema_path):
         schema = json.loads(schema_file.read())
     resolver = RefResolver('file://{0}'.format(schema_path), schema)
     jsonschema.validate(json_document, schema, resolver=resolver)
+
+
+class SwaggerValidationError(Exception):
+    """Exception raised in case of a validation error."""
+    pass
