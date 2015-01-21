@@ -27,24 +27,6 @@ def get_model_ids(api_declaration):
     return model_ids
 
 
-def validate_spec(resource_listing, api_declarations):
-    """Validates a spec that has already been retrieved and exists in a json
-    like dict form.
-
-    :param resource_listing: Resource listing in dict form
-    :param: api_declarations: Map of API Declarations in dict form
-    :type: api_declarations: dict where key=path, value=api declaration
-    """
-    validate_resource_listing(resource_listing)
-
-
-    for api in resource_listing['apis']:
-        path = url + api['path']
-        log.info('Validating %s' % path)
-        api_declaration = json.load(urllib2.urlopen(path, timeout=1))
-        validate_api_declaration(api_declaration)
-
-
 def validate_spec_url(url):
     """Simple utility function to perform recursive validation of a Resource
     Listing and all associated API Declarations.
