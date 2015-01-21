@@ -11,9 +11,9 @@ import json
 import logging
 import urllib2
 
-log = logging.getLogger(__name__)
-
 from swagger_spec_validator.common import validate_json, SwaggerValidationError
+
+log = logging.getLogger(__name__)
 
 # Primitives (§4.3.1)
 PRIMITIVE_TYPES = ['integer', 'number', 'string', 'boolean']
