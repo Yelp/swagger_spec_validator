@@ -17,7 +17,9 @@ def validate_spec_url(spec_url):
     """
     log.info('Validating %s' % spec_url)
     spec_json = json.load(urllib2.urlopen(spec_url, timeout=1))
+    validate_spec(spec_json)
 
+
+def validate_spec(spec_json):
     validate_json(spec_json, 'schemas/v2.0/schema.json')
-
     # TODO: rich schema validation

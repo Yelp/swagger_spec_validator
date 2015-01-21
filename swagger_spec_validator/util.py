@@ -14,26 +14,32 @@ version_to_validator = {
 }
 
 
-def get_validator(spec_json, origin):
+def get_validator(spec_json, origin='unknown'):
     """
-    :param spec_json: Dict representation of the API spec
-    :param origin: filename or url of the spec
-    :return: module responsible for validation based on swaggerVersion
+    :param spec_json: Dict representation of the json API spec
+    :param origin: filename or url of the spec - only use for error messages
+    :return: module responsible for validation based on Swagger version in the
+        spec
     """
-    swagger_version = spec_json.get('swaggerVersion')
+    swagger12_version = spec_json.get('swaggerVersion')
+    swagger20_version = spec_json.get('swagger')
 
-    if swagger_version is None:
+    if swagger12_version and swagger20_version:
         raise SwaggerValidationError(
-            "Swagger spec {0} is missing swaggerVersion".format(origin))
-
-    validator = version_to_validator.get(swagger_version)
-
-    if validator is None:
+            "You've for conflicting keys for the Swagger version in your spec. "
+            "Expected `swaggerVersion` or `swagger`, but not both.")
+    elif swagger12_version or swagger20_version:
+        swagger_version = swagger12_version or swagger20_version
+        validator = version_to_validator.get(swagger_version)
+        if validator is None:
+            raise SwaggerValidationError(
+                'Swagger version {0} in {1} is not supported'.format(
+                    swagger_version, origin))
+        return validator
+    else:
         raise SwaggerValidationError(
-            'Swagger version {0} in {1} is not supported'.format(
-                swagger_version, origin))
-
-    return validator
+            "Swagger spec {0} missing version. Expected "
+            "`swaggerVersion` or `swagger`".format(origin))
 
 
 def validate_spec_url(spec_url):
