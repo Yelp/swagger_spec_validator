@@ -18,7 +18,7 @@ def test_1_dot_x_version_not_supported():
 
 def test_2_dot_x_version_not_supported():
     with pytest.raises(SwaggerValidationError) as excinfo:
-        get_validator({'swagger': '0.9'}, 'http://foo.com')
+        get_validator({'swagger': '1.2'}, 'http://foo.com')
     assert 'not supported' in str(excinfo.value)
 
 

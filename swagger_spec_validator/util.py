@@ -8,11 +8,6 @@ from swagger_spec_validator.common import SwaggerValidationError
 
 log = logging.getLogger(__name__)
 
-version_to_validator = {
-    '1.2': validator12,
-    '2.0': validator20,
-}
-
 
 def get_validator(spec_json, origin='unknown'):
     """
@@ -26,16 +21,21 @@ def get_validator(spec_json, origin='unknown'):
 
     if swagger12_version and swagger20_version:
         raise SwaggerValidationError(
-            "You've for conflicting keys for the Swagger version in your spec. "
+            "You've got conflicting keys for the Swagger version in your spec. "
             "Expected `swaggerVersion` or `swagger`, but not both.")
-    elif swagger12_version or swagger20_version:
-        swagger_version = swagger12_version or swagger20_version
-        validator = version_to_validator.get(swagger_version)
-        if validator is None:
+    elif swagger12_version:
+        # we don't care about versions prior to 1.2
+        if swagger12_version == '1.2':
+            return validator12
+        else:
             raise SwaggerValidationError(
-                'Swagger version {0} in {1} is not supported'.format(
-                    swagger_version, origin))
-        return validator
+                'Swagger version {0} not supported.'.format(swagger12_version))
+    elif swagger20_version:
+        if swagger20_version == '2.0':
+            return validator20
+        else:
+            raise SwaggerValidationError(
+                'Swagger version {0} not supported.'.format(swagger12_version))
     else:
         raise SwaggerValidationError(
             "Swagger spec {0} missing version. Expected "
@@ -49,6 +49,6 @@ def validate_spec_url(spec_url):
       For Swagger 1.2, this is the URL to the resource listing in api-docs.
       For Swagger 2.0, this is the URL to swagger.json in api-docs.
     """
-    spec_json = json.load(urllib2.urlopen(spec_url, timeout=1))
+    spec_json = json.load(urllib2.urlopen(spec_url))
     validator = get_validator(spec_json, spec_url)
     validator.validate_spec_url(spec_url)

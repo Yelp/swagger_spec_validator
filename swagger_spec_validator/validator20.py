@@ -16,7 +16,7 @@ def validate_spec_url(spec_url):
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
     log.info('Validating %s' % spec_url)
-    spec_json = json.load(urllib2.urlopen(spec_url, timeout=1))
+    spec_json = json.load(urllib2.urlopen(spec_url))
     validate_spec(spec_json)
 
 
