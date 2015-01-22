@@ -30,11 +30,7 @@ API
 
 .. autoclass:: SwaggerValidationError
 
-.. autofunction:: validate_resource_listing_url
-
-.. autofunction:: validate_resource_listing
-
-.. autofunction:: validate_api_declaration
+.. autofunction:: validate_spec_url
 
 
 .. _Swagger 1.2: https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md

@@ -3,7 +3,7 @@ import json
 import mock
 import StringIO
 
-from swagger_spec_validator import validate_resource_listing_url
+from swagger_spec_validator.validator12 import validate_spec_url
 
 
 RESOURCE_LISTING = {
@@ -49,12 +49,14 @@ def make_mock_responses(mock_responses):
     ]
 
 
-def test_http():
-    mock_responses = make_mock_responses([RESOURCE_LISTING, API_DECLARATION])
+def test_success():
+    mock_responses = make_mock_responses([
+        RESOURCE_LISTING,  # ingest
+        API_DECLARATION])  # ingest
 
     with mock.patch('swagger_spec_validator.util.urllib2.urlopen',
                     side_effect=mock_responses) as mock_urlopen:
-        validate_resource_listing_url('http://localhost/api-docs')
+        validate_spec_url('http://localhost/api-docs')
 
         mock_urlopen.assert_has_calls([
             mock.call('http://localhost/api-docs', timeout=1),

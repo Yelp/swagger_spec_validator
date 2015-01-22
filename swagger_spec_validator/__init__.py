@@ -1,11 +1,7 @@
-from util import validate_resource_listing_url
-from validator import SwaggerValidationError
-from validator import validate_resource_listing
-from validator import validate_api_declaration
+from swagger_spec_validator.util import validate_spec_url
+from swagger_spec_validator.common import SwaggerValidationError
 
 __all__ = [
     'SwaggerValidationError',
-    'validate_resource_listing_url',
-    'validate_resource_listing',
-    'validate_api_declaration',
+    'validate_spec_url',
 ]
