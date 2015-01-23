@@ -1,5 +1,6 @@
 import pytest
 
+from swagger_spec_validator import validator12, validator20
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.util import get_validator
 
@@ -29,9 +30,11 @@ def test_both_swagger_1_dot_x_and_2_dot_x_version_keys_found():
     assert 'not both' in str(excinfo.value)
 
 
-def test_success():
-    validator12 = get_validator({'swaggerVersion': '1.2'}, 'http://foo.com')
-    validator20 = get_validator({'swagger': '2.0'}, 'http://foo.com')
-    assert validator12
-    assert validator20
-    assert validator12 != validator20
+def test_success_12():
+    spec = {'swaggerVersion': '1.2'}
+    assert validator12 == get_validator(spec, 'http://foo.com') == validator12
+
+
+def test_success_20():
+    spec = {'swagger': '2.0'}
+    assert validator20 == get_validator(spec, 'http://foo.com')
