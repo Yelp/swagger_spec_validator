@@ -23,23 +23,19 @@ def get_validator(spec_json, origin='unknown'):
         raise SwaggerValidationError(
             "You've got conflicting keys for the Swagger version in your spec. "
             "Expected `swaggerVersion` or `swagger`, but not both.")
-    elif swagger12_version:
+    elif swagger12_version and swagger12_version == '1.2':
         # we don't care about versions prior to 1.2
-        if swagger12_version == '1.2':
-            return validator12
-        else:
-            raise SwaggerValidationError(
-                'Swagger version {0} not supported.'.format(swagger12_version))
-    elif swagger20_version:
-        if swagger20_version == '2.0':
-            return validator20
-        else:
-            raise SwaggerValidationError(
-                'Swagger version {0} not supported.'.format(swagger12_version))
-    else:
+        return validator12
+    elif swagger20_version and swagger20_version == '2.0':
+        return validator20
+    elif swagger12_version is None and swagger20_version is None:
         raise SwaggerValidationError(
             "Swagger spec {0} missing version. Expected "
             "`swaggerVersion` or `swagger`".format(origin))
+    else:
+        raise SwaggerValidationError(
+            'Swagger version {0} not supported.'.format(
+                swagger12_version or swagger20_version))
 
 
 def validate_spec_url(spec_url):
