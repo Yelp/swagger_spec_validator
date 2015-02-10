@@ -5,3 +5,4 @@ MANIFEST
 swagger_spec_validator.egg-info
 .coverage
 docs/build
+*.swp

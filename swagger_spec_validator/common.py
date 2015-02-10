@@ -1,9 +1,21 @@
+import sys
+
 import json
 from jsonschema import RefResolver
 import jsonschema
 from pkg_resources import resource_filename
 
 
+def wrap_exception(method):
+    def wrapper(*args, **kwargs):
+        try:
+            method(*args, **kwargs)
+        except Exception as e:
+            raise SwaggerValidationError(str(e)), None, sys.exc_info()[2]
+    return wrapper
+
+
+@wrap_exception
 def validate_json(json_document, schema_path):
     """Validate a json document against a json schema.
 

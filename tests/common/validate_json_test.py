@@ -2,9 +2,7 @@ import json
 import os
 import pytest
 
-from jsonschema.exceptions import ValidationError
-
-from swagger_spec_validator.common import validate_json
+from swagger_spec_validator.common import SwaggerValidationError, validate_json
 
 
 def test_success():
@@ -15,5 +13,5 @@ def test_success():
 
 
 def test_failure():
-    with pytest.raises(ValidationError):
+    with pytest.raises(SwaggerValidationError):
         validate_json({}, 'schemas/v2.0/schema.json')
