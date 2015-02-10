@@ -32,6 +32,7 @@ def validate_spec(spec_json):
     """
     validate_json(spec_json, 'schemas/v2.0/schema.json')
 
+    # TODO: Extract 'parameters', 'responses' from the spec as well.
     apis, definitions = spec_json['paths'], spec_json['definitions']
 
     validate_apis(apis)

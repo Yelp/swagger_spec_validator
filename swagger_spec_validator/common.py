@@ -11,7 +11,7 @@ def wrap_exception(method):
         try:
             method(*args, **kwargs)
         except Exception as e:
-            raise SwaggerValidationError(e.message), None, sys.exc_info()[2]
+            raise SwaggerValidationError(str(e)), None, sys.exc_info()[2]
     return wrapper
 
 
