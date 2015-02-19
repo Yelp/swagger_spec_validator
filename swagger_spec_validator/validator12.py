@@ -9,9 +9,13 @@
 # https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
 import json
 import logging
+import os
 import urllib2
+from urlparse import urlparse
 
-from swagger_spec_validator.common import validate_json, SwaggerValidationError
+from swagger_spec_validator.common import (SwaggerValidationError,
+                                           TIMEOUT_SEC,
+                                           validate_json)
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +29,28 @@ def get_model_ids(api_declaration):
     for model in models.itervalues():
         model_ids.append(model['id'])
     return model_ids
+
+
+def get_resource_path(url, resource):
+    """Fetch the complete resource path to get the api declaration.
+
+    :param url: A file or http uri hosting the resource listing.
+    :type url: string
+    :param resource: Resource path starting with a '/'. eg. '/pet'
+    :type resource: string
+    :returns: Complete resource path hosting the api declaration.
+    """
+    if urlparse(url).scheme == 'file':
+        parent_dir = os.path.dirname(url)
+
+        def resource_file_name(resource):
+            assert resource.startswith('/')
+            return resource[1:] + '.json'
+        path = os.path.join(parent_dir, resource_file_name(resource))
+    else:
+        path = url + resource
+
+    return path
 
 
 def validate_spec_url(url):
@@ -45,13 +71,13 @@ def validate_spec_url(url):
     """
 
     log.info('Validating %s' % url)
-    resource_listing = json.load(urllib2.urlopen(url, timeout=1))
+    resource_listing = json.load(urllib2.urlopen(url, timeout=TIMEOUT_SEC))
     validate_resource_listing(resource_listing)
 
     for api in resource_listing['apis']:
-        path = url + api['path']
+        path = get_resource_path(url, api['path'])
         log.info('Validating %s' % path)
-        api_declaration = json.load(urllib2.urlopen(path, timeout=1))
+        api_declaration = json.load(urllib2.urlopen(path, timeout=TIMEOUT_SEC))
         validate_api_declaration(api_declaration)
 
 
