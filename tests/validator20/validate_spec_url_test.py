@@ -10,4 +10,5 @@ def test_success(petstore_contents):
             'swagger_spec_validator.util.urllib2.urlopen',
             side_effect=mock_responses) as mock_urlopen:
         validate_spec_url('http://localhost/api-docs')
-        mock_urlopen.assert_has_calls([mock.call('http://localhost/api-docs')])
+        mock_urlopen.assert_has_calls([
+            mock.call('http://localhost/api-docs', timeout=1)])

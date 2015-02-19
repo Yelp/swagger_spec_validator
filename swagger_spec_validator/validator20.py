@@ -3,7 +3,9 @@ import logging
 import string
 import urllib2
 
-from swagger_spec_validator.common import validate_json, SwaggerValidationError
+from swagger_spec_validator.common import (SwaggerValidationError,
+                                           TIMEOUT_SEC,
+                                           validate_json)
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ def validate_spec_url(spec_url):
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
     log.info('Validating %s' % spec_url)
-    spec_json = json.load(urllib2.urlopen(spec_url))
+    spec_json = json.load(urllib2.urlopen(spec_url, timeout=TIMEOUT_SEC))
     validate_spec(spec_json)
 
 

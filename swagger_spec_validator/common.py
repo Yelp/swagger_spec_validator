@@ -5,6 +5,8 @@ from jsonschema import RefResolver
 import jsonschema
 from pkg_resources import resource_filename
 
+TIMEOUT_SEC = 1
+
 
 def wrap_exception(method):
     def wrapper(*args, **kwargs):
