@@ -2,8 +2,10 @@ import json
 import os
 
 import mock
+import pytest
 import StringIO
 
+from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_spec_url
 
 
@@ -41,3 +43,10 @@ def test_file_uri_success():
 
         expected = json.load(read_contents(API_DECLARATION_FILE))
         mock_api.assert_called_once_with(expected)
+
+
+def test_raise_SwaggerValidationError_on_urlopen_error():
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec_url('http://foo')
+    assert ('<urlopen error [Errno -2] Name or service not known>'
+            in str(excinfo.value))
