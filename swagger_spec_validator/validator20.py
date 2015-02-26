@@ -1,10 +1,10 @@
-import json
 import logging
 import string
 import urllib2
 
 from swagger_spec_validator.common import (SwaggerValidationError,
                                            TIMEOUT_SEC,
+                                           json,
                                            validate_json,
                                            wrap_exception)
 

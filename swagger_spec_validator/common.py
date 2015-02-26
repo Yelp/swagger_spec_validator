@@ -1,6 +1,9 @@
 import sys
 
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 from jsonschema import RefResolver
 import jsonschema
 from pkg_resources import resource_filename

@@ -7,7 +7,6 @@
 # validation, augmented with custom validation code where necessary.
 #
 # https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
-import json
 import logging
 import os
 import urllib2
@@ -15,6 +14,7 @@ from urlparse import urlparse
 
 from swagger_spec_validator.common import (SwaggerValidationError,
                                            TIMEOUT_SEC,
+                                           json,
                                            validate_json,
                                            wrap_exception)
 

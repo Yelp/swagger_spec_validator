@@ -1,7 +1,10 @@
 language: python
 
 env:
-  - TOX_ENV=py
+  - TOX_ENV=py26
+  - TOX_ENV=py27
+  - TOX_ENV=py26-simplejson
+  - TOX_ENV=docs
 
 install:
   - pip install tox coveralls
