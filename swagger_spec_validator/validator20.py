@@ -1,10 +1,10 @@
 import logging
 import string
-import urllib2
+
+import six
 
 from swagger_spec_validator.common import (SwaggerValidationError,
-                                           TIMEOUT_SEC,
-                                           json,
+                                           load_json,
                                            validate_json,
                                            wrap_exception)
 
@@ -20,8 +20,7 @@ def validate_spec_url(spec_url):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
     log.info('Validating %s' % spec_url)
-    spec_json = json.load(urllib2.urlopen(spec_url, timeout=TIMEOUT_SEC))
-    validate_spec(spec_json)
+    validate_spec(load_json(spec_url))
 
 
 def validate_spec(spec_json, _spec_url=None):
@@ -52,7 +51,7 @@ def validate_apis(apis):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
-    for api_name, api_body in apis.iteritems():
+    for api_name, api_body in six.iteritems(apis):
         api_params = api_body.get('parameters', [])
         validate_duplicate_param(api_params)
         for oper_name in api_body:

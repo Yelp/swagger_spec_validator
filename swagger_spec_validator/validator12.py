@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
+"""
+Validate Swagger Specs against the Swagger 1.2 Specification.  The
+validator aims to check for full compliance with the Specification.
 
-# Validate Swagger Specs against the Swagger 1.2 Specification.  The
-# validator aims to check for full compliance with the Specification.
-#
-# The validator uses the published jsonschema files for basic structural
-# validation, augmented with custom validation code where necessary.
-#
-# https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
+The validator uses the published jsonschema files for basic structural
+validation, augmented with custom validation code where necessary.
+
+https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
+"""
 import logging
 import os
-import urllib2
-from urlparse import urlparse
+
+import six
+from six.moves.urllib.parse import urlparse
 
 from swagger_spec_validator.common import (SwaggerValidationError,
-                                           TIMEOUT_SEC,
-                                           json,
+                                           load_json,
                                            validate_json,
                                            wrap_exception)
 
@@ -26,10 +27,7 @@ PRIMITIVE_TYPES = ['integer', 'number', 'string', 'boolean']
 
 def get_model_ids(api_declaration):
     models = api_declaration.get('models', {})
-    model_ids = []
-    for model in models.itervalues():
-        model_ids.append(model['id'])
-    return model_ids
+    return [model['id'] for model in six.itervalues(models)]
 
 
 def get_resource_path(url, resource):
@@ -72,8 +70,7 @@ def validate_spec_url(url):
     """
 
     log.info('Validating %s' % url)
-    resource_listing = json.load(urllib2.urlopen(url, timeout=TIMEOUT_SEC))
-    validate_spec(resource_listing, url)
+    validate_spec(load_json(url), url)
 
 
 def validate_spec(resource_listing, url):
@@ -95,8 +92,7 @@ def validate_spec(resource_listing, url):
     for api in resource_listing['apis']:
         path = get_resource_path(url, api['path'])
         log.info('Validating %s' % path)
-        api_declaration = json.load(urllib2.urlopen(path, timeout=TIMEOUT_SEC))
-        validate_api_declaration(api_declaration)
+        validate_api_declaration(load_json(path))
 
 
 def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
@@ -154,7 +150,7 @@ def validate_model(model, model_name, model_ids):
                 'Model "%s": required property "%s" not found' %
                 (model_name, required))
 
-    for prop_name, prop in model.get('properties', {}).iteritems():
+    for prop_name, prop in six.iteritems(model.get('properties', {})):
         try:
             validate_data_type(prop, model_ids, allow_refs=True)
         except SwaggerValidationError as e:
@@ -208,7 +204,7 @@ def validate_api_declaration(api_declaration):
     for api in api_declaration['apis']:
         validate_api(api, model_ids)
 
-    for model_name, model in api_declaration.get('models', {}).iteritems():
+    for model_name, model in six.iteritems(api_declaration.get('models', {})):
         validate_model(model, model_name, model_ids)
 
 

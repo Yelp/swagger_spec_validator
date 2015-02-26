@@ -1,4 +1,3 @@
-import json
 import os
 
 import mock
@@ -12,19 +11,17 @@ API_DECLARATION_FILE = os.path.abspath('tests/data/v1.2/foo/foo.json')
 
 
 def get_resource_listing():
-    return json.load(read_contents(RESOURCE_LISTING_FILE))
+    return read_contents(RESOURCE_LISTING_FILE)
 
 
 def test_http_success():
     mock_responses = make_mock_responses([API_DECLARATION_FILE])
 
-    with mock.patch('swagger_spec_validator.util.urllib2.urlopen',
-                    side_effect=mock_responses) as mock_urlopen:
+    with mock.patch('swagger_spec_validator.validator12.load_json',
+                    side_effect=mock_responses) as mock_load_json:
         validate_spec(get_resource_listing(), 'http://localhost/api-docs')
 
-        mock_urlopen.assert_has_calls([
-            mock.call('http://localhost/api-docs/foo', timeout=1),
-        ])
+        mock_load_json.assert_called_once_with('http://localhost/api-docs/foo')
 
 
 def test_file_uri_success():
@@ -33,5 +30,5 @@ def test_file_uri_success():
         validate_spec(get_resource_listing(),
                       'file://{0}'.format(RESOURCE_LISTING_FILE))
 
-        expected = json.load(read_contents(API_DECLARATION_FILE))
+        expected = read_contents(API_DECLARATION_FILE)
         mock_api.assert_called_once_with(expected)
