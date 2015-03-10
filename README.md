@@ -14,8 +14,10 @@ Validate a spec from a url:
 ```python
 
 from swagger_spec_validator import validate_spec_url
-validate_spec_url('http://petstore.swagger.wordnik.com/api/api-docs')
-
+# example for swagger spec v1.2
+validate_spec_url('http://petstore.swagger.io/api/api-docs')
+# example for swagger spec v2.0
+validate_spec_url('http://petstore.swagger.io/v2/swagger.json')
 ```
 
 ## Documentation
