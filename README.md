@@ -9,8 +9,14 @@ Swagger Spec Validator is a Python library that validates Swagger Specs against 
 
 ## Example Usage
 
-    from swagger_spec_validator import validate_spec_url
-    validate_spec_url('http://petstore.swagger.wordnik.com/api/api-docs')
+Validate a spec from a url:
+
+```python
+
+from swagger_spec_validator import validate_spec_url
+validate_spec_url('http://petstore.swagger.wordnik.com/api/api-docs')
+
+```
 
 ## Documentation
 
