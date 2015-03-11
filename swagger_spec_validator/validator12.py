@@ -100,7 +100,7 @@ def validate_spec(resource_listing, url):
 
 
 def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
-                       allow_refs=True):
+                       allow_refs=True, allow_file=False):
     """Validate an object that contains a data type (§4.3.3).
 
     Params:
@@ -117,13 +117,14 @@ def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
     typ = obj.get('type')
     ref = obj.get('$ref')
 
-    # TODO Validate defaultValue, enum, minimum, maximum, uniqueItems
+    # TODO Use a custom jsonschema.Validator to Validate defaultValue
+    # enum, minimum, maximum, uniqueItems
     if typ is not None:
         if typ in PRIMITIVE_TYPES:
-            pass
-        elif allow_voids and typ == 'void':
-            pass
-        elif typ == 'array':
+            return
+        if allow_voids and typ == 'void':
+            return
+        if typ == 'array':
             if not allow_arrays:
                 raise SwaggerValidationError('"array" not allowed')
             # Items Object (§4.3.4)
@@ -131,18 +132,24 @@ def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
             if items is None:
                 raise SwaggerValidationError('"items" not found')
             validate_data_type(items, model_ids, allow_arrays=False)
-        elif typ in model_ids:
+            return
+        if typ == 'File':
+            if not allow_file:
+                raise SwaggerValidationError(
+                    'Type "File" is only valid for form parameters')
+            return
+        if typ in model_ids:
             if allow_refs:
                 raise SwaggerValidationError('must use "$ref" for referencing "%s"' % typ)
-        else:
-            raise SwaggerValidationError('unknown type "%s"' % typ)
-    elif ref is not None:
+        raise SwaggerValidationError('unknown type "%s"' % typ)
+
+    if ref is not None:
         if not allow_refs:
             raise SwaggerValidationError('"$ref" not allowed')
         if ref not in model_ids:
             raise SwaggerValidationError('unknown model id "%s"' % ref)
-    else:
-        raise SwaggerValidationError('no "$ref" or "type" present')
+
+    raise SwaggerValidationError('no "$ref" or "type" present')
 
 
 def validate_model(model, model_name, model_ids):
@@ -165,7 +172,9 @@ def validate_model(model, model_name, model_ids):
 
 def validate_parameter(parameter, model_ids):
     """Validate a Parameter Object (§5.2.4)."""
-    validate_data_type(parameter, model_ids, allow_refs=False)
+    allow_file = parameter.get('paramType') == 'form'
+    validate_data_type(
+        parameter, model_ids, allow_refs=False, allow_file=allow_file)
 
 
 def validate_operation(operation, model_ids):
