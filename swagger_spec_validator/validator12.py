@@ -141,6 +141,7 @@ def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
         if typ in model_ids:
             if allow_refs:
                 raise SwaggerValidationError('must use "$ref" for referencing "%s"' % typ)
+            return
         raise SwaggerValidationError('unknown type "%s"' % typ)
 
     if ref is not None:
@@ -148,6 +149,7 @@ def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
             raise SwaggerValidationError('"$ref" not allowed')
         if ref not in model_ids:
             raise SwaggerValidationError('unknown model id "%s"' % ref)
+        return
 
     raise SwaggerValidationError('no "$ref" or "type" present')
 

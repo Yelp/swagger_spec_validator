@@ -7,6 +7,7 @@ import pytest
 from .validate_spec_url_test import make_mock_responses, read_contents
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import (
+    validate_data_type,
     validate_spec,
     validate_parameter,
 )
@@ -61,3 +62,11 @@ def test_validate_parameter_type_file_in_body():
     with pytest.raises(SwaggerValidationError) as exc:
         validate_parameter(parameter, [])
     assert 'Type "File" is only valid for form parameters' in str(exc)
+
+
+def test_validate_data_type_is_model():
+    model_id = 'MyModelId'
+    model_ids = [model_id, 'OtherModelId']
+    obj = {'type': model_id}
+    # lack of error is success
+    validate_data_type(obj, model_ids, allow_refs=False)
