@@ -1,3 +1,4 @@
+from __future__ import print_function
 import glob
 import json
 import os
@@ -21,7 +22,7 @@ def run_json_tests_with_func(json_test_paths, func):
         # e.g. "api_declarations/array_nested_fail.json"
         test_name = os.sep.join(json_test_path.split(os.sep)[-2:])
 
-        print 'Testing %s...' % test_name
+        print('Testing %s...' % test_name)
 
         if test_name.endswith('_pass.json'):
             func(test_data)
