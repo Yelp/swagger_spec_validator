@@ -1,3 +1,7 @@
+Version 1.0.X (2015-XX-XX)
+-------------
+ * Remove unnecessary dependency on pyyaml
+
 Version 1.0.3 (2015-01-05)
 -------------
  * Initial support for Swagger 2.0
