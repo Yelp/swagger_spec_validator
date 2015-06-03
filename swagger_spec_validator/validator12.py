@@ -159,6 +159,10 @@ def validate_model(model, model_name, model_ids):
                 'Model "%s": required property "%s" not found' %
                 (model_name, required))
 
+    if model_name != model['id']:
+        error = 'model name: {0} does not match model id: {1}'.format(model_name, model['id'])
+        raise SwaggerValidationError(error)
+
     for prop_name, prop in six.iteritems(model.get('properties', {})):
         try:
             validate_data_type(prop, model_ids, allow_refs=True)

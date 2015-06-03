@@ -9,6 +9,7 @@ from swagger_spec_validator.validator12 import (
     validate_data_type,
     validate_spec,
     validate_parameter,
+    validate_model,
 )
 
 
@@ -67,3 +68,13 @@ def test_validate_data_type_is_model():
     obj = {'type': model_id}
     # lack of error is success
     validate_data_type(obj, model_ids, allow_refs=False)
+
+
+def test_validate_model_matches_id():
+    model = {"id": "mysupermodel"}
+    model_name = "mymodel"
+    model_ids = ""
+
+    with pytest.raises(SwaggerValidationError) as exc:
+        validate_model(model, model_name, model_ids)
+    assert 'model name: mymodel does not match model id: mysupermodel' in str(exc)
