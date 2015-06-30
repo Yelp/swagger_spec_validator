@@ -1,6 +1,7 @@
 import logging
 import string
 
+import jsonref
 import six
 
 from swagger_spec_validator.common import (SwaggerValidationError,
@@ -23,6 +24,28 @@ def validate_spec_url(spec_url):
     validate_spec(load_json(spec_url))
 
 
+def replace_jsonref_proxies(obj):
+    """
+    Replace jsonref proxies in the given json obj with the proxy target.
+    Updates are made in place. This removes compatibility problems with 3rd
+    party libraries that can't handle jsonref proxy objects.
+
+    :param obj: json like object
+    :type obj: int, bool, string, float, list, dict, etc
+    """
+    def descend(fragment):
+        if isinstance(fragment, dict):
+            for k, v in six.iteritems(fragment):
+                if isinstance(v, jsonref.JsonRef):
+                    fragment[k] = v.__subject__
+                descend(fragment[k])
+        elif isinstance(fragment, list):
+            for element in fragment:
+                descend(element)
+
+    descend(obj)
+
+
 def validate_spec(spec_json, _spec_url=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
@@ -35,10 +58,13 @@ def validate_spec(spec_json, _spec_url=None):
     """
     validate_json(spec_json, 'schemas/v2.0/schema.json')
 
+    # Dereference all $refs so we don't have to deal with them
+    spec_json = jsonref.JsonRef.replace_refs(spec_json)
+    replace_jsonref_proxies(spec_json)
+
     # TODO: Extract 'parameters', 'responses' from the spec as well.
     apis = spec_json['paths']
     definitions = spec_json.get('definitions', {})
-
     validate_apis(apis)
     validate_definitions(definitions)
 
