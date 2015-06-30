@@ -1,3 +1,7 @@
+Version 1.0.12 (2015-XX-XX)
+-------------
+ * Handle API level parameters - #29
+
 Version 1.0.11 (2015-06-02)
 -------------
  * Validation for model name and it (Swagger 1.2)
