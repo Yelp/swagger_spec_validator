@@ -151,7 +151,7 @@ def replace_jsonref_proxies(obj):
     :param obj: json like object
     :type obj: int, bool, string, float, list, dict, etc
     """
-    # Copied from https://github.com/Yelp/bravado-core/blob/v1.1.0/bravado_core/spec.py#L192
+    # See https://github.com/gazpachoking/jsonref/issues/9
     def descend(fragment):
         if isinstance(fragment, dict):
             for k, v in six.iteritems(fragment):
