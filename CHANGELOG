@@ -1,6 +1,7 @@
 Version 1.0.12 (2015-XX-XX)
 -------------
  * Handle API level parameters - #29
+ * More robust handle of $ref - #29
 
 Version 1.0.11 (2015-06-02)
 -------------
