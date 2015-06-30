@@ -81,6 +81,10 @@ def validate_apis(apis):
         api_params = api_body.get('parameters', [])
         validate_duplicate_param(api_params)
         for oper_name in api_body:
+            # don't treat parameters that apply to all api operations as
+            # an operation
+            if oper_name == 'parameters':
+                continue
             oper_body = api_body[oper_name]
             oper_params = oper_body.get('parameters', [])
             validate_duplicate_param(oper_params)
