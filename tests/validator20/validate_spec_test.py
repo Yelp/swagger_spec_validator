@@ -44,7 +44,7 @@ def test_api_parameters_as_refs():
     #       -> Open Example...
     #          -> instagram.yaml
     #
-    # and then exporting it to a json file.
+    # and then export it to a json file.
     my_dir = os.path.abspath(os.path.dirname(__file__))
     with open(os.path.join(my_dir, '../data/v2.0/instagram.json')) as f:
         validate_spec(json.loads(f.read()))
