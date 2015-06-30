@@ -24,28 +24,6 @@ def validate_spec_url(spec_url):
     validate_spec(load_json(spec_url))
 
 
-def replace_jsonref_proxies(obj):
-    """
-    Replace jsonref proxies in the given json obj with the proxy target.
-    Updates are made in place. This removes compatibility problems with 3rd
-    party libraries that can't handle jsonref proxy objects.
-
-    :param obj: json like object
-    :type obj: int, bool, string, float, list, dict, etc
-    """
-    def descend(fragment):
-        if isinstance(fragment, dict):
-            for k, v in six.iteritems(fragment):
-                if isinstance(v, jsonref.JsonRef):
-                    fragment[k] = v.__subject__
-                descend(fragment[k])
-        elif isinstance(fragment, list):
-            for element in fragment:
-                descend(element)
-
-    descend(obj)
-
-
 def validate_spec(spec_json, _spec_url=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
@@ -59,6 +37,7 @@ def validate_spec(spec_json, _spec_url=None):
     validate_json(spec_json, 'schemas/v2.0/schema.json')
 
     # Dereference all $refs so we don't have to deal with them
+    fix_malformed_model_refs(spec_json)
     spec_json = jsonref.JsonRef.replace_refs(spec_json)
     replace_jsonref_proxies(spec_json)
 
@@ -161,3 +140,49 @@ def validate_unresolvable_path_params(path_name, path_params):
     for path in get_path_params_from_url(path_name):
         if path not in path_params:
             raise SwaggerValidationError("%s: %s" % (msg, path))
+
+
+def replace_jsonref_proxies(obj):
+    """
+    Replace jsonref proxies in the given json obj with the proxy target.
+    Updates are made in place. This removes compatibility problems with 3rd
+    party libraries that can't handle jsonref proxy objects.
+
+    :param obj: json like object
+    :type obj: int, bool, string, float, list, dict, etc
+    """
+    # Copied from https://github.com/Yelp/bravado-core/blob/v1.1.0/bravado_core/spec.py#L192
+    def descend(fragment):
+        if isinstance(fragment, dict):
+            for k, v in six.iteritems(fragment):
+                if isinstance(v, jsonref.JsonRef):
+                    fragment[k] = v.__subject__
+                descend(fragment[k])
+        elif isinstance(fragment, list):
+            for element in fragment:
+                descend(element)
+
+    descend(obj)
+
+
+def fix_malformed_model_refs(spec):
+    """jsonref doesn't understand  { $ref: Category } so just fix it up to
+    { $ref: #/definitions/Category } when the ref name matches a #/definitions
+    name. Yes, this is hacky!
+
+    :param spec: Swagger spec in dict form
+    """
+    # Copied from https://github.com/Yelp/bravado-core/blob/v1.1.0/bravado_core/model.py#L166
+    model_names = [model_name for model_name in spec.get('definitions', {})]
+
+    def descend(fragment):
+        if isinstance(fragment, dict):
+            for k, v in six.iteritems(fragment):
+                if k == '$ref' and v in model_names:
+                    fragment[k] = "#/definitions/{0}".format(v)
+                descend(v)
+        elif isinstance(fragment, list):
+            for element in fragment:
+                descend(element)
+
+    descend(spec)
