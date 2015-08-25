@@ -21,16 +21,17 @@ def validate_spec_url(spec_url):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
     log.info('Validating %s' % spec_url)
-    validate_spec(load_json(spec_url))
+    validate_spec(load_json(spec_url), spec_url)
 
 
-def validate_spec(spec_json, _spec_url=None):
+def validate_spec(spec_json, spec_url=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
     :param spec_json: the json dict of the swagger spec.
     :type spec_json: dict
-    :param _spec_url: url serving the spec json (currently not used)
-    :type _spec_url: string
+    :param spec_url: url serving the spec json. Used for dereferencing
+                     relative refs. eg: file:///foo/swagger.json
+    :type spec_url: string
     :returns: `None` in case of success, otherwise raises an exception.
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
@@ -38,7 +39,8 @@ def validate_spec(spec_json, _spec_url=None):
 
     # Dereference all $refs so we don't have to deal with them
     fix_malformed_model_refs(spec_json)
-    spec_json = jsonref.JsonRef.replace_refs(spec_json)
+    spec_json = jsonref.JsonRef.replace_refs(spec_json,
+                                             base_uri=spec_url or '')
     replace_jsonref_proxies(spec_json)
 
     # TODO: Extract 'parameters', 'responses' from the spec as well.
@@ -159,7 +161,9 @@ def replace_jsonref_proxies(obj):
                     fragment[k] = v.__subject__
                 descend(fragment[k])
         elif isinstance(fragment, list):
-            for element in fragment:
+            for index, element in enumerate(fragment):
+                if isinstance(element, jsonref.JsonRef):
+                    fragment[index] = element.__subject__
                 descend(element)
 
     descend(obj)

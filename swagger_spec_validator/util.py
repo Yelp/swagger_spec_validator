@@ -44,7 +44,9 @@ def validate_spec_url(spec_url):
 
     :param spec_url:
       For Swagger 1.2, this is the URL to the resource listing in api-docs.
-      For Swagger 2.0, this is the URL to swagger.json in api-docs.
+      For Swagger 2.0, this is the URL to swagger.json in api-docs. If given
+                       as `file://` this must be an absolute url for
+                       cross-refs to work correctly.
     """
     spec_json = load_json(spec_url)
     validator = get_validator(spec_json, spec_url)
