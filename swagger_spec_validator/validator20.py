@@ -35,15 +35,16 @@ def validate_spec(spec_json, spec_url=None):
     :returns: `None` in case of success, otherwise raises an exception.
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
-    validate_json(spec_json, 'schemas/v2.0/schema.json')
-
     # Dereference all $refs so we don't have to deal with them
     fix_malformed_model_refs(spec_json)
     spec_json = jsonref.JsonRef.replace_refs(spec_json,
                                              base_uri=spec_url or '')
     replace_jsonref_proxies(spec_json)
 
-    # TODO: Extract 'parameters', 'responses' from the spec as well.
+    # Must validate after all refs in spec_json have been de-reffed because
+    # jsonschema doesn't support validation of external refs
+    validate_json(spec_json, 'schemas/v2.0/schema.json')
+
     apis = spec_json['paths']
     definitions = spec_json.get('definitions', {})
     validate_apis(apis)

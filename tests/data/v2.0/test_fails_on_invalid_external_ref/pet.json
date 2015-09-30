@@ -1,0 +1,20 @@
+{
+  "getall": {
+    "get": {
+      "operationId": "get_all_pets",
+      "parameters": [
+          {
+            "in": "query",
+            "description": "`name` is missing - this should fail validation",
+            "type": "string"
+          }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response"
+        }
+      }
+    }
+  }
+}
+
