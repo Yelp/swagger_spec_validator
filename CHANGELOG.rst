@@ -1,4 +1,4 @@
-Version 1.1.1 (2015-XX-XX)
+Version 1.1.1 (2015-10-02)
 --------------------------
  - Workaround for validation of Swagger 2.0 schemas with external refs - #38
 
