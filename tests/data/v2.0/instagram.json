@@ -81,13 +81,15 @@
             "name": "user-id",
             "in": "path",
             "description": "The user identifier number",
-            "type": "number"
+            "type": "number",
+            "required": true
         },
         "tag-name": {
             "name": "tag-name",
             "in": "path",
             "description": "Tag name",
-            "type": "string"
+            "type": "string",
+            "required": true
         }
     },
     "paths": {
@@ -452,7 +454,8 @@
                     "name": "media-id",
                     "in": "path",
                     "description": "The media ID",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
@@ -476,7 +479,8 @@
                     "name": "shortcode",
                     "in": "path",
                     "description": "The media shortcode",
-                    "type": "string"
+                    "type": "string",
+                    "required": true
                 }
             ],
             "get": {
@@ -594,7 +598,8 @@
                     "name": "media-id",
                     "in": "path",
                     "description": "Media ID",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
@@ -702,7 +707,8 @@
                     "name": "media-id",
                     "in": "path",
                     "description": "Media ID",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
@@ -887,7 +893,8 @@
                     "name": "location-id",
                     "description": "Location ID",
                     "in": "path",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
@@ -916,7 +923,8 @@
                     "name": "location-id",
                     "description": "Location ID",
                     "in": "path",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
@@ -1037,7 +1045,8 @@
                     "name": "geo-id",
                     "in": "path",
                     "description": "Geolocation ID",
-                    "type": "integer"
+                    "type": "integer",
+                    "required": true
                 }
             ],
             "get": {
