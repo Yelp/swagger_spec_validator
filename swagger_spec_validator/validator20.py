@@ -4,10 +4,11 @@ import string
 import jsonref
 import six
 
-from swagger_spec_validator.common import (SwaggerValidationError,
-                                           load_json,
-                                           validate_json,
-                                           wrap_exception)
+from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import validate_json
+from swagger_spec_validator.common import wrap_exception
+
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +37,6 @@ def validate_spec(spec_json, spec_url=None):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
     # Dereference all $refs so we don't have to deal with them
-    fix_malformed_model_refs(spec_json)
     spec_json = jsonref.JsonRef.replace_refs(spec_json,
                                              base_uri=spec_url or '')
     replace_jsonref_proxies(spec_json)
@@ -168,26 +168,3 @@ def replace_jsonref_proxies(obj):
                 descend(element)
 
     descend(obj)
-
-
-def fix_malformed_model_refs(spec):
-    """jsonref doesn't understand  { $ref: Category } so just fix it up to
-    { $ref: #/definitions/Category } when the ref name matches a #/definitions
-    name. Yes, this is hacky!
-
-    :param spec: Swagger spec in dict form
-    """
-    # Copied from https://github.com/Yelp/bravado-core/blob/v1.1.0/bravado_core/model.py#L166
-    model_names = [model_name for model_name in spec.get('definitions', {})]
-
-    def descend(fragment):
-        if isinstance(fragment, dict):
-            for k, v in six.iteritems(fragment):
-                if k == '$ref' and v in model_names:
-                    fragment[k] = "#/definitions/{0}".format(v)
-                descend(v)
-        elif isinstance(fragment, list):
-            for element in fragment:
-                descend(element)
-
-    descend(spec)
