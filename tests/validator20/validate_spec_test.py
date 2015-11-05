@@ -68,4 +68,5 @@ def test_fails_on_invalid_external_ref():
 
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(petstore_spec, petstore_url)
-    assert 'is not valid under any of the given schemas' in str(excinfo.value)
+
+    assert "`name` is missing" in str(excinfo.value)

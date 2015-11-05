@@ -19,4 +19,4 @@ def test_api_level_params_ok():
         }
     }
     # Success == no exception thrown
-    validate_apis(apis)
+    validate_apis(apis, lambda x: x)

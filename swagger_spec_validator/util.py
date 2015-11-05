@@ -1,9 +1,9 @@
 import logging
 
 from swagger_spec_validator import validator12, validator20
-from swagger_spec_validator.common import (SwaggerValidationError,
-                                           load_json,
-                                           wrap_exception)
+from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import wrap_exception
 
 
 log = logging.getLogger(__name__)

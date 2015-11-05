@@ -14,10 +14,10 @@ import os
 import six
 from six.moves.urllib.parse import urlparse
 
-from swagger_spec_validator.common import (SwaggerValidationError,
-                                           load_json,
-                                           validate_json,
-                                           wrap_exception)
+from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import validate_json
+from swagger_spec_validator.common import wrap_exception
 
 log = logging.getLogger(__name__)
 
