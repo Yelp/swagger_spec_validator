@@ -51,7 +51,7 @@ def test_api_parameters_as_refs():
         validate_spec(json.loads(f.read()))
 
 
-def test_fails_on_invalid_external_ref():
+def test_fails_on_invalid_external_ref_in_dict():
     # The external ref in petstore.json is valid.
     # The contents of the external ref (pet.json#/getall) is not - the 'name'
     # key in the parameter is missing.
@@ -69,4 +69,48 @@ def test_fails_on_invalid_external_ref():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(petstore_spec, petstore_url)
 
-    assert "`name` is missing" in str(excinfo.value)
+    assert "is not valid under any of the given schemas" in str(excinfo.value)
+
+
+def test_fails_on_invalid_external_ref_in_list():
+    # The external ref in petstore.json is valid.
+    # The contents of the external ref (pet.json#/get_all_parameters) is not
+    # - the 'name' key in the parameter is missing.
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+
+    petstore_path = os.path.join(
+        my_dir,
+        '../data/v2.0/test_fails_on_invalid_external_ref_in_list/petstore.json')
+
+    with open(petstore_path) as f:
+        petstore_spec = json.load(f)
+
+    petstore_url = 'file://{0}'.format(petstore_path)
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(petstore_spec, petstore_url)
+
+    assert "is not valid under any of the given schemas" in str(excinfo.value)
+
+
+@pytest.fixture
+def node_spec():
+    """Used in tests that have recursive $refs
+    """
+    return {
+        'type': 'object',
+        'properties': {
+            'name': {
+                'type': 'string'
+            },
+            'child': {
+                '$ref': '#/definitions/Node',
+            },
+        },
+        'required': ['name']
+    }
+
+
+# def test_recursive_ref(minimal_swagger_dict, node_spec):
+#     minimal_swagger_dict['definitions']['Node'] = node_spec
+#     validate_spec(minimal_swagger_dict)

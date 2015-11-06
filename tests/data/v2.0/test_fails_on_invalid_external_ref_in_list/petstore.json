@@ -1,0 +1,28 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Petstore"
+  },
+  "tags": [
+      {
+          "name": "pet",
+          "description": "pet"
+      }
+  ],
+  "paths": {
+    "/pet/getall": {
+      "get": {
+        "operationId": "get_all_pets",
+        "parameters": [
+          {"$ref": "pet.json#/parameter"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
+}
