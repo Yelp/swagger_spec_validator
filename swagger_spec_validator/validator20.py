@@ -1,4 +1,3 @@
-import contextlib
 import functools
 import logging
 import string
@@ -29,18 +28,10 @@ def deref(ref_dict, resolver):
     if ref_dict is None or not is_ref(ref_dict):
         return ref_dict
 
-    with in_scope(ref_dict, resolver):
-
-        # TODO: remove print
-        print('resolving %s with scope %s:%s' % (
-            ref_dict['$ref'],
-            len(resolver._scopes_stack),
-            resolver._scopes_stack))
-
-        scope, target = resolver.resolve(ref_dict['$ref'])
+    with resolver.resolving(ref_dict['$ref']) as target:
+        log.debug('Resolving {0}'.format(ref_dict['$ref']))
         if target is None:
-            # TODO: remove print
-            print('Ref not found: %s' % ref_dict)
+            log.warn('Ref not found: {0}'.format(ref_dict))
         return target
 
 
@@ -48,12 +39,14 @@ def deref(ref_dict, resolver):
 def validate_spec_url(spec_url):
     """Validates a Swagger 2.0 API Specification at the given URL.
 
-    :param spec_url: the URL of the api-docs.
-    :returns: `None` in case of success, otherwise raises an exception.
+    :param spec_url: the URL of the service's swagger spec.
+
+    :returns: The resolver (with cached remote refs) used during validation
+    :rtype: :class:`jsonschema.RefResolver`
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
     log.info('Validating %s' % spec_url)
-    validate_spec(load_json(spec_url), spec_url)
+    return validate_spec(load_json(spec_url), spec_url)
 
 
 def validate_spec(spec_dict, spec_url=''):
@@ -86,7 +79,7 @@ def validate_spec(spec_dict, spec_url=''):
 def validate_apis(apis, deref):
     """Validates semantic errors in #/paths.
 
-    :param apis: dict of all the paths
+    :param apis: dict of all the #/paths
     :param deref: callable that dereferences $refs
 
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
@@ -133,6 +126,7 @@ def get_path_param_names(params, deref):
     """Fetch all the names of the path parameters of an operation.
 
     :param params: list of all the params
+    :param deref: callable that dereferences $refs
 
     :returns: list of the name of the path params
     """
@@ -190,32 +184,5 @@ def validate_unresolvable_path_params(path_name, path_params):
             raise SwaggerValidationError("%s: %s" % (msg, path))
 
 
-def is_ref(spec):
-    return isinstance(spec, dict) and '$ref' in spec
-
-
-@contextlib.contextmanager
-def in_scope(ref_dict, resolver):
-    """Context manager to assume the annotated scope in ref_dict for the
-    passed in resolver.
-
-    :type resolver: :class:`jsonschema.validators.RefResolver
-    :param ref_dict: Dict that contains a $ref and its scope.
-        Example:
-        {
-            '$ref': '#/definitions/Foo',
-            'x-scope': [
-                'file://blah/blah/blah/swagger.json',
-                'file://blah/blah/blah/bar.json',
-            ]
-        }
-    """
-    if 'x-scope' not in ref_dict:
-        yield
-    else:
-        saved_scope_stack = resolver._scopes_stack
-        try:
-            resolver._scopes_stack = ref_dict['x-scope']
-            yield
-        finally:
-            resolver._scopes_stack = saved_scope_stack
+def is_ref(spec_dict):
+    return isinstance(spec_dict, dict) and '$ref' in spec_dict

@@ -1,10 +1,13 @@
 import contextlib
 import functools
+import logging
 
 import jsonschema
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
 from jsonschema import validators, _validators
+
+log = logging.getLogger(__name__)
 
 
 def validate(instance, schema, instance_cls, cls=None, *args, **kwargs):
@@ -45,32 +48,40 @@ def create_dereffing_validator(instance_resolver):
     visited_refs = {}
 
     custom_validators = {
-        '$ref': dereffing_ref,
-        'properties': dereffing_properties_draft4,
-        'additionalProperties': dereffing_additionalProperties,
-        'patternProperties': dereffing_patternProperties,
-        'type': dereffing_type_draft4,
-        'dependencies': dereffing_dependencies,
-        'required': dereffing_required_draft4,
-        'minProperties': dereffing_minProperties_draft4,
-        'maxProperties': dereffing_maxProperties_draft4,
-        'allOf': dereffing_allOf_draft4,
-        'oneOf': dereffing_oneOf_draft4,
-        'anyOf': dereffing_anyOf_draft4,
-        'not': dereffing_not_draft4,
+        '$ref': _validators.ref,
+        'properties': _validators.properties_draft4,
+        'additionalProperties': _validators.additionalProperties,
+        'patternProperties': _validators.patternProperties,
+        'type': _validators.type_draft4,
+        'dependencies': _validators.dependencies,
+        'required': _validators.required_draft4,
+        'minProperties': _validators.minProperties_draft4,
+        'maxProperties': _validators.maxProperties_draft4,
+        'allOf': _validators.allOf_draft4,
+        'oneOf': _validators.oneOf_draft4,
+        'anyOf': _validators.anyOf_draft4,
+        'not': _validators.not_draft4,
     }
 
     bound_validators = {}
     for k, v in iteritems(custom_validators):
         bound_validators[k] = functools.partial(
-            v, instance_resolver=instance_resolver,
-            visited_refs=visited_refs)
+            validator_wrapper,
+            instance_resolver=instance_resolver,
+            visited_refs=visited_refs,
+            default_validator_callable=v)
 
     return validators.extend(Draft4Validator, bound_validators)
 
 
 @contextlib.contextmanager
 def visiting(visited_refs, ref):
+    """Context manager that keeps track of $refs that we've seen during
+    validation.
+
+    :param visited_refs: dict of $refs
+    :param ref: string $ref value
+    """
     visited_refs[ref] = ref
     try:
         yield
@@ -78,224 +89,68 @@ def visiting(visited_refs, ref):
         del visited_refs[ref]
 
 
-def deref_and_call(validator, validator_context, instance, schema,
-                   instance_resolver, visited_refs,
-                   default_validator_callable):
+def validator_wrapper(validator, schema_element, instance, schema,
+                      instance_resolver, visited_refs,
+                      default_validator_callable):
+    """Generator function that parameterizes default_validator_callable.
 
+    :type validator: :class:`jsonschema.validators.Validator`
+    :param schema_element: The schema element that is passed in to each
+        specific validator callable aka the 2nd arg in each
+        jsonschema._validators.* callable.
+    :param instance: The fragment of the swagger service spec that is being
+        validated.
+    :param schema: The fragment of the swagger jsonschema spec that describes
+        is used for validation.
+    :param instance_resolver: Resolves refs in the swagger service spec
+    :param visited_refs: Keeps track of visisted refs during validation of
+        the swagger service spec.
+    :param default_validator_callable: jsonschema._validators.* callable
+    """
+    for error in deref_and_validate(
+        validator,
+        schema_element,
+        instance,
+        schema,
+        instance_resolver,
+        visited_refs,
+        default_validator_callable,
+    ):
+        yield error
+
+
+def deref_and_validate(validator, schema_element, instance, schema,
+                       instance_resolver, visited_refs,
+                       default_validator_callable):
+    """Generator function that dereferences instance if it is a $ref before
+    passing it downstream for actual validation. When a cyclic ref is detected,
+    short-circuit and return.
+
+    :type validator: :class:`jsonschema.validators.Validator`
+    :param schema_element: The schema element that is passed in to each
+        specific validator callable aka the 2nd arg in each
+        jsonschema._validators.* callable.
+    :param instance: The fragment of the swagger service spec that is being
+        validated.
+    :param schema: The fragment of the swagger jsonschema spec that describes
+        is used for validation.
+    :param instance_resolver: Resolves refs in the swagger service spec
+    :param visited_refs: Keeps track of visisted refs during validation of
+        the swagger service spec.
+    :param default_validator_callable: jsonschema._validators.* callable
+    """
     if isinstance(instance, dict) and '$ref' in instance:
         ref = instance['$ref']
         if ref in visited_refs:
-            print("XXX Found cycle in %s" % ref)
+            log.debug("Found cycle in %s" % ref)
             return
         with visiting(visited_refs, ref):
             with instance_resolver.resolving(ref) as target:
                 for error in default_validator_callable(
-                        validator, validator_context, target, schema):
+                        validator, schema_element, target, schema):
                     yield error
 
     else:
         for error in default_validator_callable(
-                validator, validator_context, instance, schema):
+                validator, schema_element, instance, schema):
             yield error
-
-
-def dereffing_patternProperties(validator, patternProperties, instance, schema,
-                                instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        patternProperties,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.patternProperties,
-    ):
-        yield error
-
-
-def dereffing_additionalProperties(validator, aP, instance, schema,
-                                   instance_resolver, visited_refs):
-    for error in deref_and_call(
-        validator,
-        aP,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.additionalProperties,
-    ):
-        yield error
-
-
-def dereffing_properties_draft4(validator, properties, instance, schema,
-                                instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        properties,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.properties_draft4,
-    ):
-        yield error
-
-
-def dereffing_type_draft4(validator, types, instance, schema,
-                          instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        types,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.type_draft4,
-    ):
-        yield error
-
-
-def dereffing_dependencies(validator, dependencies, instance, schema,
-                           instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        dependencies,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.dependencies,
-    ):
-        yield error
-
-
-def dereffing_ref(validator, ref, instance, schema, instance_resolver,
-                  visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        ref,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.ref,
-    ):
-        yield error
-
-
-def dereffing_required_draft4(validator, required, instance, schema,
-                              instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        required,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.required_draft4,
-    ):
-        yield error
-
-
-def dereffing_minProperties_draft4(validator, mP, instance, schema,
-                                   instance_resolver, visited_refs):
-
-    for error in deref_and_call(
-        validator,
-        mP,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.minProperties_draft4,
-    ):
-        yield error
-
-
-def dereffing_maxProperties_draft4(validator, mP, instance, schema,
-                                   instance_resolver, visited_refs):
-    for error in deref_and_call(
-        validator,
-        mP,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.maxProperties_draft4,
-    ):
-        yield error
-
-
-def dereffing_allOf_draft4(validator, allOf, instance, schema,
-                           instance_resolver, visited_refs):
-    # TODO: remove jsonReference from allOf
-    for error in deref_and_call(
-        validator,
-        allOf,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.allOf_draft4,
-    ):
-        yield error
-
-
-def dereffing_oneOf_draft4(validator, oneOf, instance, schema,
-                           instance_resolver, visited_refs):
-    # TODO: remove jsonReference from allOf
-    for error in deref_and_call(
-        validator,
-        oneOf,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.oneOf_draft4,
-    ):
-        yield error
-        # def remove_jsonReference(oneOf):
-        #     return [
-        #         element
-        #         for element in oneOf
-        #         if not(isinstance(element, dict)
-        #             and '$ref' in element
-        #             and element['$ref'].endswith('jsonReference'))
-        #     ]
-        #
-        # oneOf = remove_jsonReference(oneOf)
-
-
-def dereffing_anyOf_draft4(validator, anyOf, instance, schema,
-                           instance_resolver, visited_refs):
-    # TODO: remove jsonReference from anyOf
-    for error in deref_and_call(
-        validator,
-        anyOf,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.anyOf_draft4,
-    ):
-        yield error
-
-
-def dereffing_not_draft4(validator, not_schema, instance, schema,
-                         instance_resolver, visited_refs):
-    for error in deref_and_call(
-        validator,
-        not_schema,
-        instance,
-        schema,
-        instance_resolver,
-        visited_refs,
-        _validators.not_draft4,
-    ):
-        yield error
