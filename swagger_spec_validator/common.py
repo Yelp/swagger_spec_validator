@@ -47,7 +47,7 @@ def validate_json(spec_dict, schema_path, spec_url=''):
     schema_resolver = RefResolver('file://{0}'.format(schema_path), schema)
     spec_resolver = RefResolver(spec_url, spec_dict)
 
-    ref_validators.ssv_validate(
+    ref_validators.validate(
         spec_dict,
         schema,
         resolver=schema_resolver,

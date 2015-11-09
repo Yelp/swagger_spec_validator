@@ -111,6 +111,6 @@ def node_spec():
     }
 
 
-# def test_recursive_ref(minimal_swagger_dict, node_spec):
-#     minimal_swagger_dict['definitions']['Node'] = node_spec
-#     validate_spec(minimal_swagger_dict)
+def test_recursive_ref(minimal_swagger_dict, node_spec):
+    minimal_swagger_dict['definitions']['Node'] = node_spec
+    validate_spec(minimal_swagger_dict)
