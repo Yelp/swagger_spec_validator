@@ -28,10 +28,9 @@ def deref(ref_dict, resolver):
     if ref_dict is None or not is_ref(ref_dict):
         return ref_dict
 
-    with resolver.resolving(ref_dict['$ref']) as target:
-        log.debug('Resolving {0}'.format(ref_dict['$ref']))
-        if target is None:
-            log.warn('Ref not found: {0}'.format(ref_dict))
+    ref = ref_dict['$ref']
+    with resolver.resolving(ref) as target:
+        log.debug('Resolving {0}'.format(ref))
         return target
 
 

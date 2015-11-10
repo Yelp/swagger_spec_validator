@@ -1,5 +1,7 @@
 import json
 import os
+
+from jsonschema.validators import RefResolver
 import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError
@@ -25,7 +27,8 @@ def minimal_swagger_dict():
 
 
 def test_success(petstore_contents):
-    validate_spec(json.loads(petstore_contents))
+    assert isinstance(validate_spec(json.loads(petstore_contents)),
+                      RefResolver)
 
 
 def test_definitons_not_present_success(minimal_swagger_dict):
@@ -114,3 +117,12 @@ def node_spec():
 def test_recursive_ref(minimal_swagger_dict, node_spec):
     minimal_swagger_dict['definitions']['Node'] = node_spec
     validate_spec(minimal_swagger_dict)
+
+
+def test_recursive_ref_failure(minimal_swagger_dict, node_spec):
+    minimal_swagger_dict['definitions']['Node'] = node_spec
+    # insert non-existent $ref
+    node_spec['properties']['foo'] = {'$ref': '#/definitions/Foo'}
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(minimal_swagger_dict)
+    assert 'Unresolvable JSON pointer' in str(excinfo.value)
