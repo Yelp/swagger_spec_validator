@@ -144,6 +144,10 @@ def deref_and_validate(validator, schema_element, instance, schema,
         if ref in visited_refs:
             log.debug("Found cycle in %s" % ref)
             return
+
+        # Annotate $ref dict with scope - used by custom validations
+        attach_scope(instance, instance_resolver)
+
         with visiting(visited_refs, ref):
             with instance_resolver.resolving(ref) as target:
                 for error in default_validator_callable(
@@ -154,3 +158,38 @@ def deref_and_validate(validator, schema_element, instance, schema,
         for error in default_validator_callable(
                 validator, schema_element, instance, schema):
             yield error
+
+
+def attach_scope(ref_dict, instance_resolver):
+    """Attach scope to each $ref we encounter so that the $ref can be
+    resolved by custom validations done outside the scope of jsonscema
+    validations.
+
+    :param ref_dict: dict with $ref key
+    :type instance_resolver: :class:`jsonschema.validators.RefResolver`
+    """
+    if 'x-scope' in ref_dict:
+        log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
+        return
+    log.debug('Attaching x-scope to {0}'.format(ref_dict))
+    ref_dict['x-scope'] = list(instance_resolver._scopes_stack)
+
+
+@contextlib.contextmanager
+def in_scope(resolver, ref_dict):
+    """Context manager to assume the given scope for the passed in resolver.
+
+    The resolver's original scope is restored when exiting the context manager.
+
+    :type resolver: :class:`jsonschema.validators.RefResolver
+    :type ref_dict: dict
+    """
+    if 'x-scope' not in ref_dict:
+        yield
+    else:
+        saved_scope_stack = resolver._scopes_stack
+        try:
+            resolver._scopes_stack = ref_dict['x-scope']
+            yield
+        finally:
+            resolver._scopes_stack = saved_scope_stack
