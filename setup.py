@@ -29,7 +29,6 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        'jsonref',
         'jsonschema',
         'setuptools',
         'six',

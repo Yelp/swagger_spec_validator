@@ -1,0 +1,7 @@
+{
+  "parameter": {
+      "in": "query",
+      "description": "`name` is missing - this should fail validation",
+      "type": "string"
+    }
+}

@@ -33,6 +33,11 @@ API
 .. autofunction:: validate_spec_url
 
 
+.. toctree::
+  :maxdepth: 1
+
+  changelog
+
 .. _Swagger 1.2: https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
 
 .. _Swagger 2.0: https://github.com/wordnik/swagger-spec/blob/master/versions/2.0.md
