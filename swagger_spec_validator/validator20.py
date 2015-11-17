@@ -48,7 +48,7 @@ def validate_spec_url(spec_url):
     return validate_spec(load_json(spec_url), spec_url)
 
 
-def validate_spec(spec_dict, spec_url=''):
+def validate_spec(spec_dict, spec_url='', http_handlers=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
     :param spec_dict: the json dict of the swagger spec.
@@ -56,6 +56,11 @@ def validate_spec(spec_dict, spec_url=''):
     :param spec_url: url from which spec_dict was retrieved. Used for
         dereferencing refs. eg: file:///foo/swagger.json
     :type spec_url: string
+    :param http_handlers: used to download any remote $refs in spec_dict with
+        a custom http client. Defaults to None in which case the default
+        http client built into jsonschema's RefResolver is used. This
+        is a mapping from uri scheme to a callable that takes a
+        uri.
 
     :returns: the resolver (with cached remote refs) used during validation
     :rtype: :class:`jsonschema.RefResolver`
@@ -64,7 +69,8 @@ def validate_spec(spec_dict, spec_url=''):
     swagger_resolver = validate_json(
         spec_dict,
         'schemas/v2.0/schema.json',
-        spec_url=spec_url)
+        spec_url=spec_url,
+        http_handlers=http_handlers)
 
     bound_deref = functools.partial(deref, resolver=swagger_resolver)
     spec_dict = bound_deref(spec_dict)
