@@ -165,8 +165,8 @@ def attach_scope(ref_dict, instance_resolver):
     resolved by custom validations done outside the scope of jsonscema
     validations.
 
-    :param ref_dict:
-    :param instance_resolver:
+    :param ref_dict: dict with $ref key
+    :type instance_resolver: :class:`jsonschema.validators.RefResolver`
     """
     if 'x-scope' in ref_dict:
         log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
@@ -181,7 +181,7 @@ def in_scope(resolver, ref_dict):
 
     The resolver's original scope is restored when exiting the context manager.
 
-    :type resolver: :class:`jsonschama.validators.RefResolver
+    :type resolver: :class:`jsonschema.validators.RefResolver
     :type ref_dict: dict
     """
     if 'x-scope' not in ref_dict:
