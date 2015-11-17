@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.1 (2015-11-17)
+------------------
+- Fix rich validations that rely on a working deref with scope annotations
+
 2.0.0 (2015-11-17)
 ------------------
 - Support for recursive $refs

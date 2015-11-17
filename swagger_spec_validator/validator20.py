@@ -8,7 +8,7 @@ from swagger_spec_validator.common import load_json
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import validate_json
 from swagger_spec_validator.common import wrap_exception
-
+from swagger_spec_validator.ref_validators import in_scope
 
 log = logging.getLogger(__name__)
 
@@ -29,9 +29,10 @@ def deref(ref_dict, resolver):
         return ref_dict
 
     ref = ref_dict['$ref']
-    with resolver.resolving(ref) as target:
-        log.debug('Resolving {0}'.format(ref))
-        return target
+    with in_scope(resolver, ref_dict):
+        with resolver.resolving(ref) as target:
+            log.debug('Resolving {0}'.format(ref))
+            return target
 
 
 @wrap_exception
