@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.0 (2015-XX-XX)
+2.0.0 (2015-11-17)
 ------------------
 - Support for recursive $refs
 - Unqualified $refs no longer supported.
