@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.2 (2015-11-18)
+------------------
+- Fix regression with Swagger 1.2 schemas - #43
+
 2.0.1 (2015-11-17)
 ------------------
 - Fix rich validations that rely on a working deref with scope annotations

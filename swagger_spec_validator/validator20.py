@@ -1,12 +1,20 @@
 import functools
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import logging
 import string
 
+from jsonschema import RefResolver
+from jsonschema.validators import Draft4Validator
+from pkg_resources import resource_filename
 from six import iteritems
 
+
+from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import load_json
 from swagger_spec_validator.common import SwaggerValidationError
-from swagger_spec_validator.common import validate_json
 from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import in_scope
 
@@ -22,7 +30,7 @@ def deref(ref_dict, resolver):
     :param resolver: Ref resolver used to do the de-referencing
     :type resolver: :class:`jsonschema.RefResolver`
 
-    :return: dereferenced value of ref_dict
+    :return: de-referenced value of ref_dict
     :rtype: scalar, list, dict
     """
     if ref_dict is None or not is_ref(ref_dict):
@@ -80,6 +88,45 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     validate_apis(apis, bound_deref)
     validate_definitions(definitions, bound_deref)
     return swagger_resolver
+
+
+@wrap_exception
+def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
+    """Validate a json document against a json schema.
+
+    :param spec_dict: json document in the form of a list or dict.
+    :param schema_path: package relative path of the json schema file.
+    :param spec_url: base uri to use when creating a
+        RefResolver for the passed in spec_dict.
+    :param http_handlers: used to download any remote $refs in spec_dict with
+        a custom http client. Defaults to None in which case the default
+        http client built into jsonschema's RefResolver is used. This
+        is a mapping from uri scheme to a callable that takes a
+        uri.
+
+    :return: RefResolver for spec_dict with cached remote $refs used during
+        validation.
+    :rtype: :class:`jsonschema.RefResolver`
+    """
+    schema_path = resource_filename('swagger_spec_validator', schema_path)
+    with open(schema_path) as schema_file:
+        schema = json.loads(schema_file.read())
+
+    schema_resolver = RefResolver('file://{0}'.format(schema_path), schema)
+
+    spec_resolver = RefResolver(spec_url, spec_dict,
+                                handlers=http_handlers or {})
+
+    ref_validators.validate(
+        spec_dict,
+        schema,
+        resolver=schema_resolver,
+        instance_cls=ref_validators.create_dereffing_validator(spec_resolver),
+        cls=Draft4Validator)
+
+    # Since remote $refs were downloaded, pass the resolver back to the caller
+    # so that its cached $refs can be re-used.
+    return spec_resolver
 
 
 def validate_apis(apis, deref):

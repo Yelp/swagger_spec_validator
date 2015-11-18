@@ -6,17 +6,23 @@ validator aims to check for full compliance with the Specification.
 The validator uses the published jsonschema files for basic structural
 validation, augmented with custom validation code where necessary.
 
-https://github.com/wordnik/swagger-spec/blob/master/versions/1.2.md
+https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md
 """
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import logging
 import os
 
+import jsonschema
+from jsonschema import RefResolver
+from pkg_resources import resource_filename
 import six
 from six.moves.urllib.parse import urlparse
 
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import load_json
-from swagger_spec_validator.common import validate_json
 from swagger_spec_validator.common import wrap_exception
 
 log = logging.getLogger(__name__)
@@ -237,3 +243,17 @@ def validate_resource_listing(resource_listing):
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
     validate_json(resource_listing, 'schemas/v1.2/resourceListing.json')
+
+
+@wrap_exception
+def validate_json(json_document, schema_path):
+    """Validate a json document against a json schema.
+
+    :param json_document: json document in the form of a list or dict.
+    :param schema_path: package relative path of the json schema file.
+    """
+    schema_path = resource_filename('swagger_spec_validator', schema_path)
+    with open(schema_path) as schema_file:
+        schema = json.loads(schema_file.read())
+    resolver = RefResolver('file://{0}'.format(schema_path), schema)
+    jsonschema.validate(json_document, schema, resolver=resolver)
