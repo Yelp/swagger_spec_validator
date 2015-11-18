@@ -5,7 +5,10 @@
     {
       "operations": [
         {
-          "type": "string",
+          "type": "array",
+          "items": {
+            "$ref": "FooResponse"
+          },
           "nickname": "foo",
           "method": "GET",
           "parameters": [
@@ -19,5 +22,16 @@
       ],
       "path": "/foo"
     }
-  ]
+  ],
+  "models": {
+      "FooResponse": {
+          "id": "FooResponse",
+          "properties": {
+              "message": {
+                  "type": "string",
+                  "description": "A message"
+              }
+          }
+      }
+  }
 }
