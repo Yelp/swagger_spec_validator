@@ -145,7 +145,7 @@ def validate_apis(apis, deref):
         for oper_name in api_body:
             # don't treat parameters that apply to all api operations as
             # an operation
-            if oper_name == 'parameters':
+            if oper_name == 'parameters' or oper_name.startswith('x-'):
                 continue
             oper_body = deref(api_body[oper_name])
             oper_params = deref(oper_body.get('parameters', []))

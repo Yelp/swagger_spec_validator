@@ -7,6 +7,7 @@ def test_api_level_params_ok():
     # since they are peers.
     apis = {
         '/tags/{tag-name}': {
+            'x-ignore-me': 'DO NOT LOOK AT ME!',
             'parameters': [
                 {
                     'name': 'tag-name',
