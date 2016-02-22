@@ -7,7 +7,6 @@ def test_api_level_params_ok():
     # since they are peers.
     apis = {
         '/tags/{tag-name}': {
-            'x-ignore-me': 'DO NOT LOOK AT ME!',
             'parameters': [
                 {
                     'name': 'tag-name',
@@ -16,6 +15,26 @@ def test_api_level_params_ok():
                 },
             ],
             'get': {
+            }
+        }
+    }
+    # Success == no exception thrown
+    validate_apis(apis, lambda x: x)
+
+
+def test_api_level_x_hyphen_ok():
+    # Elements starting with "x-" should be ignored
+    apis = {
+        '/tags/{tag-name}': {
+            'x-ignore-me': 'DO NOT LOOK AT ME!',
+            'get': {
+                'parameters': [
+                    {
+                        'name': 'tag-name',
+                        'in': 'path',
+                        'type': 'string',
+                    }
+                ]
             }
         }
     }
