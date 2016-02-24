@@ -2,7 +2,7 @@ Changelog
 =========
 2.0.X (2016-XX-XX)
 ------------------
-- Ignore x- vendor extensions at the path level - PR #45
+- Ignore x- vendor extensions in the schema at the #/paths/{path}/{http_method} level - PR #45
 
 2.0.2 (2015-11-18)
 ------------------
