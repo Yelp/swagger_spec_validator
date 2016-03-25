@@ -12,6 +12,7 @@ def test_api_level_params_ok():
                     'name': 'tag-name',
                     'in': 'path',
                     'type': 'string',
+                    'required': True
                 },
             ],
             'get': {
