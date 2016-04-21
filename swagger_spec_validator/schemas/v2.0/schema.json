@@ -912,6 +912,9 @@
         },
         {
           "$ref": "#/definitions/nonBodyParameter"
+        },
+        {
+          "$ref": "#/definitions/schema"
         }
       ]
     },
