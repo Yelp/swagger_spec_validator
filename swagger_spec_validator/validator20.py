@@ -5,6 +5,7 @@ except ImportError:
     import json
 import logging
 import string
+import copy
 
 from jsonschema import RefResolver
 from jsonschema.validators import Draft4Validator
@@ -75,6 +76,8 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     :rtype: :class:`jsonschema.RefResolver`
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
+    spec_dict = copy.deepcopy(spec_dict)
+
     swagger_resolver = validate_json(
         spec_dict,
         'schemas/v2.0/schema.json',
