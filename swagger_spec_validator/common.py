@@ -5,6 +5,7 @@ try:
     import simplejson as json
 except ImportError:
     import json
+import yaml
 import six
 from six.moves.urllib import request
 
@@ -24,8 +25,16 @@ def wrap_exception(method):
 
 
 def load_json(url):
+    return _load(url, json.loads)
+
+
+def load_yaml(url):
+    return _load(url, yaml.safe_load)
+
+
+def _load(url, parser):
     with contextlib.closing(request.urlopen(url, timeout=TIMEOUT_SEC)) as fh:
-        return json.loads(fh.read().decode('utf-8'))
+        return parser(fh.read().decode('utf-8'))
 
 
 class SwaggerValidationError(Exception):
