@@ -50,7 +50,7 @@ def validate_spec_url(spec_url):
                        cross-refs to work correctly.
     """
     _, extension = os.path.splitext(spec_url)
-    is_yaml = any([i == extension for i in ('.yml', '.yaml')])
+    is_yaml = extension in ('.yml', '.yaml')
     if is_yaml:
         spec_json = load_yaml(spec_url)
     else:
