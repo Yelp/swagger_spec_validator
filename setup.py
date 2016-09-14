@@ -32,6 +32,7 @@ setup(
         'jsonschema',
         'setuptools',
         'six',
+        'pyyaml'
     ],
     license=about['__license__']
 )

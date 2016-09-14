@@ -16,11 +16,11 @@ import logging
 import os
 
 import jsonschema
-from jsonschema import RefResolver
 from pkg_resources import resource_filename
 import six
 from six.moves.urllib.parse import urlparse
 
+from swagger_spec_validator.common import RefResolver
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import load_json
 from swagger_spec_validator.common import wrap_exception

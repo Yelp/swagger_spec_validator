@@ -6,13 +6,13 @@ except ImportError:
 import logging
 import string
 
-from jsonschema import RefResolver
 from jsonschema.validators import Draft4Validator
 from pkg_resources import resource_filename
 from six import iteritems
 
 
 from swagger_spec_validator import ref_validators
+from swagger_spec_validator.common import RefResolver
 from swagger_spec_validator.common import load_json
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception

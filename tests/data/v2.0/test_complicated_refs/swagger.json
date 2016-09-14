@@ -18,6 +18,9 @@
   "definitions": {
       "pong": {
           "$ref": "definitions/definitions.json#/pong"
+      },
+      "pet": {
+          "$ref": "definitions/pet.yaml"
       }
   }
 }
