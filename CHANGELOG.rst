@@ -1,6 +1,6 @@
 Changelog
 =========
-2.0.X (2016-XX-XX)
+2.0.3 (2016-11-23)
 ------------------
 - Ignore x- vendor extensions in the schema at the #/paths/{path}/{http_method} level - PR #45
 - Swagger 2.0 schema synced with upstream - PR #40
