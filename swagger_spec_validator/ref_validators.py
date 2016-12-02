@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def validate(instance, schema, instance_cls, cls=None, *args, **kwargs):
-    """This is a carbon-copy of :method:`jsonscema.validate` except that it
+    """This is a carbon-copy of :method:`jsonschema.validate` except that it
     takes two validator classes instead of just one. In the jsonschema
     implementation, `cls` is used to validate both the schema and the
     instance. This changes the behavior to have a separate validator for
