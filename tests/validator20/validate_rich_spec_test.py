@@ -51,6 +51,7 @@ def test_failure_on_unresolvable_ref_of_props_required_list(swagger_spec):
     assert ("Required list has properties not defined: ['bla']"
             in str(exc_info.value))
 
+
 # TODO: validate definitions of references made by $ref, commented them for now.
 """
 def test_failure_on_unresolvable_model_reference_from_model(swagger_spec):
