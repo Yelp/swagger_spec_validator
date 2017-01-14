@@ -63,7 +63,9 @@ def validate_spec_url(spec_url):
     return validate_spec(read_url(spec_url), spec_url)
 
 
-def validate_spec(spec_dict, spec_url='', http_handlers=None):
+def validate_spec(spec_dict, spec_url='', http_handlers=None,
+                  schema_pkg='swagger_spec_validator',
+                  schema_path='schemas/v2.0/schema.json'):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
     :param spec_dict: the json dict of the swagger spec.
@@ -76,6 +78,8 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
         http client built into jsonschema's RefResolver is used. This
         is a mapping from uri scheme to a callable that takes a
         uri.
+    :param schema_pkg: package of the json schema file.
+    :param schema_path: package relative path of the json schema file.
 
     :returns: the resolver (with cached remote refs) used during validation
     :rtype: :class:`jsonschema.RefResolver`
@@ -83,7 +87,8 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     """
     swagger_resolver = validate_json(
         spec_dict,
-        'schemas/v2.0/schema.json',
+        schema_pkg,
+        schema_path,
         spec_url=spec_url,
         http_handlers=http_handlers,
     )
@@ -98,10 +103,12 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
 
 
 @wrap_exception
-def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
+def validate_json(spec_dict, schema_pkg, schema_path,
+                  spec_url='', http_handlers=None):
     """Validate a json document against a json schema.
 
     :param spec_dict: json document in the form of a list or dict.
+    :param schema_pkg: package of the json schema file.
     :param schema_path: package relative path of the json schema file.
     :param spec_url: base uri to use when creating a
         RefResolver for the passed in spec_dict.
@@ -115,7 +122,7 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
         validation.
     :rtype: :class:`jsonschema.RefResolver`
     """
-    schema_path = resource_filename('swagger_spec_validator', schema_path)
+    schema_path = resource_filename(schema_pkg, schema_path)
     schema = read_file(schema_path)
 
     schema_resolver = RefResolver(
