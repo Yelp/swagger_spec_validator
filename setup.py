@@ -30,7 +30,6 @@ setup(
     include_package_data=True,
     install_requires=[
         'jsonschema',
-        'setuptools',
         'six',
     ],
     license=about['__license__']
