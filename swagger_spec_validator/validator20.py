@@ -168,11 +168,28 @@ def validate_definitions(definitions, deref):
     for def_name, definition in iteritems(definitions):
         definition = deref(definition)
         required = definition.get('required', [])
-        props = definition.get('properties', {}).keys()
+        props = get_all_definition_properties(definition, deref)
         extra_props = list(set(required) - set(props))
         if extra_props:
             msg = "Required list has properties not defined"
             raise SwaggerValidationError("%s: %s" % (msg, extra_props))
+
+
+def get_all_definition_properties(definition, deref):
+    """Get all of the properties for the definition including those inherited using allOf.
+
+    :param definitions: dict of all the definitions
+    :param deref: callable that dereferences $refs
+
+    :returns: Set of property names
+    """
+    props = set(definition.get('properties', {}).keys())
+    if 'allOf' in definition:
+        for other_definition in definition['allOf']:
+            other_definition = deref(other_definition)
+            if 'properties' in other_definition:
+                props.update(get_all_definition_properties(other_definition, deref))
+    return props
 
 
 def get_path_param_names(params, deref):
