@@ -4,32 +4,7 @@
         "version": "1.0.0",
         "title": "test"
     },
-    "paths": {
-        "/users/{id}": {
-            "get": {
-                "consumes": [],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                }
-            }
-        }
-    },
+    "paths": {},
     "definitions": {
         "User": {
             "type": "object",
@@ -47,9 +22,6 @@
                             "type": "string"
                         },
                         "name": {
-                            "type": "string"
-                        },
-                        "email": {
                             "type": "string"
                         }
                     }
