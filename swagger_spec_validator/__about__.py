@@ -3,11 +3,11 @@ __all__ = [
     "__email__", "__license__"
 ]
 
-__title__ = "swagger_spec_validator"
+__title__ = "swagger-spec-validator"
 __summary__ = "Validation of Swagger specifications"
 __uri__ = "http://github.com/Yelp/swagger_spec_validator"
 
-__version__ = "2.0.3"
+__version__ = "2.0.4"
 
 __author__ = "John Billings"
 __email__ = "billings@yelp.com"

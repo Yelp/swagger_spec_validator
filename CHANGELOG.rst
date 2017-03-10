@@ -1,5 +1,9 @@
 Changelog
 =========
+2.0.4 (2017-03-10)
+------------------
+- Rename package to swagger-spec-validator to fix PyPI upload issues - #59
+
 2.0.3 (2016-11-23)
 ------------------
 - Ignore x- vendor extensions in the schema at the #/paths/{path}/{http_method} level - PR #45
