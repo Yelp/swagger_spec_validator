@@ -1,5 +1,6 @@
 import json
 import os
+from six.moves.urllib import parse as urlparse
 
 import pytest
 
@@ -22,3 +23,10 @@ def no_op_deref():
     the actual test.
     """
     return lambda x: x
+
+
+def get_spec_json_and_url(rel_url):
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+    abs_path = os.path.realpath(os.path.join(my_dir, rel_url))
+    with open(abs_path) as f:
+        return json.loads(f.read()), urlparse.urljoin('file:', abs_path)

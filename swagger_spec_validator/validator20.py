@@ -11,7 +11,6 @@ from jsonschema.validators import Draft4Validator
 from pkg_resources import resource_filename
 from six import iteritems
 
-
 from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import load_json
 from swagger_spec_validator.common import SwaggerValidationError
@@ -79,7 +78,8 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
         spec_dict,
         'schemas/v2.0/schema.json',
         spec_url=spec_url,
-        http_handlers=http_handlers)
+        http_handlers=http_handlers,
+    )
 
     bound_deref = functools.partial(deref, resolver=swagger_resolver)
     spec_dict = bound_deref(spec_dict)
@@ -156,6 +156,63 @@ def validate_apis(apis, deref):
             validate_unresolvable_path_params(api_name, all_path_params)
 
 
+def get_collapsed_properties_type_mapping(definition, deref):
+    definition = deref(definition)
+    required_properties = {}
+    not_required_properties = {}
+    if definition.get('allOf'):
+        for inner_definition in definition['allOf']:
+            inner_required_properties, inner_not_required_properties = get_collapsed_properties_type_mapping(inner_definition, deref)
+            required_properties.update(inner_required_properties)
+            not_required_properties.update(inner_not_required_properties)
+    else:
+        properties = {
+            prop_name: prop_schema.get('type', 'object')
+            for prop_name, prop_schema in iteritems(definition.get('properties', {}))
+        }
+        required_properties_set = set(definition.get('required', []))
+
+        required_properties = {
+            k: v
+            for k, v in iteritems(properties)
+            if k in required_properties_set
+        }
+        not_required_properties = {
+            k: v
+            for k, v in iteritems(properties)
+            if k not in required_properties_set
+        }
+    return required_properties, not_required_properties
+
+
+def validate_definition(definition, deref, def_name=None):
+    definition = deref(definition)
+
+    if 'allOf' in definition:
+        for inner_definition in definition['allOf']:
+            validate_definition(inner_definition, deref)
+    else:
+        required = definition.get('required', [])
+        props = definition.get('properties', {}).keys()
+        extra_props = list(set(required) - set(props))
+        if extra_props:
+            raise SwaggerValidationError(
+                "Required list has properties not defined: {}".format(
+                    extra_props
+                )
+            )
+
+    if 'discriminator' in definition:
+        required_props, not_required_props = get_collapsed_properties_type_mapping(definition, deref)
+        discriminator = definition['discriminator']
+        if discriminator not in required_props and discriminator not in not_required_props:
+            raise SwaggerValidationError('discriminator (%s) must be defined in properties' % discriminator)
+        if discriminator not in required_props:
+            raise SwaggerValidationError('discriminator (%s) must be defined a required property' % discriminator)
+        if required_props[discriminator] != 'string':
+            raise SwaggerValidationError('discriminator (%s) must be a string property' % discriminator)
+
+
 def validate_definitions(definitions, deref):
     """Validates the semantic errors in #/definitions.
 
@@ -166,13 +223,7 @@ def validate_definitions(definitions, deref):
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
     for def_name, definition in iteritems(definitions):
-        definition = deref(definition)
-        required = definition.get('required', [])
-        props = definition.get('properties', {}).keys()
-        extra_props = list(set(required) - set(props))
-        if extra_props:
-            msg = "Required list has properties not defined"
-            raise SwaggerValidationError("%s: %s" % (msg, extra_props))
+        validate_definition(definition, deref, def_name=def_name)
 
 
 def get_path_param_names(params, deref):
