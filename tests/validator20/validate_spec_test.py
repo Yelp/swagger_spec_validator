@@ -149,7 +149,7 @@ def test_complicated_refs():
     #   exception was not thrown, there should be 8 cached refs in the
     #   resolver's store:
     #
-    #   6 json files from ../../tests/data/v2.0/tests_complicated_refs/*
+    #   7 json files from ../../tests/data/v2.0/tests_complicated_refs/*
     #   1 draft3 spec
     #   1 draft4 spec
-    assert len(resolver.store) == 8
+    assert len(resolver.store) == 9
