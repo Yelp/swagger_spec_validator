@@ -1,0 +1,40 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "test"
+    },
+    "paths": {},
+    "definitions": {
+        "User": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonBaseType"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonBaseType": {
+            "type": "object",
+            "properties": {
+                "commonBaseThing": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -97,6 +97,22 @@ def test_fails_on_invalid_external_ref_in_list():
     assert "is not valid under any of the given schemas" in str(excinfo.value)
 
 
+def test_requires_and_allof():
+    # The User definition in userapi.json is valid.
+    # This asserts that the requirements are correctly checked when the
+    # properties are nested under the "allOf" element.
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+
+    userapi_path = os.path.join(
+        my_dir,
+        '../data/v2.0/test_requires_and_allof/userapi.json')
+
+    with open(userapi_path) as f:
+        userapi_spec = json.load(f)
+
+    validate_spec(userapi_spec)
+
+
 @pytest.fixture
 def node_spec():
     """Used in tests that have recursive $refs
