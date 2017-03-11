@@ -9,6 +9,14 @@ from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_spec
 
 
+def get_spec_json_and_url(rel_url):
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+    abs_path = os.path.realpath(os.path.join(my_dir, rel_url))
+    with open(abs_path) as f:
+        return json.loads(f.read()), urlparse.urljoin('file:', abs_path)
+
+
+
 @pytest.fixture
 def minimal_swagger_dict():
     """Return minimal dict that respresents a swagger spec - useful as a base
@@ -27,9 +35,8 @@ def minimal_swagger_dict():
     }
 
 
-def test_success(petstore_contents):
-    assert isinstance(validate_spec(json.loads(petstore_contents)),
-                      RefResolver)
+def test_success(petstore_dict):
+    assert isinstance(validate_spec(petstore_dict), RefResolver)
 
 
 def test_definitons_not_present_success(minimal_swagger_dict):
@@ -50,25 +57,20 @@ def test_api_parameters_as_refs():
     #          -> instagram.yaml
     #
     # and then export it to a json file.
-    my_dir = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(my_dir, '../data/v2.0/instagram.json')) as f:
-        validate_spec(json.loads(f.read()))
+    instagram_specs, _ = get_spec_json_and_url(
+        '../data/v2.0/instagram.json'
+    )
+    validate_spec(instagram_specs)
 
 
 def test_fails_on_invalid_external_ref_in_dict():
     # The external ref in petstore.json is valid.
     # The contents of the external ref (pet.json#/getall) is not - the 'name'
     # key in the parameter is missing.
-    my_dir = os.path.abspath(os.path.dirname(__file__))
 
-    petstore_path = os.path.join(
-        my_dir,
-        '../data/v2.0/test_fails_on_invalid_external_ref/petstore.json')
-
-    with open(petstore_path) as f:
-        petstore_spec = json.load(f)
-
-    petstore_url = 'file://{0}'.format(petstore_path)
+    petstore_spec, petstore_url = get_spec_json_and_url(
+        '../data/v2.0/test_fails_on_invalid_external_ref/petstore.json'
+    )
 
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(petstore_spec, petstore_url)
@@ -82,14 +84,9 @@ def test_fails_on_invalid_external_ref_in_list():
     # - the 'name' key in the parameter is missing.
     my_dir = os.path.abspath(os.path.dirname(__file__))
 
-    petstore_path = os.path.join(
-        my_dir,
-        '../data/v2.0/test_fails_on_invalid_external_ref_in_list/petstore.json')
-
-    with open(petstore_path) as f:
-        petstore_spec = json.load(f)
-
-    petstore_url = 'file://{0}'.format(petstore_path)
+    petstore_spec, petstore_url = get_spec_json_and_url(
+        '../data/v2.0/test_fails_on_invalid_external_ref_in_list/petstore.json'
+    )
 
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(petstore_spec, petstore_url)
@@ -131,11 +128,6 @@ def test_recursive_ref_failure(minimal_swagger_dict, node_spec):
 
 def test_complicated_refs():
 
-    def get_spec_json_and_url(rel_url):
-        my_dir = os.path.abspath(os.path.dirname(__file__))
-        abs_path = os.path.join(my_dir, rel_url)
-        with open(abs_path) as f:
-            return json.loads(f.read()), urlparse.urljoin('file:', abs_path)
 
     # Split the swagger spec into a bunch of different json files and use
     # $refs all over to place to wire stuff together - see the test-data
