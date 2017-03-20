@@ -135,8 +135,6 @@ def test_specs_with_discriminator():
     file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
     swagger_dict, _ = get_spec_json_and_url(file_path)
 
-    swagger_dict['definitions']['GenericPet']['discriminator'] = 'type'
-
     validate_spec(swagger_dict)
 
 
@@ -176,8 +174,6 @@ def test_specs_with_discriminator_fail_because_not_in_properties():
 def test_specs_with_discriminator_in_allOf():
     file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
     swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['BaseObject']['discriminator'] = 'type'
 
     validate_spec(swagger_dict)
 

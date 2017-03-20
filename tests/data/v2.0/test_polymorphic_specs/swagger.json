@@ -28,6 +28,7 @@
     "GenericPet": {
       "type": "object",
       "title": "GenericPet",
+      "discriminator": "type",
       "properties": {
         "name": {
           "type": "string"

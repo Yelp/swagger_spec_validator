@@ -156,13 +156,21 @@ def validate_apis(apis, deref):
             validate_unresolvable_path_params(api_name, all_path_params)
 
 
-def get_collapsed_properties_type_mapping(definition, deref):
+def get_collapsed_properties_type_mappings(definition, deref):
+    """
+    Get all the properties for a swagger model (definition).
+    :param definition: dictionary representation of the definition
+    :type definition: dict
+    :param deref: callable that dereferences $refs
+    :return: (required properties type mapping, not required properties type mapping)
+    :type: tuple
+    """
     definition = deref(definition)
     required_properties = {}
     not_required_properties = {}
     if definition.get('allOf'):
         for inner_definition in definition['allOf']:
-            inner_required_properties, inner_not_required_properties = get_collapsed_properties_type_mapping(inner_definition, deref)
+            inner_required_properties, inner_not_required_properties = get_collapsed_properties_type_mappings(inner_definition, deref)
             required_properties.update(inner_required_properties)
             not_required_properties.update(inner_not_required_properties)
     else:
@@ -171,17 +179,12 @@ def get_collapsed_properties_type_mapping(definition, deref):
             for prop_name, prop_schema in iteritems(definition.get('properties', {}))
         }
         required_properties_set = set(definition.get('required', []))
+        for k, v in iteritems(properties):
+            if k in required_properties_set:
+                required_properties[k] = v
+            else:
+                not_required_properties[k] = v
 
-        required_properties = {
-            k: v
-            for k, v in iteritems(properties)
-            if k in required_properties_set
-        }
-        not_required_properties = {
-            k: v
-            for k, v in iteritems(properties)
-            if k not in required_properties_set
-        }
     return required_properties, not_required_properties
 
 
@@ -203,7 +206,7 @@ def validate_definition(definition, deref, def_name=None):
             )
 
     if 'discriminator' in definition:
-        required_props, not_required_props = get_collapsed_properties_type_mapping(definition, deref)
+        required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)
         discriminator = definition['discriminator']
         if discriminator not in required_props and discriminator not in not_required_props:
             raise SwaggerValidationError('discriminator (%s) must be defined in properties' % discriminator)
