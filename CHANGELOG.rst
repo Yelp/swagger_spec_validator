@@ -1,5 +1,9 @@
 Changelog
 =========
+2.1.0 (2017-03-21)
+------------------
+- Properly validate polymorphic objects - #68
+
 2.0.4 (2017-03-10)
 ------------------
 - Rename package to swagger-spec-validator to fix PyPI upload issues - #59
