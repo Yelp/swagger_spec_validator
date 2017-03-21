@@ -41,9 +41,9 @@ def test_main():
     my_dir = os.path.abspath(os.path.dirname(__file__))
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/v1.2/api_declarations/*.json')),
+        glob.glob(os.path.join(my_dir, '../data/v1.2/api_declarations/*.json')),
         validate_api_declaration)
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/v1.2/resource_listings/*.json')),
+        glob.glob(os.path.join(my_dir, '../data/v1.2/resource_listings/*.json')),
         validate_resource_listing)
