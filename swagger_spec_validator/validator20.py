@@ -64,8 +64,7 @@ def validate_spec_url(spec_url):
 
 
 def validate_spec(spec_dict, spec_url='', http_handlers=None,
-                  schema_pkg='swagger_spec_validator',
-                  schema_path='schemas/v2.0/schema.json'):
+                  schema_dict=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
     :param spec_dict: the json dict of the swagger spec.
@@ -87,11 +86,10 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None,
     """
     swagger_resolver = validate_json(
         spec_dict,
-        schema_pkg,
-        schema_path,
+        'schemas/v2.0/schema.json',
         spec_url=spec_url,
         http_handlers=http_handlers,
-    )
+        schema=schema_dict)
 
     bound_deref = functools.partial(deref, resolver=swagger_resolver)
     spec_dict = bound_deref(spec_dict)
@@ -103,8 +101,8 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None,
 
 
 @wrap_exception
-def validate_json(spec_dict, schema_pkg, schema_path,
-                  spec_url='', http_handlers=None):
+def validate_json(spec_dict, schema_path, spec_url='',
+                  http_handlers=None, schema=None):
     """Validate a json document against a json schema.
 
     :param spec_dict: json document in the form of a list or dict.
@@ -122,8 +120,9 @@ def validate_json(spec_dict, schema_pkg, schema_path,
         validation.
     :rtype: :class:`jsonschema.RefResolver`
     """
-    schema_path = resource_filename(schema_pkg, schema_path)
-    schema = read_file(schema_path)
+    if schema is None:
+        schema_path = resource_filename('swagger_spec_validator', schema_path)
+        schema = read_file(schema_path)
 
     schema_resolver = RefResolver(
         base_uri='file://{}'.format(schema_path),
