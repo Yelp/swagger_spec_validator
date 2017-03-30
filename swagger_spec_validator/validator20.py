@@ -77,8 +77,7 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None,
         http client built into jsonschema's RefResolver is used. This
         is a mapping from uri scheme to a callable that takes a
         uri.
-    :param schema_pkg: package of the json schema file.
-    :param schema_path: package relative path of the json schema file.
+    :param schema_dict: the schema which validate the swagger specification.
 
     :returns: the resolver (with cached remote refs) used during validation
     :rtype: :class:`jsonschema.RefResolver`
@@ -106,7 +105,6 @@ def validate_json(spec_dict, schema_path, spec_url='',
     """Validate a json document against a json schema.
 
     :param spec_dict: json document in the form of a list or dict.
-    :param schema_pkg: package of the json schema file.
     :param schema_path: package relative path of the json schema file.
     :param spec_url: base uri to use when creating a
         RefResolver for the passed in spec_dict.
@@ -115,6 +113,7 @@ def validate_json(spec_dict, schema_path, spec_url='',
         http client built into jsonschema's RefResolver is used. This
         is a mapping from uri scheme to a callable that takes a
         uri.
+    :param schema: the schema which validate the swagger specification.
 
     :return: RefResolver for spec_dict with cached remote $refs used during
         validation.
