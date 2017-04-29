@@ -1,5 +1,6 @@
-from swagger_spec_validator.util import validate_spec_url
+# -*- coding: utf-8 -*-
 from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.util import validate_spec_url
 
 __all__ = [
     'SwaggerValidationError',

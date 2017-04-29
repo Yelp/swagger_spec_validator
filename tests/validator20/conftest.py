@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import json
 import os
-from six.moves.urllib import parse as urlparse
 
 import pytest
+from six.moves.urllib import parse as urlparse
 
 
 @pytest.fixture(scope='session')

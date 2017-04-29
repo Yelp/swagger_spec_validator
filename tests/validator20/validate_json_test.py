@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import json
 import os
+
 import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError

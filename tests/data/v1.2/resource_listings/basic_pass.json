@@ -1,9 +1,9 @@
 {
-    "swaggerVersion": "1.2",
     "apis": [
         {
-            "path": "/foo",
-            "description": "Some description"
+            "description": "Some description",
+            "path": "/foo"
         }
-    ]
+    ],
+    "swaggerVersion": "1.2"
 }

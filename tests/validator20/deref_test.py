@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
+import pytest
 from jsonschema.exceptions import RefResolutionError
 from jsonschema.validators import RefResolver
 from mock import Mock
-import pytest
 
 from swagger_spec_validator.validator20 import deref
 

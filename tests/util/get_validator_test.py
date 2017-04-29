@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import pytest
 
-from swagger_spec_validator import validator12, validator20
+from swagger_spec_validator import validator12
+from swagger_spec_validator import validator20
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.util import get_validator
 

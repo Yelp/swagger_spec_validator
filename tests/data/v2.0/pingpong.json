@@ -1,21 +1,20 @@
 {
-  "ping": {
-    "get": {
-      "operationId": "ping",
-      "parameters": [
-          {
-            "name": "pung",
-            "in": "query",
-            "description": "true or false",
-            "type": "boolean"
-          }
-      ],
-      "responses": {
-        "200": {
-          "description": "Successful response"
+    "ping": {
+        "get": {
+            "operationId": "ping",
+            "parameters": [
+                {
+                    "description": "true or false",
+                    "in": "query",
+                    "name": "pung",
+                    "type": "boolean"
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successful response"
+                }
+            }
         }
-      }
     }
-  }
 }
-

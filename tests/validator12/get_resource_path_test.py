@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 from swagger_spec_validator.validator12 import get_resource_path

@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 import contextlib
 import functools
 import logging
 
 import jsonschema
+from jsonschema import _validators
+from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
-from jsonschema import validators, _validators
 
 log = logging.getLogger(__name__)
 

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import json
-import mock
 import os
+
+import mock
 import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError

@@ -1,8 +1,8 @@
-from __future__ import absolute_import, division, print_function
-
+# -*- coding: utf-8 -*-
 import os
 
-from setuptools import find_packages, setup
+from setuptools import find_packages
+from setuptools import setup
 
 base_dir = os.path.dirname(__file__)
 

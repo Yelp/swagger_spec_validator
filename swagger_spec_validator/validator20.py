@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import functools
 try:
     import simplejson as json

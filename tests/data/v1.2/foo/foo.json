@@ -1,37 +1,37 @@
 {
-  "basePath": "http://localhost",
-  "swaggerVersion": "1.2",
-  "apis": [
-    {
-      "operations": [
+    "apis": [
         {
-          "type": "array",
-          "items": {
-            "$ref": "FooResponse"
-          },
-          "nickname": "foo",
-          "method": "GET",
-          "parameters": [
-            {
-              "paramType": "query",
-              "type": "string",
-              "name": "name"
-            }
-          ]
+            "operations": [
+                {
+                    "items": {
+                        "$ref": "FooResponse"
+                    },
+                    "method": "GET",
+                    "nickname": "foo",
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "paramType": "query",
+                            "type": "string"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "path": "/foo"
         }
-      ],
-      "path": "/foo"
-    }
-  ],
-  "models": {
-      "FooResponse": {
-          "id": "FooResponse",
-          "properties": {
-              "message": {
-                  "type": "string",
-                  "description": "A message"
-              }
-          }
-      }
-  }
+    ],
+    "basePath": "http://localhost",
+    "models": {
+        "FooResponse": {
+            "id": "FooResponse",
+            "properties": {
+                "message": {
+                    "description": "A message",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "swaggerVersion": "1.2"
 }

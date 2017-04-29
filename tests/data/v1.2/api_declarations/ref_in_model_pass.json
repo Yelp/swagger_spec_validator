@@ -1,9 +1,6 @@
 {
-    "swaggerVersion": "1.2",
-    "basePath": "http://localhost",
     "apis": [
         {
-            "path": "/foo",
             "operations": [
                 {
                     "method": "GET",
@@ -11,9 +8,11 @@
                     "parameters": [],
                     "type": "bar"
                 }
-            ]
+            ],
+            "path": "/foo"
         }
     ],
+    "basePath": "http://localhost",
     "models": {
         "bar": {
             "id": "bar",
@@ -31,5 +30,6 @@
                 }
             }
         }
-    }
+    },
+    "swaggerVersion": "1.2"
 }
