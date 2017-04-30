@@ -16,6 +16,9 @@
     }
   },
   "definitions": {
+      "pet": {
+          "$ref": "definitions/pet.yaml"
+      },
       "pong": {
           "$ref": "definitions/definitions.json#/pong"
       }

@@ -30,6 +30,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'jsonschema',
+        'pyyaml',
         'six',
     ],
     license=about['__license__']

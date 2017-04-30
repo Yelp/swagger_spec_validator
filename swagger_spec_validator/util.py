@@ -1,8 +1,9 @@
 import logging
 
-from swagger_spec_validator import validator12, validator20
+from swagger_spec_validator import validator12
+from swagger_spec_validator import validator20
 from swagger_spec_validator.common import SwaggerValidationError
-from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import wrap_exception
 
 
@@ -48,6 +49,6 @@ def validate_spec_url(spec_url):
                        as `file://` this must be an absolute url for
                        cross-refs to work correctly.
     """
-    spec_json = load_json(spec_url)
+    spec_json = read_url(spec_url)
     validator = get_validator(spec_json, spec_url)
     validator.validate_spec(spec_json, spec_url)

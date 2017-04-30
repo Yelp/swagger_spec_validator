@@ -25,11 +25,13 @@ def test_http_success():
     mock_responses = make_mock_responses([RESOURCE_LISTING_FILE,
                                           API_DECLARATION_FILE])
 
-    with mock.patch('swagger_spec_validator.validator12.load_json',
-                    side_effect=mock_responses) as mock_load_json:
+    with mock.patch(
+        'swagger_spec_validator.validator12.read_url',
+        side_effect=mock_responses,
+    ) as mock_read_url:
         validate_spec_url('http://localhost/api-docs')
 
-        mock_load_json.assert_has_calls([
+        mock_read_url.assert_has_calls([
             mock.call('http://localhost/api-docs'),
             mock.call('http://localhost/api-docs/foo'),
         ])

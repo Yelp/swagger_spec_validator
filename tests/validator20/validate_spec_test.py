@@ -126,9 +126,10 @@ def test_complicated_refs():
     #   resolver's store:
     #
     #   6 json files from ../../tests/data/v2.0/tests_complicated_refs/*
+    #   1 yaml files from ../../tests/data/v2.0/tests_complicated_refs/*
     #   1 draft3 spec
     #   1 draft4 spec
-    assert len(resolver.store) == 8
+    assert len(resolver.store) == 9
 
 
 def test_specs_with_discriminator():
@@ -201,6 +202,17 @@ def test_specs_with_discriminator_in_allOf_fail_because_not_string():
 
 
 def test_specs_with_discriminator_in_allOf_fail_because_not_in_properties():
+    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
+    swagger_dict, _ = get_spec_json_and_url(file_path)
+
+    swagger_dict['definitions']['BaseObject']['discriminator'] = 'an_other_property'
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(swagger_dict)
+    assert 'discriminator (an_other_property) must be defined in properties' in str(excinfo.value)
+
+
+def test_read_yaml_specs():
     file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
     swagger_dict, _ = get_spec_json_and_url(file_path)
 

@@ -1,21 +1,20 @@
 import functools
-try:
-    import simplejson as json
-except ImportError:
-    import json
 import logging
 import string
 
-from jsonschema import RefResolver
 from jsonschema.validators import Draft4Validator
+from jsonschema.validators import RefResolver
 from pkg_resources import resource_filename
 from six import iteritems
 
 from swagger_spec_validator import ref_validators
-from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import read_file
+from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
+from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
+
 
 log = logging.getLogger(__name__)
 
@@ -53,7 +52,7 @@ def validate_spec_url(spec_url):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
     log.info('Validating %s' % spec_url)
-    return validate_spec(load_json(spec_url), spec_url)
+    return validate_spec(read_url(spec_url), spec_url)
 
 
 def validate_spec(spec_dict, spec_url='', http_handlers=None):
@@ -109,20 +108,27 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
     :rtype: :class:`jsonschema.RefResolver`
     """
     schema_path = resource_filename('swagger_spec_validator', schema_path)
-    with open(schema_path) as schema_file:
-        schema = json.loads(schema_file.read())
+    schema = read_file(schema_path)
 
-    schema_resolver = RefResolver('file://{0}'.format(schema_path), schema)
+    schema_resolver = RefResolver(
+        base_uri='file://{0}'.format(schema_path),
+        referrer=schema,
+        handlers=default_handlers,
+    )
 
-    spec_resolver = RefResolver(spec_url, spec_dict,
-                                handlers=http_handlers or {})
+    spec_resolver = RefResolver(
+        base_uri=spec_url,
+        referrer=spec_dict,
+        handlers=http_handlers or default_handlers,
+    )
 
     ref_validators.validate(
-        spec_dict,
-        schema,
+        instance=spec_dict,
+        schema=schema,
         resolver=schema_resolver,
         instance_cls=ref_validators.create_dereffing_validator(spec_resolver),
-        cls=Draft4Validator)
+        cls=Draft4Validator,
+    )
 
     # Since remote $refs were downloaded, pass the resolver back to the caller
     # so that its cached $refs can be re-used.
