@@ -1,0 +1,56 @@
+{
+    "API_KEY_SECURITY": {
+        "$ref": "schema.json#/definitions/apiKeySecurity"
+    },
+    "CONTACT": {
+        "$ref": "schema.json#/definitions/contact"
+    },
+    "DEFINITIONS": {
+        "$ref": "schema.json#/definitions/definitions"
+    },
+    "EXTERNAL_DOCS": {
+        "$ref": "schema.json#/definitions/externalDocs"
+    },
+    "INFO": {
+        "$ref": "schema.json#/definitions/info"
+    },
+    "LICENSE": {
+        "$ref": "schema.json#/definitions/license"
+    },
+    "OPERATION": {
+        "$ref": "schema.json#/definitions/operation"
+    },
+    "PARAMETER": {
+        "$ref": "schema.json#/definitions/parameter"
+    },
+    "PARAMETERS_LIST": {
+        "$ref": "schema.json#/definitions/parametersList"
+    },
+    "PARAMETER_DEFINITIONS": {
+        "$ref": "schema.json#/definitions/parameterDefinitions"
+    },
+    "PATHS": {
+        "$ref": "schema.json#/definitions/paths"
+    },
+    "PATH_ITEM": {
+        "$ref": "schema.json#/definitions/pathItem"
+    },
+    "RESPONSE": {
+        "$ref": "schema.json#/definitions/response"
+    },
+    "RESPONSES": {
+        "$ref": "schema.json#/definitions/responses"
+    },
+    "RESPONSE_VALUE": {
+        "$ref": "schema.json#/definitions/responseValue"
+    },
+    "SCHEMA": {
+        "$ref": "schema.json#/definitions/schema"
+    },
+    "SECURITY": {
+        "$ref": "schema.json#/definitions/security"
+    },
+    "TAG": {
+        "$ref": "schema.json#/definitions/tag"
+    }
+}

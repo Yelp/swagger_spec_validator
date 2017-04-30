@@ -41,11 +41,12 @@ def read_file(file_path):
 def read_url(url):
     if urlparse(url).scheme == 'file':
         fp = urlopen(url)
+        # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
         return safe_load(fp)
-    else:
-        with contextlib.closing(request.urlopen(url, timeout=TIMEOUT_SEC)) as fh:
-            # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
-            return safe_load(fh.read().decode('utf-8'))
+
+    with contextlib.closing(request.urlopen(url, timeout=TIMEOUT_SEC)) as remote_request:
+        # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
+        return safe_load(remote_request.fp)
 
 
 class SwaggerValidationError(Exception):

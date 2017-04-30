@@ -21,4 +21,4 @@ def get_spec_json_and_url(rel_url):
     my_dir = os.path.abspath(os.path.dirname(__file__))
     abs_path = os.path.realpath(os.path.join(my_dir, rel_url))
     with open(abs_path) as f:
-        return json.loads(f.read()), urlparse.urljoin('file:', abs_path)
+        return json.load(f), urlparse.urljoin('file:', abs_path)
