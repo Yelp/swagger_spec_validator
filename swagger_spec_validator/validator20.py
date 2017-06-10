@@ -285,10 +285,10 @@ def validate_unresolvable_path_params(path_name, path_params):
 
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
-    msg = "Path Parameter used is not documented"
     for path in get_path_params_from_url(path_name):
         if path not in path_params:
-            raise SwaggerValidationError("%s: %s in %s" % (msg, path, path_name))
+            msg = "Path parameter {!r} used is not documented on {!r}".format(path, path_name)
+            raise SwaggerValidationError(msg)
 
 
 def is_ref(spec_dict):
