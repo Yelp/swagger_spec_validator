@@ -287,7 +287,7 @@ def validate_unresolvable_path_params(path_name, path_params):
     """
     for path in get_path_params_from_url(path_name):
         if path not in path_params:
-            msg = "Path parameter {!r} used is not documented on {!r}".format(path, path_name)
+            msg = "Path parameter {!s} used is not documented on {!s}".format(path, path_name)
             raise SwaggerValidationError(msg)
 
 
