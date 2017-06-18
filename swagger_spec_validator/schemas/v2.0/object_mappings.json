@@ -8,6 +8,9 @@
     "DEFINITIONS": {
         "$ref": "schema.json#/definitions/definitions"
     },
+    "EXAMPLES": {
+        "$ref": "schema.json#/definitions/examples"
+    },
     "EXTERNAL_DOCS": {
         "$ref": "schema.json#/definitions/externalDocs"
     },

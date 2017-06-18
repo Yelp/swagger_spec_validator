@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import pytest
+
 from swagger_spec_validator.util import determine_swagger2dot0_object_type
 from swagger_spec_validator.util import Swagger2dot0ObjectType
 
@@ -40,4 +42,25 @@ def test_determine_object_type_with_no_type_hint():
                 }
             }
         },
-    ) == {Swagger2dot0ObjectType.PATH_ITEM}
+        greedy_detection=False,
+    ) == {Swagger2dot0ObjectType.EXAMPLES, Swagger2dot0ObjectType.PATH_ITEM}
+
+
+@pytest.mark.parametrize(
+    'greedy_detection', (True, False),
+)
+def test_SwaggerObjectType_with_no_mappings(greedy_detection):
+    matched_types = determine_swagger2dot0_object_type(
+        object_dict={
+            'name': 'pung',
+            'in': 'query',
+            'description': 'true or false',
+            'type': 'boolean',
+        },
+        possible_types=[Swagger2dot0ObjectType.PARAMETER, Swagger2dot0ObjectType.EXAMPLES],
+        greedy_detection=greedy_detection,
+    )
+    if greedy_detection:
+        assert matched_types == {Swagger2dot0ObjectType.PARAMETER}
+    else:
+        assert matched_types == {Swagger2dot0ObjectType.PARAMETER, Swagger2dot0ObjectType.EXAMPLES}

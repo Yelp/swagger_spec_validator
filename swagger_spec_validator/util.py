@@ -90,7 +90,10 @@ def _initialize_Swagger2dot0ObjectType(object_mapping_schema_path='schemas/v2.0/
 Swagger2dot0ObjectType = _initialize_Swagger2dot0ObjectType()
 
 
-def determine_swagger2dot0_object_type(object_dict, object_resolver=None, spec_url='', http_handlers=None, possible_types=None):
+def determine_swagger2dot0_object_type(
+        object_dict, object_resolver=None, spec_url='',
+        http_handlers=None, possible_types=None, greedy_detection=True,
+):
     """
     Determine the possible Swagger Object types for a given object dictionary representation.
 
@@ -107,6 +110,8 @@ def determine_swagger2dot0_object_type(object_dict, object_resolver=None, spec_u
         uri.
     :param possible_types: Swagger2dot0 types to iterate. If None is set all the possible types will be analyzed
     :type possible_types: iterable[Swagger2dot0]
+    :param greedy_detection: stop determination of types as soon as the first matching type is find
+    :type greedy_detection: bool
 
     :return: Set of Swagger2dot0 types under which object_dict is valid
     :rtype: set[Swagger2dot0]
@@ -129,7 +134,7 @@ def determine_swagger2dot0_object_type(object_dict, object_resolver=None, spec_u
     # Init schema resolver
     schema = read_file(_schema_path)
     schema_resolver = RefResolver(
-        base_uri='file://{0}'.format(_schema_path),
+        base_uri='file://{}'.format(_schema_path),
         referrer=schema,
     )
 
@@ -141,12 +146,15 @@ def determine_swagger2dot0_object_type(object_dict, object_resolver=None, spec_u
         )
 
     if possible_types is None:
-        possible_types = set(Swagger2dot0ObjectType)
+        possible_types = sorted(Swagger2dot0ObjectType, key=lambda item: item.name)
     else:
-        possible_types = set(Swagger2dot0ObjectType).intersection(set(possible_types))
+        possible_types = list(possible_types)
 
-    return {
-        swagger_object_type
-        for swagger_object_type in possible_types
-        if is_valid(object_type=swagger_object_type)
-    }
+    result = set()
+    for swagger_object_type in possible_types:
+        valid = is_valid(object_type=swagger_object_type)
+        if valid:
+            result.add(swagger_object_type)
+            if greedy_detection:
+                break
+    return result
