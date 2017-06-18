@@ -5,6 +5,7 @@ import os
 import os.path
 
 import jsonschema.exceptions
+import pytest
 
 from swagger_spec_validator.validator12 import validate_api_declaration
 from swagger_spec_validator.validator12 import validate_resource_listing
@@ -27,23 +28,17 @@ def run_json_tests_with_func(json_test_paths, func):
         if test_name.endswith('_pass.json'):
             func(test_data)
         elif test_name.endswith('_fail.json'):
-            try:
+            with pytest.raises((SwaggerValidationError, jsonschema.exceptions.ValidationError)):
                 func(test_data)
-            except (SwaggerValidationError, jsonschema.exceptions.ValidationError):
-                pass
-            else:
-                raise ValueError('Validation error did not occur')
-        else:
-            raise ValueError('Invalid test name')
 
 
 def test_main():
     my_dir = os.path.abspath(os.path.dirname(__file__))
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/v1.2/api_declarations/*.json')),
+        glob.glob(os.path.join(my_dir, '../data/v1.2/api_declarations/*.json')),
         validate_api_declaration)
 
     run_json_tests_with_func(
-        glob.glob(os.path.join(my_dir, 'data/v1.2/resource_listings/*.json')),
+        glob.glob(os.path.join(my_dir, '../data/v1.2/resource_listings/*.json')),
         validate_resource_listing)
