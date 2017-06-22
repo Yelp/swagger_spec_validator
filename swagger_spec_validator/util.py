@@ -37,11 +37,11 @@ def get_validator(spec_json, origin='unknown'):
         return validator20
     elif swagger12_version is None and swagger20_version is None:
         raise SwaggerValidationError(
-            "Swagger spec {0} missing version. Expected "
+            "Swagger spec {} missing version. Expected "
             "`swaggerVersion` or `swagger`".format(origin))
     else:
         raise SwaggerValidationError(
-            'Swagger version {0} not supported.'.format(
+            'Swagger version {} not supported.'.format(
                 swagger12_version or swagger20_version))
 
 

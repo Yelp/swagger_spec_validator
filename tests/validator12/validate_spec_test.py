@@ -41,7 +41,7 @@ def test_file_uri_success():
     mock_string = 'swagger_spec_validator.validator12.validate_api_declaration'
     with mock.patch(mock_string) as mock_api:
         validate_spec(get_resource_listing(),
-                      'file://{0}'.format(RESOURCE_LISTING_FILE))
+                      'file://{}'.format(RESOURCE_LISTING_FILE))
 
         expected = read_contents(API_DECLARATION_FILE)
         mock_api.assert_called_once_with(expected)

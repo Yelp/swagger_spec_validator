@@ -169,7 +169,7 @@ def validate_model(model, model_name, model_ids):
                 (model_name, required))
 
     if model_name != model['id']:
-        error = 'model name: {0} does not match model id: {1}'.format(model_name, model['id'])
+        error = 'model name: {} does not match model id: {}'.format(model_name, model['id'])
         raise SwaggerValidationError(error)
 
     for prop_name, prop in six.iteritems(model.get('properties', {})):
@@ -259,7 +259,7 @@ def validate_json(json_document, schema_path):
     schema = read_file(schema_path)
 
     resolver = RefResolver(
-        base_uri='file://{0}'.format(schema_path),
+        base_uri='file://{}'.format(schema_path),
         referrer=schema,
         handlers=default_handlers,
     )
