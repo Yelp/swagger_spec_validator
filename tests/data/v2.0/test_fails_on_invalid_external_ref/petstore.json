@@ -1,19 +1,18 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.0",
-    "title": "Petstore"
-  },
-  "tags": [
-      {
-          "name": "pet",
-          "description": "pet"
-      }
-  ],
-  "paths": {
-    "/pet/getall": {
-        "$ref": "pet.json#/getall"
-    }
-  }
+    "info": {
+        "title": "Petstore",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/pet/getall": {
+            "$ref": "pet.json#/getall"
+        }
+    },
+    "swagger": "2.0",
+    "tags": [
+        {
+            "description": "pet",
+            "name": "pet"
+        }
+    ]
 }
-

@@ -1,18 +1,18 @@
 {
-    "swaggerVersion": "1.2",
-    "basePath": "http://localhost",
     "apis": [
         {
-            "path": "/foo",
             "operations": [
                 {
+                    "format": "byte",
                     "method": "GET",
                     "nickname": "foo",
                     "parameters": [],
-                    "type": "number",
-                    "format": "byte"
+                    "type": "number"
                 }
-            ]
+            ],
+            "path": "/foo"
         }
-    ]
+    ],
+    "basePath": "http://localhost",
+    "swaggerVersion": "1.2"
 }

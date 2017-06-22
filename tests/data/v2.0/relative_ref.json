@@ -1,19 +1,18 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.0",
-    "title": "Simple"
-  },
-  "tags": [
-      {
-          "name": "pingpong",
-          "description": "pingpong related specs"
-      }
-  ],
-  "paths": {
-    "/ping": {
-        "$ref": "pingpong.json#/ping"
-    }
-  }
+    "info": {
+        "title": "Simple",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/ping": {
+            "$ref": "pingpong.json#/ping"
+        }
+    },
+    "swagger": "2.0",
+    "tags": [
+        {
+            "description": "pingpong related specs",
+            "name": "pingpong"
+        }
+    ]
 }
-

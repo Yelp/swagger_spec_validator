@@ -1,26 +1,26 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.0",
-    "title": "Simple"
-  },
-  "tags": [
-      {
-          "name": "pingpong",
-          "description": "pingpong related specs"
-      }
-  ],
-  "paths": {
-    "/ping": {
-        "$ref": "paths/paths.json#/ping"
-    }
-  },
-  "definitions": {
-      "pet": {
-          "$ref": "definitions/pet.yaml"
-      },
-      "pong": {
-          "$ref": "definitions/definitions.json#/pong"
-      }
-  }
+    "definitions": {
+        "pet": {
+            "$ref": "definitions/pet.yaml"
+        },
+        "pong": {
+            "$ref": "definitions/definitions.json#/pong"
+        }
+    },
+    "info": {
+        "title": "Simple",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/ping": {
+            "$ref": "paths/paths.json#/ping"
+        }
+    },
+    "swagger": "2.0",
+    "tags": [
+        {
+            "description": "pingpong related specs",
+            "name": "pingpong"
+        }
+    ]
 }

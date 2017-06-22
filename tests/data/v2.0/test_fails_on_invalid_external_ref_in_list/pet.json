@@ -1,7 +1,7 @@
 {
-  "parameter": {
-      "in": "query",
-      "description": "`name` is missing - this should fail validation",
-      "type": "string"
+    "parameter": {
+        "description": "`name` is missing - this should fail validation",
+        "in": "query",
+        "type": "string"
     }
 }
