@@ -8,22 +8,25 @@ validation, augmented with custom validation code where necessary.
 
 https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md
 """
-from jsonschema import RefResolver
-
-from swagger_spec_validator.ref_validators import default_handlers
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import logging
 import os
 
 import jsonschema
-from pkg_resources import resource_filename
 import six
+from jsonschema import RefResolver
+from pkg_resources import resource_filename
 from six.moves.urllib.parse import urlparse
 
 from swagger_spec_validator.common import read_file
-from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import read_url
+from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
+from swagger_spec_validator.ref_validators import default_handlers
 
 log = logging.getLogger(__name__)
 

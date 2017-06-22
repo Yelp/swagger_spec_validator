@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-from jsonschema.validators import RefResolver
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import pytest
-from tests.validator20.conftest import get_spec_json_and_url
+from jsonschema.validators import RefResolver
+
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_spec
+from tests.validator20.conftest import get_spec_json_and_url
 
 
 @pytest.fixture
