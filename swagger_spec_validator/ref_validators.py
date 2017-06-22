@@ -6,8 +6,17 @@ import jsonschema
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
 from jsonschema import validators, _validators
+from swagger_spec_validator import common
+
 
 log = logging.getLogger(__name__)
+
+
+default_handlers = {
+    'http': common.read_url,
+    'https': common.read_url,
+    'file': common.read_url,
+}
 
 
 def validate(instance, schema, instance_cls, cls=None, *args, **kwargs):
@@ -69,7 +78,8 @@ def create_dereffing_validator(instance_resolver):
             validator_wrapper,
             instance_resolver=instance_resolver,
             visited_refs=visited_refs,
-            default_validator_callable=v)
+            default_validator_callable=v,
+        )
 
     return validators.extend(Draft4Validator, bound_validators)
 
@@ -166,7 +176,7 @@ def attach_scope(ref_dict, instance_resolver):
     validations.
 
     :param ref_dict: dict with $ref key
-    :type instance_resolver: :class:`jsonschema.validators.RefResolver`
+    :type instance_resolver: :class:`jsonschema.RefResolver`
     """
     if 'x-scope' in ref_dict:
         log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
@@ -181,7 +191,7 @@ def in_scope(resolver, ref_dict):
 
     The resolver's original scope is restored when exiting the context manager.
 
-    :type resolver: :class:`jsonschema.validators.RefResolver
+    :type resolver: :class:`jsonschema.RefResolver
     :type ref_dict: dict
     """
     if 'x-scope' not in ref_dict:

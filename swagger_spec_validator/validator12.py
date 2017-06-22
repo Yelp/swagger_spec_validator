@@ -8,21 +8,21 @@ validation, augmented with custom validation code where necessary.
 
 https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md
 """
-try:
-    import simplejson as json
-except ImportError:
-    import json
+from jsonschema import RefResolver
+
+from swagger_spec_validator.ref_validators import default_handlers
+
 import logging
 import os
 
 import jsonschema
-from jsonschema import RefResolver
 from pkg_resources import resource_filename
 import six
 from six.moves.urllib.parse import urlparse
 
+from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import SwaggerValidationError
-from swagger_spec_validator.common import load_json
+from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import wrap_exception
 
 log = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def validate_spec_url(url):
     """
 
     log.info('Validating %s' % url)
-    validate_spec(load_json(url), url)
+    validate_spec(read_url(url), url)
 
 
 def validate_spec(resource_listing, url):
@@ -98,7 +98,7 @@ def validate_spec(resource_listing, url):
     for api in resource_listing['apis']:
         path = get_resource_path(url, api['path'])
         log.info('Validating %s' % path)
-        validate_api_declaration(load_json(path))
+        validate_api_declaration(read_url(path))
 
 
 def validate_data_type(obj, model_ids, allow_arrays=True, allow_voids=False,
@@ -253,7 +253,11 @@ def validate_json(json_document, schema_path):
     :param schema_path: package relative path of the json schema file.
     """
     schema_path = resource_filename('swagger_spec_validator', schema_path)
-    with open(schema_path) as schema_file:
-        schema = json.loads(schema_file.read())
-    resolver = RefResolver('file://{0}'.format(schema_path), schema)
+    schema = read_file(schema_path)
+
+    resolver = RefResolver(
+        base_uri='file://{0}'.format(schema_path),
+        referrer=schema,
+        handlers=default_handlers,
+    )
     jsonschema.validate(json_document, schema, resolver=resolver)

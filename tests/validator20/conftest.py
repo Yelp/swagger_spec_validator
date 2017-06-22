@@ -17,14 +17,6 @@ def petstore_dict(petstore_contents):
     return json.loads(petstore_contents)
 
 
-@pytest.fixture
-def no_op_deref():
-    """For functions that require a 'deref' callable but don't use $refs in
-    the actual test.
-    """
-    return lambda x: x
-
-
 def get_spec_json_and_url(rel_url):
     my_dir = os.path.abspath(os.path.dirname(__file__))
     abs_path = os.path.realpath(os.path.join(my_dir, rel_url))

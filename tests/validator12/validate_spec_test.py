@@ -24,11 +24,12 @@ def get_resource_listing():
 def test_http_success():
     mock_responses = make_mock_responses([API_DECLARATION_FILE])
 
-    with mock.patch('swagger_spec_validator.validator12.load_json',
-                    side_effect=mock_responses) as mock_load_json:
+    with mock.patch(
+        'swagger_spec_validator.validator12.read_url',
+        side_effect=mock_responses
+    ) as mock_read_url:
         validate_spec(get_resource_listing(), 'http://localhost/api-docs')
-
-        mock_load_json.assert_called_once_with('http://localhost/api-docs/foo')
+        mock_read_url.assert_called_once_with('http://localhost/api-docs/foo')
 
 
 def test_file_uri_success():
