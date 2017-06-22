@@ -34,14 +34,14 @@ def test_failure_on_unresolvable_path_parameter(swagger_spec):
     swagger_spec['paths']['/pet/{foo}'] = swagger_spec['paths']['/pet']
     with pytest.raises(SwaggerValidationError) as exc_info:
         validate_spec(swagger_spec)
-    assert "Path Parameter used is not defined: foo" in str(exc_info.value)
+    assert "Path parameter 'foo' used is not documented on '/pet/{foo}'" in str(exc_info.value)
 
 
 def test_failure_on_path_parameter_used_but_not_defined(swagger_spec):
     swagger_spec['paths']['/user/{username}']['get']['parameters'][0]['name'] = '_'
     with pytest.raises(SwaggerValidationError) as exc_info:
         validate_spec(swagger_spec)
-    assert "Path Parameter used is not defined: username" in str(exc_info.value)
+    assert "Path parameter 'username' used is not documented on '/user/{username}'" in str(exc_info.value)
 
 
 def test_failure_on_unresolvable_ref_of_props_required_list(swagger_spec):
