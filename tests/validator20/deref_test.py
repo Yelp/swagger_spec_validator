@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from jsonschema.exceptions import RefResolutionError
 from jsonschema.validators import RefResolver
 from mock import Mock

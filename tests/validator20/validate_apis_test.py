@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from swagger_spec_validator.validator20 import validate_apis
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from jsonschema.validators import RefResolver
 import pytest
 from tests.validator20.conftest import get_spec_json_and_url

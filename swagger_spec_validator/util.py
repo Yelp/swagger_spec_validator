@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 
 from swagger_spec_validator import validator12

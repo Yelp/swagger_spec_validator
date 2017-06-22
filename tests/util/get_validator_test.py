@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pytest
 
 from swagger_spec_validator import validator12, validator20
