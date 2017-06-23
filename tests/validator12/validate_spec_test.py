@@ -1,16 +1,21 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import os
 
 import mock
 import pytest
 
-from .validate_spec_url_test import make_mock_responses, read_contents
+from .validate_spec_url_test import make_mock_responses
+from .validate_spec_url_test import read_contents
 from swagger_spec_validator.common import SwaggerValidationError
-from swagger_spec_validator.validator12 import (
-    validate_data_type,
-    validate_spec,
-    validate_parameter,
-    validate_model,
-)
+from swagger_spec_validator.validator12 import validate_data_type
+from swagger_spec_validator.validator12 import validate_model
+from swagger_spec_validator.validator12 import validate_parameter
+from swagger_spec_validator.validator12 import validate_spec
 
 
 RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')
@@ -36,7 +41,7 @@ def test_file_uri_success():
     mock_string = 'swagger_spec_validator.validator12.validate_api_declaration'
     with mock.patch(mock_string) as mock_api:
         validate_spec(get_resource_listing(),
-                      'file://{0}'.format(RESOURCE_LISTING_FILE))
+                      'file://{}'.format(RESOURCE_LISTING_FILE))
 
         expected = read_contents(API_DECLARATION_FILE)
         mock_api.assert_called_once_with(expected)

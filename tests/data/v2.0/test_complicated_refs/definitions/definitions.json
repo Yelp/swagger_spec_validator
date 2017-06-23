@@ -1,10 +1,10 @@
 {
-  "pong": {
-      "type": "object",
-      "properties": {
-          "pang": {
-              "type": "string"
-          }
-      }
-  }
+    "pong": {
+        "properties": {
+            "pang": {
+                "type": "string"
+            }
+        },
+        "type": "object"
+    }
 }

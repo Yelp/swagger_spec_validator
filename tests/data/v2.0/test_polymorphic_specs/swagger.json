@@ -1,131 +1,133 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "Small example of polymorphic Swaggr specs",
-    "version": "0.0.0",
-    "title": "Pets"
-  },
-  "basePath": "/",
-  "paths": {
-    "/pets": {
-      "get": {
-        "summary": "Get all the pets",
-        "operationId": "get_pets",
-        "responses": {
-          "200": {
-            "description": "Pet List"
-          }
+    "basePath": "/",
+    "definitions": {
+        "BaseObject": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/GenericPet"
+                }
+            ]
+        },
+        "Bird": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            },
+            "title": "Bird",
+            "type": "object"
+        },
+        "Cat": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/GenericPet"
+                },
+                {
+                    "properties": {
+                        "color": {
+                            "enum": [
+                                "red",
+                                "green",
+                                "yellow",
+                                "white",
+                                "black"
+                            ],
+                            "type": "string"
+                        }
+                    }
+                }
+            ],
+            "title": "Cat",
+            "type": "object"
+        },
+        "Dog": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/GenericPet"
+                },
+                {
+                    "properties": {
+                        "birth_date": {
+                            "format": "date",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "birth_date"
+                    ]
+                }
+            ],
+            "title": "Dog",
+            "type": "object"
+        },
+        "GenericPet": {
+            "discriminator": "type",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "weight"
+            ],
+            "title": "GenericPet",
+            "type": "object"
+        },
+        "PetList": {
+            "properties": {
+                "list": {
+                    "items": {
+                        "$ref": "#/definitions/GenericPet"
+                    },
+                    "type": "array"
+                },
+                "number_of_pets": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "Whale": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/Bird"
+                },
+                {
+                    "properties": {
+                        "weight": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            ],
+            "title": "Whale",
+            "type": "object"
         }
-      }
-    }
-  },
-  "definitions": {
-    "BaseObject": {
-      "allOf": [
-        {"$ref": "#/definitions/GenericPet"}
-      ]
     },
-    "GenericPet": {
-      "type": "object",
-      "title": "GenericPet",
-      "discriminator": "type",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "weight": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "type",
-        "weight"
-      ]
+    "info": {
+        "description": "Small example of polymorphic Swaggr specs",
+        "title": "Pets",
+        "version": "0.0.0"
     },
-    "Dog": {
-      "type": "object",
-      "title": "Dog",
-      "allOf": [
-        {
-          "$ref": "#/definitions/GenericPet"
-        },
-        {
-          "properties": {
-            "birth_date": {
-              "type": "string",
-              "format": "date"
+    "paths": {
+        "/pets": {
+            "get": {
+                "operationId": "get_pets",
+                "responses": {
+                    "200": {
+                        "description": "Pet List"
+                    }
+                },
+                "summary": "Get all the pets"
             }
-          },
-          "required": [
-            "birth_date"
-          ]
         }
-      ]
     },
-    "Cat": {
-      "type": "object",
-      "title": "Cat",
-      "allOf": [
-        {
-          "$ref": "#/definitions/GenericPet"
-        },
-        {
-          "properties": {
-            "color": {
-              "type": "string",
-              "enum": [
-                "red",
-                "green",
-                "yellow",
-                "white",
-                "black"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "Bird": {
-      "type": "object",
-      "title": "Bird",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "Whale": {
-      "type": "object",
-      "title": "Whale",
-      "allOf": [
-        {
-          "$ref": "#/definitions/Bird"
-        },
-        {
-          "properties": {
-            "weight": {
-              "type": "integer"
-            }
-          }
-        }
-      ]
-    },
-    "PetList": {
-      "type": "object",
-      "properties": {
-        "number_of_pets": {
-          "type": "integer"
-        },
-        "list": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GenericPet"
-          }
-        }
-      }
-    }
-  }
+    "swagger": "2.0"
 }

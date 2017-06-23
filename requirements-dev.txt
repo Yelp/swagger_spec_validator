@@ -1,0 +1,3 @@
+httpretty
+mock
+pytest

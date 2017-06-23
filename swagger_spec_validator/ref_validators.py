@@ -1,11 +1,19 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import contextlib
 import functools
 import logging
 
 import jsonschema
+from jsonschema import _validators
+from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
-from jsonschema import validators, _validators
+
 from swagger_spec_validator import common
 
 
@@ -181,7 +189,7 @@ def attach_scope(ref_dict, instance_resolver):
     if 'x-scope' in ref_dict:
         log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
         return
-    log.debug('Attaching x-scope to {0}'.format(ref_dict))
+    log.debug('Attaching x-scope to {}'.format(ref_dict))
     ref_dict['x-scope'] = list(instance_resolver._scopes_stack)
 
 

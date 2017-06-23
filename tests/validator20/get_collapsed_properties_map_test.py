@@ -1,7 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import functools
-from tests.validator20.conftest import get_spec_json_and_url
-from swagger_spec_validator.validator20 import validate_json, deref
+
+from swagger_spec_validator.validator20 import deref
 from swagger_spec_validator.validator20 import get_collapsed_properties_type_mappings
+from swagger_spec_validator.validator20 import validate_json
+from tests.validator20.conftest import get_spec_json_and_url
 
 
 def get_deref(spec_dict):

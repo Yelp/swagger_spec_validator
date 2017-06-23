@@ -1,8 +1,14 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import json
 import os
-from six.moves.urllib import parse as urlparse
 
 import pytest
+from six.moves.urllib import parse as urlparse
 
 
 @pytest.fixture(scope='session')

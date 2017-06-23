@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import functools
 import logging
 import string
@@ -37,7 +43,7 @@ def deref(ref_dict, resolver):
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):
         with resolver.resolving(ref) as target:
-            log.debug('Resolving {0}'.format(ref))
+            log.debug('Resolving {}'.format(ref))
             return target
 
 
@@ -111,7 +117,7 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
     schema = read_file(schema_path)
 
     schema_resolver = RefResolver(
-        base_uri='file://{0}'.format(schema_path),
+        base_uri='file://{}'.format(schema_path),
         referrer=schema,
         handlers=default_handlers,
     )

@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
+
 import glob
 import json
 import os
@@ -7,9 +12,9 @@ import os.path
 import jsonschema.exceptions
 import pytest
 
+from swagger_spec_validator import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_api_declaration
 from swagger_spec_validator.validator12 import validate_resource_listing
-from swagger_spec_validator import SwaggerValidationError
 
 
 def run_json_tests_with_func(json_test_paths, func):

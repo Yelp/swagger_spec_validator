@@ -1,23 +1,23 @@
 {
-    "swaggerVersion": "1.2",
-    "basePath": "http://localhost",
     "apis": [
         {
-            "path": "/foo",
             "operations": [
                 {
                     "method": "GET",
                     "nickname": "foo",
                     "parameters": [
                         {
-                            "paramType": "query",
                             "name": "name",
+                            "paramType": "query",
                             "type": "string"
                         }
                     ],
                     "type": "string"
                 }
-            ]
+            ],
+            "path": "/foo"
         }
-    ]
+    ],
+    "basePath": "http://localhost",
+    "swaggerVersion": "1.2"
 }

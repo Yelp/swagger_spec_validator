@@ -1,9 +1,6 @@
 {
-    "swaggerVersion": "1.2",
-    "basePath": "http://localhost",
     "apis": [
         {
-            "path": "/foo",
             "operations": [
                 {
                     "method": "GET",
@@ -11,7 +8,10 @@
                     "parameters": [],
                     "type": "unknown"
                 }
-            ]
+            ],
+            "path": "/foo"
         }
-    ]
+    ],
+    "basePath": "http://localhost",
+    "swaggerVersion": "1.2"
 }

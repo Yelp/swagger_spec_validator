@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import logging
 
 from swagger_spec_validator import validator12
 from swagger_spec_validator import validator20
-from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import read_url
+from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
 
 
@@ -31,11 +37,11 @@ def get_validator(spec_json, origin='unknown'):
         return validator20
     elif swagger12_version is None and swagger20_version is None:
         raise SwaggerValidationError(
-            "Swagger spec {0} missing version. Expected "
+            "Swagger spec {} missing version. Expected "
             "`swaggerVersion` or `swagger`".format(origin))
     else:
         raise SwaggerValidationError(
-            'Swagger version {0} not supported.'.format(
+            'Swagger version {} not supported.'.format(
                 swagger12_version or swagger20_version))
 
 

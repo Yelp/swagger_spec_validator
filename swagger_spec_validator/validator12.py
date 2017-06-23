@@ -8,22 +8,25 @@ validation, augmented with custom validation code where necessary.
 
 https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md
 """
-from jsonschema import RefResolver
-
-from swagger_spec_validator.ref_validators import default_handlers
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
 import logging
 import os
 
 import jsonschema
-from pkg_resources import resource_filename
 import six
+from jsonschema import RefResolver
+from pkg_resources import resource_filename
 from six.moves.urllib.parse import urlparse
 
 from swagger_spec_validator.common import read_file
-from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import read_url
+from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
+from swagger_spec_validator.ref_validators import default_handlers
 
 log = logging.getLogger(__name__)
 
@@ -166,7 +169,7 @@ def validate_model(model, model_name, model_ids):
                 (model_name, required))
 
     if model_name != model['id']:
-        error = 'model name: {0} does not match model id: {1}'.format(model_name, model['id'])
+        error = 'model name: {} does not match model id: {}'.format(model_name, model['id'])
         raise SwaggerValidationError(error)
 
     for prop_name, prop in six.iteritems(model.get('properties', {})):
@@ -256,7 +259,7 @@ def validate_json(json_document, schema_path):
     schema = read_file(schema_path)
 
     resolver = RefResolver(
-        base_uri='file://{0}'.format(schema_path),
+        base_uri='file://{}'.format(schema_path),
         referrer=schema,
         handlers=default_handlers,
     )

@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import json
-import mock
 import os
+
+import mock
 import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError
@@ -18,14 +25,14 @@ def test_success(petstore_contents):
 
 def test_success_crossref_url_yaml():
     my_dir = os.path.abspath(os.path.dirname(__file__))
-    urlpath = "file://{0}".format(os.path.join(
+    urlpath = "file://{}".format(os.path.join(
         my_dir, "../data/v2.0/minimal.yaml"))
     validate_spec_url(urlpath)
 
 
 def test_success_crossref_url_json():
     my_dir = os.path.abspath(os.path.dirname(__file__))
-    urlpath = "file://{0}".format(os.path.join(
+    urlpath = "file://{}".format(os.path.join(
         my_dir, "../data/v2.0/relative_ref.json"))
     validate_spec_url(urlpath)
 
