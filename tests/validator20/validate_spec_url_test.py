@@ -12,6 +12,7 @@ import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_spec_url
+from tests.conftest import is_urlopen_error
 
 
 def test_success(petstore_contents):
@@ -40,5 +41,4 @@ def test_success_crossref_url_json():
 def test_raise_SwaggerValidationError_on_urlopen_error():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec_url('http://foo')
-    assert '<urlopen error [Errno -2] Name or service not known>' in str(excinfo.value) or \
-           '<urlopen error [Errno 8] nodename nor servname provided, or not known' in str(excinfo.value)
+    assert is_urlopen_error(excinfo.value)
