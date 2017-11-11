@@ -45,7 +45,7 @@ def deref(ref_dict, resolver):
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):
         with resolver.resolving(ref) as target:
-            log.debug('Resolving {}'.format(ref))
+            log.debug('Resolving %s', ref)
             return target
 
 
@@ -59,7 +59,7 @@ def validate_spec_url(spec_url):
     :rtype: :class:`jsonschema.RefResolver`
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
-    log.info('Validating %s' % spec_url)
+    log.info('Validating %s', spec_url)
     return validate_spec(read_url(spec_url), spec_url)
 
 

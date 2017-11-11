@@ -168,7 +168,7 @@ def deref_and_validate(validator, schema_element, instance, schema,
     if isinstance(instance, dict) and '$ref' in instance:
         ref = instance['$ref']
         if ref in visited_refs:
-            log.debug("Found cycle in %s" % ref)
+            log.debug("Found cycle in %s", ref)
             return
 
         # Annotate $ref dict with scope - used by custom validations
@@ -195,9 +195,9 @@ def attach_scope(ref_dict, instance_resolver):
     :type instance_resolver: :class:`jsonschema.RefResolver`
     """
     if 'x-scope' in ref_dict:
-        log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
+        log.debug('Ref %s already has scope attached', ref_dict['$ref'])
         return
-    log.debug('Attaching x-scope to {}'.format(ref_dict))
+    log.debug('Attaching x-scope to %s', ref_dict)
     ref_dict['x-scope'] = list(instance_resolver._scopes_stack)
 
 
