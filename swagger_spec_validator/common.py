@@ -24,7 +24,7 @@ def wrap_exception(method):
         except Exception as e:
             six.reraise(
                 SwaggerValidationError,
-                SwaggerValidationError(str(e)),
+                SwaggerValidationError(str(e), e),
                 sys.exc_info()[2])
     return wrapper
 
