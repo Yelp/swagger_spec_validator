@@ -13,6 +13,7 @@ from jsonschema import _validators
 from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
+from jsonschema.validators import RefResolver
 
 from swagger_spec_validator import common
 
@@ -90,6 +91,13 @@ def create_dereffing_validator(instance_resolver):
         )
 
     return validators.extend(Draft4Validator, bound_validators)
+
+
+def validate_schema_value(schema, value, swagger_resolver=None):
+    # pass resolver to avoid to refetch schema files
+    if swagger_resolver is None:
+        swagger_resolver = RefResolver.from_schema(schema)
+    create_dereffing_validator(swagger_resolver)(schema, resolver=swagger_resolver).validate(value)
 
 
 @contextlib.contextmanager
