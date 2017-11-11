@@ -8,9 +8,8 @@ import contextlib
 import sys
 
 import six
-from jsonschema.compat import urlopen
-from six.moves.urllib import request
-from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import urlopen
 from yaml import safe_load
 
 
@@ -37,19 +36,13 @@ def read_file(file_path):
     :return: Python dictionary representation of the JSON file
     :rtype: dict
     """
-    with open(file_path) as f:
+    return read_url(urljoin('file://', file_path))
+
+
+def read_url(url, timeout=TIMEOUT_SEC):
+    with contextlib.closing(urlopen(url, timeout=timeout)) as fh:
         # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
-        return safe_load(f)
-
-
-def read_url(url):
-    if urlparse(url).scheme == 'file':
-        fp = urlopen(url)
-        return safe_load(fp)
-    else:
-        with contextlib.closing(request.urlopen(url, timeout=TIMEOUT_SEC)) as fh:
-            # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
-            return safe_load(fh.read().decode('utf-8'))
+        return safe_load(fh.read().decode('utf-8'))
 
 
 class SwaggerValidationError(Exception):
