@@ -228,3 +228,97 @@ def test_read_yaml_specs():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(swagger_dict)
     assert 'discriminator (an_other_property) must be defined in properties' in str(excinfo.value)
+
+
+@pytest.fixture
+def default_checks_spec_dict(minimal_swagger_dict):
+    minimal_swagger_dict['definitions']['bool_string'] = {
+        'properties': {
+            'value': {
+                'type': 'string', 'enum': ['True', 'False'],
+            },
+        },
+    }
+    return minimal_swagger_dict
+
+
+@pytest.mark.parametrize(
+    'property_spec',
+    [
+        {'type': 'integer', 'default': 1},
+        {'type': 'boolean', 'default': True},
+        {'type': 'null', 'default': None},
+        {'type': 'number', 'default': 2},
+        {'type': 'number', 'default': 3.4},
+        {'type': 'object', 'default': {'a_random_property': 'valid'}},
+        {'type': 'array', 'default': [5, 6, 7]},
+        {'type': 'string', 'default': ''},
+        {'default': -1},  # if type is not defined any value is a valid value
+        {'type': ['number', 'boolean'], 'default': 8},
+        {'type': ['number', 'boolean'], 'default': False},
+        {'type': 'array', 'items': {'$ref': '#/definitions/bool_string'}, 'default': [{'value': 'False'}]},
+    ],
+)
+def test_valid_specs_with_check_of_default_types(default_checks_spec_dict, property_spec):
+    default_checks_spec_dict['definitions']['injected_definition'] = {
+        'properties': {'property': property_spec},
+    }
+    # Success if no exception are raised
+    validate_spec(default_checks_spec_dict)
+
+
+@pytest.mark.parametrize(
+    'property_spec, validator, instance',
+    [
+        [
+            {'type': 'integer', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'boolean', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'null', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'number', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'object', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'array', 'default': 'wrong_type'},
+            'type', 'wrong_type',
+        ],
+        [
+            {'type': 'string', 'default': -1},
+            'type', -1,
+        ],
+        [
+            {'type': 'string', 'minLength': 100, 'default': 'short_string'},
+            'minLength', 'short_string',
+        ],
+        [
+            {'type': ['number', 'boolean'], 'default': 'not_a_number_or_boolean'},
+            'type', 'not_a_number_or_boolean',
+        ],
+        [
+            {'type': 'array', 'items': {'$ref': '#/definitions/bool_string'}, 'default': [{'value': 'not_valid'}]},
+            'enum', 'not_valid',
+        ],
+    ],
+)
+def test_failure_due_to_wrong_default_type(default_checks_spec_dict, property_spec, validator, instance):
+    default_checks_spec_dict['definitions']['injected_definition'] = {
+        'properties': {'property': property_spec},
+    }
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(default_checks_spec_dict)
+
+    validation_error = excinfo.value.args[1]
+    assert validation_error.instance == instance
+    assert validation_error.validator == validator
