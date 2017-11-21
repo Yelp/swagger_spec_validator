@@ -13,14 +13,14 @@ from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_json
 
 
-def test_success():
-    my_dir = os.path.abspath(os.path.dirname(__file__))
-
-    with open(os.path.join(my_dir, '../data/v1.2/foo/swagger_api.json')) as f:
+def test_success_validate_json_resource_listing(test_dir):
+    with open(os.path.join(test_dir, 'data/v1.2/foo/swagger_api.json')) as f:
         resource_listing = json.load(f)
     validate_json(resource_listing, 'schemas/v1.2/resourceListing.json')
 
-    with open(os.path.join(my_dir, '../data/v1.2/foo/foo.json')) as f:
+
+def test_success_validate_json_api_declaration(test_dir):
+    with open(os.path.join(test_dir, 'data/v1.2/foo/foo.json')) as f:
         api_declaration = json.load(f)
     validate_json(api_declaration, 'schemas/v1.2/apiDeclaration.json')
 

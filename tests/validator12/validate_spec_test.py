@@ -9,42 +9,32 @@ import os
 import mock
 import pytest
 
-from .validate_spec_url_test import make_mock_responses
-from .validate_spec_url_test import read_contents
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_data_type
 from swagger_spec_validator.validator12 import validate_model
 from swagger_spec_validator.validator12 import validate_parameter
 from swagger_spec_validator.validator12 import validate_spec
+from tests.conftest import get_url
 
 
 RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')
 API_DECLARATION_FILE = os.path.abspath('tests/data/v1.2/foo/foo.json')
 
 
-def get_resource_listing():
-    return read_contents(RESOURCE_LISTING_FILE)
-
-
-def test_http_success():
-    mock_responses = make_mock_responses([API_DECLARATION_FILE])
-
+def test_http_success(mock_responses, resource_listing_dict):
     with mock.patch(
         'swagger_spec_validator.validator12.read_url',
         side_effect=mock_responses
     ) as mock_read_url:
-        validate_spec(get_resource_listing(), 'http://localhost/api-docs')
+        validate_spec(resource_listing_dict, 'http://localhost/api-docs')
         mock_read_url.assert_called_once_with('http://localhost/api-docs/foo')
 
 
-def test_file_uri_success():
+def test_file_uri_success(resource_listing_dict, resource_listing_abspath, api_declaration_dict):
     mock_string = 'swagger_spec_validator.validator12.validate_api_declaration'
     with mock.patch(mock_string) as mock_api:
-        validate_spec(get_resource_listing(),
-                      'file://{}'.format(RESOURCE_LISTING_FILE))
-
-        expected = read_contents(API_DECLARATION_FILE)
-        mock_api.assert_called_once_with(expected)
+        validate_spec(resource_listing_dict, get_url(resource_listing_abspath))
+        mock_api.assert_called_once_with(api_declaration_dict)
 
 
 def test_validate_parameter_type_file_in_form():
