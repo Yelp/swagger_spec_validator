@@ -4,19 +4,25 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import os
+
 import pytest
 from jsonschema.validators import RefResolver
 
+from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_spec
-from tests.validator20.conftest import get_spec_json_and_url
+from tests.conftest import get_url
+
+
+@pytest.fixture
+def minimal_swagger2dot0_specs_dict(test_dir):
+    return read_file(get_url(os.path.join(test_dir, 'data/v2.0/minimal.yaml')))
 
 
 @pytest.fixture
 def minimal_swagger_dict():
-    """Return minimal dict that respresents a swagger spec - useful as a base
-    template.
-    """
+    """Return minimal dict that represents a swagger spec - useful as a base template."""
     return {
         'swagger': '2.0',
         'info': {
@@ -30,20 +36,20 @@ def minimal_swagger_dict():
     }
 
 
-def test_success(petstore_dict):
-    assert isinstance(validate_spec(petstore_dict), RefResolver)
+def test_success(petstore_swagger2dot0_specs_dict):
+    assert isinstance(validate_spec(petstore_swagger2dot0_specs_dict), RefResolver)
 
 
-def test_definitons_not_present_success(minimal_swagger_dict):
-    del minimal_swagger_dict['definitions']
-    validate_spec(minimal_swagger_dict)
+def test_definitons_not_present_success(minimal_swagger2dot0_specs_dict):
+    del minimal_swagger2dot0_specs_dict['definitions']
+    validate_spec(minimal_swagger2dot0_specs_dict)
 
 
-def test_empty_definitions_success(minimal_swagger_dict):
-    validate_spec(minimal_swagger_dict)
+def test_empty_definitions_success(minimal_swagger2dot0_specs_dict):
+    validate_spec(minimal_swagger2dot0_specs_dict)
 
 
-def test_api_parameters_as_refs():
+def test_api_parameters_as_refs(test_dir):
     # Verify issue #29 - instragram.json comes from:
     #
     # http://editor.swagger.io/#/
@@ -52,37 +58,38 @@ def test_api_parameters_as_refs():
     #          -> instagram.yaml
     #
     # and then export it to a json file.
-    instagram_specs, _ = get_spec_json_and_url(
-        '../data/v2.0/instagram.json'
-    )
-    validate_spec(instagram_specs)
+    validate_spec(read_file(get_url(os.path.join(test_dir, 'data/v2.0/instagram.json'))))
 
 
-def test_fails_on_invalid_external_ref_in_dict():
+def test_fails_on_invalid_external_ref_in_dict(test_dir):
     # The external ref in petstore.json is valid.
     # The contents of the external ref (pet.json#/getall) is not - the 'name'
     # key in the parameter is missing.
 
-    petstore_spec, petstore_url = get_spec_json_and_url(
-        '../data/v2.0/test_fails_on_invalid_external_ref/petstore.json'
-    )
-
+    invalid_refs_petstore_url = get_url(os.path.join(test_dir, 'data/v2.0/test_fails_on_invalid_external_ref/petstore.json'))
+    invalid_refs_petstore_dict = read_file(invalid_refs_petstore_url)
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(petstore_spec, petstore_url)
+        validate_spec(
+            spec_dict=invalid_refs_petstore_dict,
+            spec_url=invalid_refs_petstore_url,
+        )
 
     assert "is not valid under any of the given schemas" in str(excinfo.value)
 
 
-def test_fails_on_invalid_external_ref_in_list():
+def test_fails_on_invalid_external_ref_in_list(test_dir):
     # The external ref in petstore.json is valid.
     # The contents of the external ref (pet.json#/get_all_parameters) is not
     # - the 'name' key in the parameter is missing.
-    petstore_spec, petstore_url = get_spec_json_and_url(
-        '../data/v2.0/test_fails_on_invalid_external_ref_in_list/petstore.json'
-    )
+
+    invalid_refs_petstore_url = get_url(os.path.join(test_dir, 'data/v2.0/test_fails_on_invalid_external_ref_in_list/petstore.json'))
+    invalid_refs_petstore_dict = read_file(invalid_refs_petstore_url)
 
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(petstore_spec, petstore_url)
+        validate_spec(
+            spec_dict=invalid_refs_petstore_dict,
+            spec_url=invalid_refs_petstore_url,
+        )
 
     assert "is not valid under any of the given schemas" in str(excinfo.value)
 
@@ -105,27 +112,28 @@ def node_spec():
     }
 
 
-def test_recursive_ref(minimal_swagger_dict, node_spec):
-    minimal_swagger_dict['definitions']['Node'] = node_spec
-    validate_spec(minimal_swagger_dict)
+def test_recursive_ref(minimal_swagger2dot0_specs_dict, node_spec):
+    minimal_swagger2dot0_specs_dict['definitions']['Node'] = node_spec
+    validate_spec(minimal_swagger2dot0_specs_dict)
 
 
-def test_recursive_ref_failure(minimal_swagger_dict, node_spec):
-    minimal_swagger_dict['definitions']['Node'] = node_spec
+def test_recursive_ref_failure(minimal_swagger2dot0_specs_dict, node_spec):
+    minimal_swagger2dot0_specs_dict['definitions']['Node'] = node_spec
     # insert non-existent $ref
     node_spec['properties']['foo'] = {'$ref': '#/definitions/Foo'}
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(minimal_swagger_dict)
+        validate_spec(minimal_swagger2dot0_specs_dict)
     assert 'Unresolvable JSON pointer' in str(excinfo.value)
 
 
-def test_complicated_refs():
+def test_complicated_refs(test_dir):
     # Split the swagger spec into a bunch of different json files and use
     # $refs all over to place to wire stuff together - see the test-data
     # files or this will make no sense whatsoever.
-    file_path = '../../tests/data/v2.0/test_complicated_refs/swagger.json'
-    swagger_dict, origin_url = get_spec_json_and_url(file_path)
-    resolver = validate_spec(swagger_dict, spec_url=origin_url)
+    complicated_specs_url = get_url(os.path.join(test_dir, 'data/v2.0/test_complicated_refs/swagger.json'))
+    complicated_specs_dict = read_file(complicated_specs_url)
+
+    resolver = validate_spec(spec_dict=complicated_specs_dict, spec_url=complicated_specs_url)
 
     # Hokey verification but better than nothing:
     #   If all the files with $refs were ingested and validated and an
@@ -139,94 +147,31 @@ def test_complicated_refs():
     assert len(resolver.store) == 9
 
 
-def test_specs_with_discriminator():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    validate_spec(swagger_dict)
+def test_specs_with_discriminator(polymorphic_swagger2dot0_specs_dict):
+    validate_spec(polymorphic_swagger2dot0_specs_dict)
 
 
-def test_specs_with_discriminator_fail_because_not_required():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['GenericPet']['discriminator'] = 'name'
+def test_specs_with_discriminator_fail_because_not_required(polymorphic_swagger2dot0_specs_dict):
+    polymorphic_swagger2dot0_specs_dict['definitions']['GenericPet']['discriminator'] = 'name'
 
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
+        validate_spec(polymorphic_swagger2dot0_specs_dict)
     assert 'discriminator (name) must be defined a required property' in str(excinfo.value)
 
 
-def test_specs_with_discriminator_fail_because_not_string():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['GenericPet']['discriminator'] = 'weight'
+def test_specs_with_discriminator_fail_because_not_string(polymorphic_swagger2dot0_specs_dict):
+    polymorphic_swagger2dot0_specs_dict['definitions']['GenericPet']['discriminator'] = 'weight'
 
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
+        validate_spec(polymorphic_swagger2dot0_specs_dict)
     assert 'discriminator (weight) must be a string property' in str(excinfo.value)
 
 
-def test_specs_with_discriminator_fail_because_not_in_properties():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['GenericPet']['discriminator'] = 'an_other_property'
+def test_specs_with_discriminator_fail_because_not_in_properties(polymorphic_swagger2dot0_specs_dict):
+    polymorphic_swagger2dot0_specs_dict['definitions']['GenericPet']['discriminator'] = 'an_other_property'
 
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
-    assert 'discriminator (an_other_property) must be defined in properties' in str(excinfo.value)
-
-
-def test_specs_with_discriminator_in_allOf():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    validate_spec(swagger_dict)
-
-
-def test_specs_with_discriminator_in_allOf_fail_because_not_required():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['BaseObject']['discriminator'] = 'name'
-
-    with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
-    assert 'discriminator (name) must be defined a required property' in str(excinfo.value)
-
-
-def test_specs_with_discriminator_in_allOf_fail_because_not_string():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['BaseObject']['discriminator'] = 'weight'
-
-    with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
-    assert 'discriminator (weight) must be a string property' in str(excinfo.value)
-
-
-def test_specs_with_discriminator_in_allOf_fail_because_not_in_properties():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['BaseObject']['discriminator'] = 'an_other_property'
-
-    with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
-    assert 'discriminator (an_other_property) must be defined in properties' in str(excinfo.value)
-
-
-def test_read_yaml_specs():
-    file_path = '../../tests/data/v2.0/test_polymorphic_specs/swagger.json'
-    swagger_dict, _ = get_spec_json_and_url(file_path)
-
-    swagger_dict['definitions']['BaseObject']['discriminator'] = 'an_other_property'
-
-    with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_spec(swagger_dict)
+        validate_spec(polymorphic_swagger2dot0_specs_dict)
     assert 'discriminator (an_other_property) must be defined in properties' in str(excinfo.value)
 
 
