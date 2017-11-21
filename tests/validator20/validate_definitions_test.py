@@ -7,53 +7,11 @@ from __future__ import unicode_literals
 import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError
-from swagger_spec_validator.validator20 import validate_apis
-
-
-def test_api_level_params_ok():
-    # Parameters defined at the API level apply to all operations within that
-    # API. Make sure we don't treat the API level parameters as an operation
-    # since they are peers.
-    apis = {
-        '/tags/{tag-name}': {
-            'parameters': [
-                {
-                    'name': 'tag-name',
-                    'in': 'path',
-                    'type': 'string',
-                    'required': True
-                },
-            ],
-            'get': {
-            }
-        }
-    }
-    # Success == no exception thrown
-    validate_apis(apis, lambda x: x)
-
-
-def test_api_level_x_hyphen_ok():
-    # Elements starting with "x-" should be ignored
-    apis = {
-        '/tags/{tag-name}': {
-            'x-ignore-me': 'DO NOT LOOK AT ME!',
-            'get': {
-                'parameters': [
-                    {
-                        'name': 'tag-name',
-                        'in': 'path',
-                        'type': 'string',
-                    }
-                ]
-            }
-        }
-    }
-    # Success == no exception thrown
-    validate_apis(apis, lambda x: x)
+from swagger_spec_validator.validator20 import validate_definitions
 
 
 @pytest.mark.parametrize(
-    'partial_parameter_spec',
+    'property_spec',
     [
         {'type': 'integer', 'default': 1},
         {'type': 'boolean', 'default': True},
@@ -68,23 +26,21 @@ def test_api_level_x_hyphen_ok():
         {'type': ['number', 'boolean'], 'default': False},
     ],
 )
-def test_api_check_default_succeed(partial_parameter_spec):
-    apis = {
-        '/api': {
-            'get': {
-                'parameters': [
-                    dict({'name': 'param', 'in': 'query'}, **partial_parameter_spec),
-                ],
+def test_api_check_default_succeed(property_spec):
+    definitions = {
+        'injected_definition': {
+            'properties': {
+                'property': property_spec,
             },
         },
     }
 
     # Success if no exception are raised
-    validate_apis(apis, lambda x: x)
+    validate_definitions(definitions, lambda x: x)
 
 
 @pytest.mark.parametrize(
-    'partial_parameter_spec, validator, instance',
+    'property_spec, validator, instance',
     [
         [
             {'type': 'integer', 'default': 'wrong_type'},
@@ -124,19 +80,17 @@ def test_api_check_default_succeed(partial_parameter_spec):
         ],
     ],
 )
-def test_api_check_default_fails(partial_parameter_spec, validator, instance):
-    apis = {
-        '/api': {
-            'get': {
-                'parameters': [
-                    dict({'name': 'param', 'in': 'query'}, **partial_parameter_spec),
-                ],
+def test_api_check_default_fails(property_spec, validator, instance):
+    definitions = {
+        'injected_definition': {
+            'properties': {
+                'property': property_spec,
             },
         },
     }
 
     with pytest.raises(SwaggerValidationError) as excinfo:
-        validate_apis(apis, lambda x: x)
+        validate_definitions(definitions, lambda x: x)
 
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance

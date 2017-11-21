@@ -13,6 +13,7 @@ from jsonschema import _validators
 from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
+from jsonschema.validators import RefResolver
 
 from swagger_spec_validator import common
 
@@ -92,6 +93,13 @@ def create_dereffing_validator(instance_resolver):
     return validators.extend(Draft4Validator, bound_validators)
 
 
+def validate_schema_value(schema, value, swagger_resolver=None):
+    # pass resolver to avoid to refetch schema files
+    if swagger_resolver is None:
+        swagger_resolver = RefResolver.from_schema(schema)
+    create_dereffing_validator(swagger_resolver)(schema, resolver=swagger_resolver).validate(value)
+
+
 @contextlib.contextmanager
 def visiting(visited_refs, ref):
     """Context manager that keeps track of $refs that we've seen during
@@ -160,7 +168,7 @@ def deref_and_validate(validator, schema_element, instance, schema,
     if isinstance(instance, dict) and '$ref' in instance:
         ref = instance['$ref']
         if ref in visited_refs:
-            log.debug("Found cycle in %s" % ref)
+            log.debug("Found cycle in %s", ref)
             return
 
         # Annotate $ref dict with scope - used by custom validations
@@ -187,9 +195,9 @@ def attach_scope(ref_dict, instance_resolver):
     :type instance_resolver: :class:`jsonschema.RefResolver`
     """
     if 'x-scope' in ref_dict:
-        log.debug('Ref %s already has scope attached' % ref_dict['$ref'])
+        log.debug('Ref %s already has scope attached', ref_dict['$ref'])
         return
-    log.debug('Attaching x-scope to {}'.format(ref_dict))
+    log.debug('Attaching x-scope to %s', ref_dict)
     ref_dict['x-scope'] = list(instance_resolver._scopes_stack)
 
 

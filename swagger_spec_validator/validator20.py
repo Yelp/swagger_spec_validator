@@ -12,6 +12,7 @@ from jsonschema.validators import Draft4Validator
 from jsonschema.validators import RefResolver
 from pkg_resources import resource_filename
 from six import iteritems
+from six import iterkeys
 
 from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import read_file
@@ -20,6 +21,7 @@ from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
+from swagger_spec_validator.ref_validators import validate_schema_value
 
 
 log = logging.getLogger(__name__)
@@ -43,7 +45,7 @@ def deref(ref_dict, resolver):
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):
         with resolver.resolving(ref) as target:
-            log.debug('Resolving {}'.format(ref))
+            log.debug('Resolving %s', ref)
             return target
 
 
@@ -57,7 +59,7 @@ def validate_spec_url(spec_url):
     :rtype: :class:`jsonschema.RefResolver`
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
-    log.info('Validating %s' % spec_url)
+    log.info('Validating %s', spec_url)
     return validate_spec(read_url(spec_url), spec_url)
 
 
@@ -141,6 +143,39 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
     return spec_resolver
 
 
+@wrap_exception
+def validate_value_type(schema, value, deref):
+    # Extract resolver from deref partial build on ``validate_spec``
+    # This is used in order to use already fetched external references
+    # If it is missing a new RefResolver will be initialized
+    swagger_resolver = getattr(deref, 'keywords', {}).get('resolver', None)
+    validate_schema_value(schema=deref(schema), value=value, swagger_resolver=swagger_resolver)
+
+
+def validate_defaults_in_parameters(params_spec, deref):
+    """
+    Validates that default values for api parameters are
+    of the parameter type
+
+    :param params_spec: list of parameter objects (#/paths/<path>/<http_verb>/parameters)
+    :param deref: callable that dereferences $refs
+
+    :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
+    """
+    for param_spec in params_spec:
+        deref_param_spec = deref(param_spec)
+        if deref_param_spec.get('required', False):
+            # If the parameter is a required parameter, default has no meaning
+            continue
+
+        if 'default' in deref_param_spec:
+            validate_value_type(
+                schema=deref_param_spec,
+                value=deref_param_spec['default'],
+                deref=deref,
+            )
+
+
 def validate_apis(apis, deref):
     """Validates semantic errors in #/paths.
 
@@ -166,6 +201,7 @@ def validate_apis(apis, deref):
                 get_path_param_names(api_params, deref) +
                 get_path_param_names(oper_params, deref)))
             validate_unresolvable_path_params(api_name, all_path_params)
+            validate_defaults_in_parameters(oper_params, deref)
 
 
 def get_collapsed_properties_type_mappings(definition, deref):
@@ -200,6 +236,26 @@ def get_collapsed_properties_type_mappings(definition, deref):
     return required_properties, not_required_properties
 
 
+def validate_property_default(property_spec, deref):
+    """
+    Validates that default values for definitions are of the property type.
+    Enforces presence of "type" in case of "default" presence.
+
+    :param property_spec: schema object (#/definitions/<def_name>/properties/<property_name>
+    :param deref: callable that dereferences $refs
+
+    :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
+    """
+    deref_property_spec = deref(property_spec)
+    if 'default' in deref_property_spec:
+        validate_value_type(schema=property_spec, value=deref_property_spec['default'], deref=deref)
+
+
+def validate_defaults_in_definition(definition_spec, deref):
+    for property_name, property_spec in iteritems(definition_spec.get('properties', {})):
+        validate_property_default(property_spec, deref)
+
+
 def validate_definition(definition, deref, def_name=None):
     definition = deref(definition)
 
@@ -208,7 +264,7 @@ def validate_definition(definition, deref, def_name=None):
             validate_definition(inner_definition, deref)
     else:
         required = definition.get('required', [])
-        props = definition.get('properties', {}).keys()
+        props = iterkeys(definition.get('properties', {}))
         extra_props = list(set(required) - set(props))
         if extra_props:
             raise SwaggerValidationError(
@@ -216,6 +272,8 @@ def validate_definition(definition, deref, def_name=None):
                     extra_props
                 )
             )
+
+        validate_defaults_in_definition(definition, deref)
 
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)

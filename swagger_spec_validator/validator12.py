@@ -78,7 +78,7 @@ def validate_spec_url(url):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
 
-    log.info('Validating %s' % url)
+    log.info('Validating %s', url)
     validate_spec(read_url(url), url)
 
 
@@ -100,7 +100,7 @@ def validate_spec(resource_listing, url):
 
     for api in resource_listing['apis']:
         path = get_resource_path(url, api['path'])
-        log.info('Validating %s' % path)
+        log.info('Validating %s', path)
         validate_api_declaration(read_url(path))
 
 
