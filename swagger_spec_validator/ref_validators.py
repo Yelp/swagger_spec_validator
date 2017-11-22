@@ -9,12 +9,12 @@ import functools
 import logging
 
 import jsonschema
+import six
 from jsonschema import _validators
 from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
 from jsonschema.validators import RefResolver
-import six
 
 from swagger_spec_validator import common
 

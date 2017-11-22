@@ -322,3 +322,9 @@ def test_failure_due_to_wrong_default_type(default_checks_spec_dict, property_sp
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance
     assert validation_error.validator == validator
+
+
+def test_ref_without_str_argument(minimal_swagger_dict):
+    not_a_ref = {'properties': {'$ref': {'type': 'string'}}}
+    minimal_swagger_dict['definitions']['not_a_ref'] = not_a_ref
+    validate_spec(minimal_swagger_dict)
