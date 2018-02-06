@@ -63,7 +63,11 @@ def validate_spec_url(spec_url):
     return validate_spec(read_url(spec_url), spec_url)
 
 
-def validate_spec(spec_dict, spec_url='', http_handlers=None):
+def validate_spec(spec_dict, spec_url='',
+                  http_handlers=None, custom_handlers=None,
+                  apis_getter=None, definitions_getter=None,
+                  apis_validator=None, definitions_validator=None,
+                  schema_dict=None, urljoin_cache=None):
     """Validates a Swagger 2.0 API Specification given a Swagger Spec.
 
     :param spec_dict: the json dict of the swagger spec.
@@ -71,63 +75,104 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     :param spec_url: url from which spec_dict was retrieved. Used for
         dereferencing refs. eg: file:///foo/swagger.json
     :type spec_url: string
-    :param http_handlers: used to download any remote $refs in spec_dict with
-        a custom http client. Defaults to None in which case the default
-        http client built into jsonschema's RefResolver is used. This
-        is a mapping from uri scheme to a callable that takes a
-        uri.
+    :param http_handlers: deprecated. use the 'custom_handlers' parameter
+        instead
+    :param custom_handlers: used to download any remote $refs in spec_dict
+        with a custom http client or used to add custom handlers for $refs.
+        Defaults to None in which case the default http client built into
+        jsonschema's RefResolver is used. This is a mapping from uri scheme
+        to a callable that takes a uri.
+    :param apis_getter: a callable used to get the apis from the 'paths'
+        object.
+    :param definitions_getter: a callable used to get the definitions from
+        the 'definitions' object.
+    :param apis_validator: a callable used to validate the apis specification.
+    :param definitions_validator: a callable used to validate the definitions
+        specification.
+    :param schema_dict: the schema which validate the swagger specification.
+    :param urljoin_cache: a callable to be used on the
+        `jsonschema.RefResolver` constructor.
 
     :returns: the resolver (with cached remote refs) used during validation
     :rtype: :class:`jsonschema.RefResolver`
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
+    def default_getter(obj, deref):
+        return deref(obj)
+
+    if custom_handlers is None:
+        custom_handlers = http_handlers
+
     swagger_resolver = validate_json(
         spec_dict,
         'schemas/v2.0/schema.json',
         spec_url=spec_url,
-        http_handlers=http_handlers,
-    )
+        custom_handlers=custom_handlers,
+        schema=schema_dict,
+        urljoin_cache=urljoin_cache)
+
+    apis_getter = apis_getter or default_getter
+    definitions_getter = definitions_getter or default_getter
+    apis_validator = apis_validator or validate_apis
+    definitions_validator = definitions_validator or validate_definitions
 
     bound_deref = functools.partial(deref, resolver=swagger_resolver)
+
     spec_dict = bound_deref(spec_dict)
-    apis = bound_deref(spec_dict['paths'])
-    definitions = bound_deref(spec_dict.get('definitions', {}))
-    validate_apis(apis, bound_deref)
-    validate_definitions(definitions, bound_deref)
+    apis = apis_getter(spec_dict['paths'], bound_deref)
+    definitions = definitions_getter(spec_dict.get('definitions', {}),
+                                     bound_deref)
+
+    apis_validator(apis, bound_deref)
+    definitions_validator(definitions, bound_deref)
     return swagger_resolver
 
 
 @wrap_exception
-def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
+def validate_json(spec_dict, schema_path, spec_url='',
+                  http_handlers=None, custom_handlers=None,
+                  schema=None, urljoin_cache=None):
     """Validate a json document against a json schema.
 
     :param spec_dict: json document in the form of a list or dict.
     :param schema_path: package relative path of the json schema file.
     :param spec_url: base uri to use when creating a
         RefResolver for the passed in spec_dict.
-    :param http_handlers: used to download any remote $refs in spec_dict with
-        a custom http client. Defaults to None in which case the default
-        http client built into jsonschema's RefResolver is used. This
-        is a mapping from uri scheme to a callable that takes a
-        uri.
+    :param http_handlers: deprecated. use the 'custom_handlers' parameter
+        instead
+    :param custom_handlers: used to download any remote $refs in spec_dict
+        with a custom http client or used to add custom handlers for $refs.
+        Defaults to None in which case the default http client built into
+        jsonschema's RefResolver is used. This is a mapping from uri scheme
+        to a callable that takes a uri.
+    :param schema: the schema which validate the swagger specification.
+    :type schema: dict | None
+    :param urljoin_cache: a callable to be used on the
+        `jsonschema.RefResolver` constructor.
 
     :return: RefResolver for spec_dict with cached remote $refs used during
         validation.
     :rtype: :class:`jsonschema.RefResolver`
     """
-    schema_path = resource_filename('swagger_spec_validator', schema_path)
-    schema = read_file(schema_path)
+    if custom_handlers is None:
+        custom_handlers = http_handlers
+
+    if schema is None:
+        schema_path = resource_filename('swagger_spec_validator', schema_path)
+        schema = read_file(schema_path)
 
     schema_resolver = RefResolver(
         base_uri='file://{}'.format(schema_path),
         referrer=schema,
-        handlers=default_handlers,
+        handlers=custom_handlers or default_handlers,
+        urljoin_cache=urljoin_cache
     )
 
     spec_resolver = RefResolver(
         base_uri=spec_url,
         referrer=spec_dict,
-        handlers=http_handlers or default_handlers,
+        handlers=custom_handlers or default_handlers,
+        urljoin_cache=urljoin_cache
     )
 
     ref_validators.validate(
