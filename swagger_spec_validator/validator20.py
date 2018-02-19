@@ -194,7 +194,7 @@ def validate_definition(definition, deref, def_name=None):
     if 'allOf' in definition:
         for inner_definition in definition['allOf']:
             validate_definition(inner_definition, deref)
-    else:
+    elif isinstance(definition, dict):
         required = definition.get('required', [])
         props = definition.get('properties', {}).keys()
         extra_props = list(set(required) - set(props))
