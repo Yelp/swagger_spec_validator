@@ -154,7 +154,7 @@ def test_specs_with_discriminator_fail_because_not_required():
 
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(swagger_dict)
-    assert 'discriminator (name) must be defined a required property' in str(excinfo.value)
+    assert 'discriminator (name) must be a required property' in str(excinfo.value)
 
 
 def test_specs_with_discriminator_fail_because_not_string():
@@ -194,7 +194,7 @@ def test_specs_with_discriminator_in_allOf_fail_because_not_required():
 
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(swagger_dict)
-    assert 'discriminator (name) must be defined a required property' in str(excinfo.value)
+    assert 'discriminator (name) must be a required property' in str(excinfo.value)
 
 
 def test_specs_with_discriminator_in_allOf_fail_because_not_string():
