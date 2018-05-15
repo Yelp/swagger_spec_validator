@@ -4,6 +4,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
+import os
+
 import pytest
 from jsonschema.validators import RefResolver
 
@@ -328,3 +331,12 @@ def test_ref_without_str_argument(minimal_swagger_dict):
     not_a_ref = {'properties': {'$ref': {'type': 'string'}}}
     minimal_swagger_dict['definitions']['not_a_ref'] = not_a_ref
     validate_spec(minimal_swagger_dict)
+
+
+def test_failure_because_references_in_operation_responses():
+    my_dir = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(my_dir, '../data/v2.0/invalid_swagger_specs_because_ref_in_responses.json')) as f:
+        invalid_spec = json.load(f)
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(invalid_spec)
+    assert 'GET /endpoint has not valid responses' in str(excinfo.value)
