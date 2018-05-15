@@ -281,7 +281,7 @@ def validate_definition(definition, deref, def_name=None):
         if discriminator not in required_props and discriminator not in not_required_props:
             raise SwaggerValidationError('discriminator (%s) must be defined in properties' % discriminator)
         if discriminator not in required_props:
-            raise SwaggerValidationError('discriminator (%s) must be defined a required property' % discriminator)
+            raise SwaggerValidationError('discriminator (%s) must be a required property' % discriminator)
         if required_props[discriminator] != 'string':
             raise SwaggerValidationError('discriminator (%s) must be a string property' % discriminator)
 
