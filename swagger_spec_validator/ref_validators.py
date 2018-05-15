@@ -9,6 +9,7 @@ import functools
 import logging
 
 import jsonschema
+import six
 from jsonschema import _validators
 from jsonschema import validators
 from jsonschema.compat import iteritems
@@ -165,7 +166,7 @@ def deref_and_validate(validator, schema_element, instance, schema,
         the swagger service spec.
     :param default_validator_callable: jsonschema._validators.* callable
     """
-    if isinstance(instance, dict) and '$ref' in instance:
+    if isinstance(instance, dict) and '$ref' in instance and isinstance(instance['$ref'], six.string_types):
         ref = instance['$ref']
         if ref in visited_refs:
             log.debug("Found cycle in %s", ref)
