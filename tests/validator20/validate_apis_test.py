@@ -141,3 +141,40 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance
     assert validation_error.validator == validator
+
+
+@pytest.mark.parametrize(
+    'apis',
+    [
+        {
+            '/api': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                },
+                'post': {
+                    'operationId': 'duplicateOperationId',
+                },
+            },
+        },
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                },
+            },
+        },
+    ]
+)
+def test_duplicate_operationIds_fails(apis):
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+
+    swagger_validation_error = excinfo.value
+    error_message = swagger_validation_error.args[0]
+
+    assert error_message == "Duplicate operationId: duplicateOperationId"

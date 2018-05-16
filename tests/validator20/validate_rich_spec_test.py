@@ -36,10 +36,11 @@ def test_failure_on_duplicate_operation_parameters(swagger_spec):
 
 
 def test_failure_on_unresolvable_path_parameter(swagger_spec):
-    swagger_spec['paths']['/pet/{foo}'] = swagger_spec['paths']['/pet']
+    swagger_spec['paths']['/pet/{petId}']['get']['parameters'] = []
+
     with pytest.raises(SwaggerValidationError) as exc_info:
         validate_spec(swagger_spec)
-    assert "Path parameter 'foo' used is not documented on '/pet/{foo}'" in str(exc_info.value)
+    assert "Path parameter 'petId' used is not documented on '/pet/{petId}'" in str(exc_info.value)
 
 
 def test_failure_on_path_parameter_used_but_not_defined(swagger_spec):

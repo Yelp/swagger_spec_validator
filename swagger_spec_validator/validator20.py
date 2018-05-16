@@ -185,6 +185,8 @@ def validate_apis(apis, deref):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
+    operation_ids = set()
+
     for api_name, api_body in iteritems(apis):
         api_body = deref(api_body)
         api_params = deref(api_body.get('parameters', []))
@@ -195,6 +197,18 @@ def validate_apis(apis, deref):
             if oper_name == 'parameters' or oper_name.startswith('x-'):
                 continue
             oper_body = deref(api_body[oper_name])
+
+            # Check that, if this operation has an operationId defined,
+            # it is unique.
+            operation_id = oper_body.get('operationId')
+            if operation_id is not None:
+                if operation_id in operation_ids:
+                    raise SwaggerValidationError(
+                        "Duplicate operationId: {}".format(operation_id)
+                    )
+                else:
+                    operation_ids.add(operation_id)
+
             oper_params = deref(oper_body.get('parameters', []))
             validate_duplicate_param(oper_params, deref)
             all_path_params = list(set(
