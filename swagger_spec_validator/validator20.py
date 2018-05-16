@@ -176,7 +176,7 @@ def validate_defaults_in_parameters(params_spec, deref):
             )
 
 
-def validate_references_in_responses(api, http_verb, responses_dict):
+def validate_responses(api, http_verb, responses_dict):
     if is_ref(responses_dict):
         raise SwaggerValidationError(
             '{http_verb} {api} has not valid responses. Responses cannot be a reference to an other object.'.format(
@@ -212,7 +212,7 @@ def validate_apis(apis, deref):
                 get_path_param_names(oper_params, deref)))
             validate_unresolvable_path_params(api_name, all_path_params)
             validate_defaults_in_parameters(oper_params, deref)
-            validate_references_in_responses(api_name, oper_name, oper_body['responses'])
+            validate_responses(api_name, oper_name, oper_body['responses'])
 
 
 def get_collapsed_properties_type_mappings(definition, deref):
