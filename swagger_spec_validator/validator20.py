@@ -179,7 +179,8 @@ def validate_defaults_in_parameters(params_spec, deref):
 def validate_responses(api, http_verb, responses_dict):
     if is_ref(responses_dict):
         raise SwaggerValidationError(
-            '{http_verb} {api} has not valid responses. Responses cannot be a reference to an other object.'.format(
+            '{http_verb} {api} does not have a valid responses section. '
+            'That section cannot be just a reference to another object.'.format(
                 http_verb=http_verb.upper(),
                 api=api,
             )

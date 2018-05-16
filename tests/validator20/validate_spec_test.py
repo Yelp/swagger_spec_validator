@@ -339,4 +339,5 @@ def test_failure_because_references_in_operation_responses():
         invalid_spec = json.load(f)
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(invalid_spec)
-    assert 'GET /endpoint has not valid responses' in str(excinfo.value)
+    assert 'GET /endpoint does not have a valid responses section. ' \
+           'That section cannot be just a reference to another object.' in str(excinfo.value)
