@@ -187,7 +187,6 @@ def validate_apis(apis, deref):
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
     operation_tag_to_operation_id_set = defaultdict(set)
-    # operation_ids = set()
 
     for api_name, api_body in iteritems(apis):
         api_body = deref(api_body)
@@ -204,7 +203,6 @@ def validate_apis(apis, deref):
             # Check that, if this operation has an operationId defined,
             # no other operation with a same tag also has that
             # operationId.
-            # import ipdb; ipdb.set_trace()
             operation_id = oper_body.get('operationId')
             if operation_id is not None:
                 for oper_tag in oper_tags:
@@ -212,8 +210,7 @@ def validate_apis(apis, deref):
                         raise SwaggerValidationError(
                             "Duplicate operationId: {}".format(operation_id)
                         )
-                    else:
-                        operation_tag_to_operation_id_set[oper_tag].add(operation_id)
+                    operation_tag_to_operation_id_set[oper_tag].add(operation_id)
 
             oper_params = deref(oper_body.get('parameters', []))
             validate_duplicate_param(oper_params, deref)
