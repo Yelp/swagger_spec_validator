@@ -1,0 +1,21 @@
+{
+    "info": {
+        "title": "Test",
+        "version": "1.0"
+    },
+    "paths": {
+        "/endpoint": {
+            "get": {
+                "responses": {
+                    "$ref": "#/responses"
+                }
+            }
+        }
+    },
+    "responses": {
+        "default": {
+            "description": "any response"
+        }
+    },
+    "swagger": "2.0"
+}

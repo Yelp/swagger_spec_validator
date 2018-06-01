@@ -10,6 +10,13 @@ from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_apis
 
 
+RESPONSES = {
+    'default': {
+        'description': 'random description',
+    },
+}
+
+
 def test_api_level_params_ok():
     # Parameters defined at the API level apply to all operations within that
     # API. Make sure we don't treat the API level parameters as an operation
@@ -25,8 +32,9 @@ def test_api_level_params_ok():
                 },
             ],
             'get': {
-            }
-        }
+                'responses': RESPONSES,
+            },
+        },
     }
     # Success == no exception thrown
     validate_apis(apis, lambda x: x)
@@ -44,7 +52,8 @@ def test_api_level_x_hyphen_ok():
                         'in': 'path',
                         'type': 'string',
                     }
-                ]
+                ],
+                'responses': RESPONSES,
             }
         }
     }
@@ -75,6 +84,7 @@ def test_api_check_default_succeed(partial_parameter_spec):
                 'parameters': [
                     dict({'name': 'param', 'in': 'query'}, **partial_parameter_spec),
                 ],
+                'responses': RESPONSES,
             },
         },
     }
@@ -131,6 +141,7 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
                 'parameters': [
                     dict({'name': 'param', 'in': 'query'}, **partial_parameter_spec),
                 ],
+                'responses': RESPONSES,
             },
         },
     }
