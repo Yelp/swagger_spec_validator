@@ -177,6 +177,17 @@ def validate_defaults_in_parameters(params_spec, deref):
             )
 
 
+def validate_responses(api, http_verb, responses_dict):
+    if is_ref(responses_dict):
+        raise SwaggerValidationError(
+            '{http_verb} {api} does not have a valid responses section. '
+            'That section cannot be just a reference to another object.'.format(
+                http_verb=http_verb.upper(),
+                api=api,
+            )
+        )
+
+
 def validate_apis(apis, deref):
     """Validates semantic errors in #/paths.
 
@@ -219,6 +230,7 @@ def validate_apis(apis, deref):
                 get_path_param_names(oper_params, deref)))
             validate_unresolvable_path_params(api_name, all_path_params)
             validate_defaults_in_parameters(oper_params, deref)
+            validate_responses(api_name, oper_name, oper_body['responses'])
 
 
 def get_collapsed_properties_type_mappings(definition, deref):
