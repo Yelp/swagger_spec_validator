@@ -168,6 +168,20 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
                 },
             },
         },
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1', 'tag2'],
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1'],
+                },
+            },
+        },
     ]
 )
 def test_duplicate_operationIds_fails(apis):
@@ -178,3 +192,31 @@ def test_duplicate_operationIds_fails(apis):
     error_message = swagger_validation_error.args[0]
 
     assert error_message == "Duplicate operationId: duplicateOperationId"
+
+
+@pytest.mark.parametrize(
+    'apis',
+    [
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1'],
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag2'],
+                },
+            },
+            '/api3': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                },
+            },
+        },
+    ]
+)
+def test_duplicate_operationIds_succeeds_if_tags_differ(apis):
+    validate_apis(apis, lambda x: x)
