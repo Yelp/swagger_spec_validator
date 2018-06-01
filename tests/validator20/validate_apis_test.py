@@ -161,9 +161,11 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
             '/api': {
                 'get': {
                     'operationId': 'duplicateOperationId',
+                    'responses': {},
                 },
                 'post': {
                     'operationId': 'duplicateOperationId',
+                    'responses': {},
                 },
             },
         },
@@ -171,11 +173,13 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
             '/api1': {
                 'get': {
                     'operationId': 'duplicateOperationId',
+                    'responses': {},
                 },
             },
             '/api2': {
                 'get': {
                     'operationId': 'duplicateOperationId',
+                    'responses': {},
                 },
             },
         },
@@ -184,12 +188,14 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
                 'get': {
                     'operationId': 'duplicateOperationId',
                     'tags': ['tag1', 'tag2'],
+                    'responses': {},
                 },
             },
             '/api2': {
                 'get': {
                     'operationId': 'duplicateOperationId',
                     'tags': ['tag1'],
+                    'responses': {},
                 },
             },
         },
@@ -213,17 +219,20 @@ def test_duplicate_operationIds_fails(apis):
                 'get': {
                     'operationId': 'duplicateOperationId',
                     'tags': ['tag1'],
+                    'responses': {},
                 },
             },
             '/api2': {
                 'get': {
                     'operationId': 'duplicateOperationId',
                     'tags': ['tag2'],
+                    'responses': {},
                 },
             },
             '/api3': {
                 'get': {
                     'operationId': 'duplicateOperationId',
+                    'responses': {},
                 },
             },
         },
