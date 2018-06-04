@@ -268,6 +268,15 @@ def validate_defaults_in_definition(definition_spec, deref):
         validate_property_default(property_spec, deref)
 
 
+def validate_arrays_in_definition(definition_spec, def_name=None):
+    if definition_spec.get('type') == 'array' and 'items' not in definition_spec:
+        raise SwaggerValidationError(
+            'Definition of type array must define `items` property{}.'.format(
+                '' if not def_name else ' (definition {})'.format(def_name),
+            ),
+        )
+
+
 def validate_definition(definition, deref, def_name=None):
     definition = deref(definition)
 
@@ -286,6 +295,7 @@ def validate_definition(definition, deref, def_name=None):
             )
 
         validate_defaults_in_definition(definition, deref)
+        validate_arrays_in_definition(definition, def_name=def_name)
 
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)

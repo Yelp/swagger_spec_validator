@@ -341,3 +341,37 @@ def test_failure_because_references_in_operation_responses():
         validate_spec(invalid_spec)
     assert 'GET /endpoint does not have a valid responses section. ' \
            'That section cannot be just a reference to another object.' in str(excinfo.value)
+
+
+def test_type_array_with_items_succeed_validation(minimal_swagger_dict):
+    minimal_swagger_dict['definitions'] = {
+        'definition_1': {
+            'type': 'array',
+            'items': {
+                'type': 'string',
+            },
+        },
+    }
+
+    # Success if no exception are raised
+    validate_spec(minimal_swagger_dict)
+
+
+@pytest.mark.parametrize(
+    'swagger_dict_override',
+    (
+        {
+            'definitions': {
+                'definition_1': {
+                    'type': 'array',
+                },
+            },
+        },
+    )
+)
+def test_type_array_without_items_succeed_fails(minimal_swagger_dict, swagger_dict_override):
+    minimal_swagger_dict.update(swagger_dict_override)
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_spec(minimal_swagger_dict)
+
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
