@@ -8,7 +8,7 @@ import pytest
 
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import validate_apis
-
+from swagger_spec_validator.validator20 import validate_defaults_in_parameters
 
 RESPONSES = {
     'default': {
@@ -153,6 +153,24 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
     assert validation_error.validator == validator
 
 
+def test_validate_defaults_in_parameters_succeed():
+    # Success if no exception are raised
+    validate_defaults_in_parameters(
+        params_spec=[{'type': 'integer'}],
+        deref=lambda x: x,
+    )
+
+
+def test_validate_defaults_in_parameters_fails():
+    with pytest.raises(SwaggerValidationError):
+        validate_defaults_in_parameters(
+            params_spec=[
+                {'type': 'integer', 'default': 'wrong_type'},
+            ],
+            deref=lambda x: x,
+        )
+
+
 @pytest.mark.parametrize(
     'apis',
     [
@@ -239,3 +257,81 @@ def test_duplicate_operationIds_fails(apis):
 )
 def test_duplicate_operationIds_succeeds_if_tags_differ(apis):
     validate_apis(apis, lambda x: x)
+
+
+def test_invalid_inline_models_in_responses_fails():
+    apis = {
+        '/endpoint': {
+            'get': {
+                'responses': {
+                    '200': {
+                        'description': 'desc',
+                        'schema': {
+                            'type': 'object',
+                            'properties': {'prop': {'type': 'array'}},
+                        },
+                    },
+                },
+            },
+        },
+    }
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+    assert str(excinfo.value) == 'Definition of type array must define `items` property ' \
+                                 '(definition #/paths//endpoint/get/responses/200/properties/prop).'
+
+
+def test_invalid_inline_models_in_operation_body_parameters_fails():
+    apis = {
+        '/endpoint': {
+            'get': {
+                'parameters': [
+                    {
+                        'in': 'body',
+                        'name': 'body',
+                        'schema': {
+                            'type': 'object',
+                            'properties': {'prop': {'type': 'array'}},
+                        },
+                    }
+                ],
+                'responses': {
+                    '200': {
+                        'description': 'desc',
+                    },
+                },
+            },
+        },
+    }
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+    assert str(excinfo.value) == 'Definition of type array must define `items` property ' \
+                                 '(definition #/paths//endpoint/get/parameters/0/schema/properties/prop).'
+
+
+def test_invalid_inline_models_in_api_body_parameters_fails():
+    apis = {
+        '/endpoint': {
+            'parameters': [
+                {
+                    'in': 'body',
+                    'name': 'body',
+                    'schema': {
+                        'type': 'object',
+                        'properties': {'prop': {'type': 'array'}},
+                    },
+                }
+            ],
+            'get': {
+                'responses': {
+                    '200': {
+                        'description': 'desc',
+                    },
+                },
+            },
+        },
+    }
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+    assert str(excinfo.value) == 'Definition of type array must define `items` property ' \
+                                 '(definition #/paths//endpoint/parameters/0/schema/properties/prop).'

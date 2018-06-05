@@ -121,3 +121,21 @@ def test_type_array_without_items_succeed_fails():
         validate_definitions(definitions, lambda x: x)
 
     assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
+
+
+def test_inline_model_is_not_valid_validation_fails():
+    definitions = {
+        'definition_1': {
+            'properties': {
+                'property': {
+                    'type': 'array',
+                },
+            },
+        },
+    }
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_definitions(definitions, lambda x: x)
+
+    assert str(excinfo.value) == 'Definition of type array must define `items` property ' \
+                                 '(definition #/definitions/definition_1/properties/property).'
