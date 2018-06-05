@@ -294,12 +294,27 @@ def validate_arrays_in_definition(definition_spec, def_name=None):
         )
 
 
-def validate_definition(definition, deref, def_name=None):
+def validate_definition(definition, deref, def_name=None, visited_definitions_ids=None):
+    """
+    :param visited_definitions_ids: set of ids of already visited definitions (after dereference)
+                                    This is used to cut recursion in case of recursive definitions
+    :type visited_definitions_ids: set
+    """
     definition = deref(definition)
+
+    if visited_definitions_ids is not None:
+        if id(definition) in visited_definitions_ids:
+            return
+        visited_definitions_ids.add(id(definition))
 
     if 'allOf' in definition:
         for inner_definition in definition['allOf']:
-            validate_definition(inner_definition, deref)
+            validate_definition(
+                definition=inner_definition,
+                deref=deref,
+                def_name=def_name,
+                visited_definitions_ids=visited_definitions_ids,
+            )
     else:
         required = definition.get('required', [])
         props = iterkeys(definition.get('properties', {}))
@@ -334,8 +349,14 @@ def validate_definitions(definitions, deref):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
+    visited_definitions_ids = set()
     for def_name, definition in iteritems(definitions):
-        validate_definition(definition, deref, def_name=def_name)
+        validate_definition(
+            definition=definition,
+            deref=deref,
+            def_name=def_name,
+            visited_definitions_ids=visited_definitions_ids,
+        )
 
 
 def get_path_param_names(params, deref):
