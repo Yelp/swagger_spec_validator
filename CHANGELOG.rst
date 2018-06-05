@@ -1,5 +1,15 @@
 Changelog
 =========
+2.2.0 (2018-06-05)
+------------------
+- Add support for reading YAML files - #74
+- Make sure operationIds are unique within the same tag - #93
+- Validate that array models in the top-level definitions have an ``items`` property (validation for array models in other places will come in a future release) - #95
+- Responses (the mapping of HTTP status codes to Response objects) cannot be a reference - #92
+- ``$ref`` values need to be strings - #83. Thanks ceridwen for your contribution!
+- Ensure that default values are compliant with the spec - #82
+- More helpful error message when encountering unresolvable path params - #72. Thanks daym for your contribution!
+
 2.1.0 (2017-03-21)
 ------------------
 - Properly validate polymorphic objects - #68
