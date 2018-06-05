@@ -183,7 +183,7 @@ def validate_defaults_in_parameters(params_spec, deref):
         validate_default_in_parameter(param_spec, deref)
 
 
-def validate_responses(api, http_verb, responses_dict):
+def validate_responses(api, http_verb, responses_dict, deref=None):
     if is_ref(responses_dict):
         raise SwaggerValidationError(
             '{http_verb} {api} does not have a valid responses section. '
@@ -191,6 +191,20 @@ def validate_responses(api, http_verb, responses_dict):
                 http_verb=http_verb.upper(),
                 api=api,
             )
+        )
+    for response_status, response_spec in iteritems(responses_dict):
+        response_schema = response_spec.get('schema')
+        if response_schema is None:
+            continue
+        validate_definition(
+            definition=response_schema,
+            deref=deref,
+            def_name='#/paths/{api}/{http_verb}/responses/{status_code}'.format(
+                http_verb=http_verb,
+                api=api,
+                status_code=response_status,
+            ),
+            visited_definitions_ids=set(),
         )
 
 
@@ -260,7 +274,7 @@ def validate_apis(apis, deref):
                     ),
                 )
             # Responses validation
-            validate_responses(api_name, oper_name, oper_body['responses'])
+            validate_responses(api_name, oper_name, oper_body['responses'], deref)
 
 
 def get_collapsed_properties_type_mappings(definition, deref):
