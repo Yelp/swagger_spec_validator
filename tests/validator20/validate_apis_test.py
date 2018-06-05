@@ -152,3 +152,91 @@ def test_api_check_default_fails(partial_parameter_spec, validator, instance):
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance
     assert validation_error.validator == validator
+
+
+@pytest.mark.parametrize(
+    'apis',
+    [
+        {
+            '/api': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'responses': {},
+                },
+                'post': {
+                    'operationId': 'duplicateOperationId',
+                    'responses': {},
+                },
+            },
+        },
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'responses': {},
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'responses': {},
+                },
+            },
+        },
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1', 'tag2'],
+                    'responses': {},
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1'],
+                    'responses': {},
+                },
+            },
+        },
+    ]
+)
+def test_duplicate_operationIds_fails(apis):
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+
+    swagger_validation_error = excinfo.value
+    error_message = swagger_validation_error.args[0]
+
+    assert error_message == "Duplicate operationId: duplicateOperationId"
+
+
+@pytest.mark.parametrize(
+    'apis',
+    [
+        {
+            '/api1': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag1'],
+                    'responses': {},
+                },
+            },
+            '/api2': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'tags': ['tag2'],
+                    'responses': {},
+                },
+            },
+            '/api3': {
+                'get': {
+                    'operationId': 'duplicateOperationId',
+                    'responses': {},
+                },
+            },
+        },
+    ]
+)
+def test_duplicate_operationIds_succeeds_if_tags_differ(apis):
+    validate_apis(apis, lambda x: x)
