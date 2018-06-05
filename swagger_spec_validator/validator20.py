@@ -393,11 +393,11 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
         visited_definitions_ids.add(id(definition))
 
     if 'allOf' in definition:
-        for inner_definition in definition['allOf']:
+        for idx, inner_definition in enumerate(definition['allOf']):
             validate_definition(
                 definition=inner_definition,
                 deref=deref,
-                def_name=def_name,
+                def_name='{}/{}'.format(def_name, str(idx)),
                 visited_definitions_ids=visited_definitions_ids,
             )
     else:
@@ -447,7 +447,7 @@ def validate_definitions(definitions, deref):
         validate_definition(
             definition=definition,
             deref=deref,
-            def_name=def_name,
+            def_name='#/definitions/{}'.format(def_name),
             visited_definitions_ids=visited_definitions_ids,
         )
 

@@ -374,7 +374,7 @@ def test_type_array_without_items_succeed_fails(minimal_swagger_dict, swagger_di
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(minimal_swagger_dict)
 
-    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
 
 
 INVALID_SCHEMA_OBJECT = {

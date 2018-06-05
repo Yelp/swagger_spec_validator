@@ -120,4 +120,4 @@ def test_type_array_without_items_succeed_fails():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_definitions(definitions, lambda x: x)
 
-    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
