@@ -359,6 +359,14 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
         validate_defaults_in_definition(definition, deref)
         validate_arrays_in_definition(definition, def_name=def_name)
 
+        for property_name, property_spec in iteritems(definition.get('properties', {})):
+            validate_definition(
+                definition=property_spec,
+                deref=deref,
+                def_name='{}/properties/{}'.format(def_name, property_name),
+                visited_definitions_ids=visited_definitions_ids,
+            )
+
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)
         discriminator = definition['discriminator']
