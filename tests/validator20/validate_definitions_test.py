@@ -95,3 +95,30 @@ def test_api_check_default_fails(property_spec, validator, instance):
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance
     assert validation_error.validator == validator
+
+
+def test_type_array_with_items_succeed_validation():
+    definitions = {
+        'definition_1': {
+            'type': 'array',
+            'items': {
+                'type': 'string',
+            },
+        },
+    }
+
+    # Success if no exception are raised
+    validate_definitions(definitions, lambda x: x)
+
+
+def test_type_array_without_items_succeed_fails():
+    definitions = {
+        'definition_1': {
+            'type': 'array',
+        },
+    }
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_definitions(definitions, lambda x: x)
+
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
