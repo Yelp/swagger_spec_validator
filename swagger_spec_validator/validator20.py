@@ -153,6 +153,21 @@ def validate_value_type(schema, value, deref):
     validate_schema_value(schema=deref(schema), value=value, swagger_resolver=swagger_resolver)
 
 
+def validate_default_in_parameter(param_spec, deref):
+    deref_param_spec = deref(param_spec)
+
+    if deref_param_spec.get('required'):
+        # If the parameter is a required parameter, default has no meaning
+        return
+
+    if 'default' in deref_param_spec:
+        validate_value_type(
+            schema=deref_param_spec,
+            value=deref_param_spec['default'],
+            deref=deref,
+        )
+
+
 def validate_defaults_in_parameters(params_spec, deref):
     """
     Validates that default values for api parameters are
@@ -163,18 +178,9 @@ def validate_defaults_in_parameters(params_spec, deref):
 
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
+    # Note: this functions is preserved to avoid public signature updates (it's not used internally)
     for param_spec in params_spec:
-        deref_param_spec = deref(param_spec)
-        if deref_param_spec.get('required', False):
-            # If the parameter is a required parameter, default has no meaning
-            continue
-
-        if 'default' in deref_param_spec:
-            validate_value_type(
-                schema=deref_param_spec,
-                value=deref_param_spec['default'],
-                deref=deref,
-            )
+        validate_default_in_parameter(param_spec, deref)
 
 
 def validate_responses(api, http_verb, responses_dict):
@@ -186,6 +192,10 @@ def validate_responses(api, http_verb, responses_dict):
                 api=api,
             )
         )
+
+
+def validate_parameter(param, deref, def_name):
+    validate_default_in_parameter(param, deref)
 
 
 def validate_apis(apis, deref):
@@ -203,6 +213,16 @@ def validate_apis(apis, deref):
         api_body = deref(api_body)
         api_params = deref(api_body.get('parameters', []))
         validate_duplicate_param(api_params, deref)
+        for idx, param in enumerate(api_params):
+            validate_parameter(
+                param=param,
+                deref=deref,
+                def_name='#/paths/{api_name}/parameters/{idx}'.format(
+                    api_name=api_name,
+                    idx=idx,
+                ),
+            )
+
         for oper_name in api_body:
             # don't treat parameters that apply to all api operations as
             # an operation
@@ -229,7 +249,17 @@ def validate_apis(apis, deref):
                 get_path_param_names(api_params, deref) +
                 get_path_param_names(oper_params, deref)))
             validate_unresolvable_path_params(api_name, all_path_params)
-            validate_defaults_in_parameters(oper_params, deref)
+            for idx, param in enumerate(oper_params):
+                validate_parameter(
+                    param=param,
+                    deref=deref,
+                    def_name='#/paths/{api_name}/{oper_name}/parameters/{idx}'.format(
+                        api_name=api_name,
+                        oper_name=oper_name,
+                        idx=idx,
+                    ),
+                )
+            # Responses validation
             validate_responses(api_name, oper_name, oper_body['responses'])
 
 
