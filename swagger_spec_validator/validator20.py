@@ -95,6 +95,7 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     definitions = bound_deref(spec_dict.get('definitions', {}))
     validate_apis(apis, bound_deref)
     validate_definitions(definitions, bound_deref)
+    validate_parameters(bound_deref(spec_dict.get('parameters', {})), bound_deref)
     return swagger_resolver
 
 
@@ -448,6 +449,15 @@ def validate_definitions(definitions, deref):
             deref=deref,
             def_name=def_name,
             visited_definitions_ids=visited_definitions_ids,
+        )
+
+
+def validate_parameters(parameters, deref):
+    for param_name, param_spec in iteritems(parameters):
+        validate_parameter(
+            param=param_spec,
+            deref=deref,
+            def_name='#/parameters/{}'.format(param_name),
         )
 
 
