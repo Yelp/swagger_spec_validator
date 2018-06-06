@@ -20,6 +20,7 @@ from swagger_spec_validator.validator20 import validate_definitions
         {'type': 'number', 'default': 3.4},
         {'type': 'object', 'default': {'a_random_property': 'valid'}},
         {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
+        {'default': -1},  # if type is not defined any value is a valid value
         {'type': 'string', 'default': ''},
         {'type': ['number', 'boolean'], 'default': 8},
         {'type': ['number', 'boolean'], 'default': False},
