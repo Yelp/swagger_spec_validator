@@ -213,12 +213,6 @@ def validate_responses(api, http_verb, responses_dict, deref=None):
 
 
 def validate_non_body_parameter(param, deref, def_name):
-    if is_ref(param):
-        return
-
-    if param['in'] == 'body':
-        return
-
     if 'type' not in param:
         raise SwaggerValidationError(
             'Non-Body parameter in `{def_name}` does not specify `type`.'.format(def_name=def_name),
@@ -231,12 +225,6 @@ def validate_non_body_parameter(param, deref, def_name):
 
 
 def validate_body_parameter(param, deref, def_name):
-    if is_ref(param):
-        return
-
-    if param['in'] != 'body':
-        return
-
     if 'schema' not in param:
         raise SwaggerValidationError(
             'Body parameter in `{def_name}` does not specify `schema`.'.format(def_name=def_name)
@@ -252,8 +240,12 @@ def validate_body_parameter(param, deref, def_name):
 
 def validate_parameter(param, deref, def_name):
     validate_default_in_parameter(param, deref)
-    validate_body_parameter(param, deref, def_name)
-    validate_non_body_parameter(param, deref, def_name)
+
+    if not is_ref(param):
+        if param['in'] == 'body':
+            validate_body_parameter(param, deref, def_name)
+        else:
+            validate_non_body_parameter(param, deref, def_name)
 
 
 def validate_apis(apis, deref):
