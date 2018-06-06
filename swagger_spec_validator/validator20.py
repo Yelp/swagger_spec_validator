@@ -162,6 +162,9 @@ def validate_default_in_parameter(param_spec, deref):
         return
 
     if 'default' in deref_param_spec:
+        if deref_param_spec['default'] is None and deref_param_spec.get('x-nullable', False) is True:
+            # In case x-nullable property is set to true, null is a valid default
+            return
         validate_value_type(
             schema=deref_param_spec,
             value=deref_param_spec['default'],
@@ -362,6 +365,10 @@ def validate_property_default(property_spec, deref):
     """
     deref_property_spec = deref(property_spec)
     if 'default' in deref_property_spec:
+        if deref_property_spec['default'] is None and deref_property_spec.get('x-nullable', False) is True:
+            # In case x-nullable property is set to true, null is a valid default
+            return
+
         validate_value_type(schema=property_spec, value=deref_property_spec['default'], deref=deref)
 
 

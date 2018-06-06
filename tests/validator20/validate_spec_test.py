@@ -256,6 +256,7 @@ def default_checks_spec_dict(minimal_swagger_dict):
         {'type': 'object', 'default': {'a_random_property': 'valid'}},
         {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
         {'type': 'string', 'default': ''},
+        {'type': 'string', 'default': None, 'x-nullable': True},
         {'default': -1},  # if type is not defined any value is a valid value
         {'type': ['number', 'boolean'], 'default': 8},
         {'type': ['number', 'boolean'], 'default': False},

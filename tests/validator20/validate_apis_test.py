@@ -72,6 +72,7 @@ def test_api_level_x_hyphen_ok():
         {'type': 'object', 'default': {'a_random_property': 'valid'}},
         {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
         {'type': 'string', 'default': ''},
+        {'type': 'string', 'default': None, 'x-nullable': True},
         {'type': ['number', 'boolean'], 'default': 8},
         {'type': ['number', 'boolean'], 'default': False},
     ],
