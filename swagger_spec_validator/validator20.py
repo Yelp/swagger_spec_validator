@@ -95,6 +95,7 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     definitions = bound_deref(spec_dict.get('definitions', {}))
     validate_apis(apis, bound_deref)
     validate_definitions(definitions, bound_deref)
+    validate_parameters(bound_deref(spec_dict.get('parameters', {})), bound_deref)
     return swagger_resolver
 
 
@@ -153,6 +154,24 @@ def validate_value_type(schema, value, deref):
     validate_schema_value(schema=deref(schema), value=value, swagger_resolver=swagger_resolver)
 
 
+def validate_default_in_parameter(param_spec, deref):
+    deref_param_spec = deref(param_spec)
+
+    if deref_param_spec.get('required'):
+        # If the parameter is a required parameter, default has no meaning
+        return
+
+    if 'default' in deref_param_spec:
+        if deref_param_spec['default'] is None and deref_param_spec.get('x-nullable', False) is True:
+            # In case x-nullable property is set to true, null is a valid default
+            return
+        validate_value_type(
+            schema=deref_param_spec,
+            value=deref_param_spec['default'],
+            deref=deref,
+        )
+
+
 def validate_defaults_in_parameters(params_spec, deref):
     """
     Validates that default values for api parameters are
@@ -163,21 +182,12 @@ def validate_defaults_in_parameters(params_spec, deref):
 
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
+    # Note: this functions is preserved to avoid public signature updates (it's not used internally)
     for param_spec in params_spec:
-        deref_param_spec = deref(param_spec)
-        if deref_param_spec.get('required', False):
-            # If the parameter is a required parameter, default has no meaning
-            continue
-
-        if 'default' in deref_param_spec:
-            validate_value_type(
-                schema=deref_param_spec,
-                value=deref_param_spec['default'],
-                deref=deref,
-            )
+        validate_default_in_parameter(param_spec, deref)
 
 
-def validate_responses(api, http_verb, responses_dict):
+def validate_responses(api, http_verb, responses_dict, deref=None):
     if is_ref(responses_dict):
         raise SwaggerValidationError(
             '{http_verb} {api} does not have a valid responses section. '
@@ -186,6 +196,56 @@ def validate_responses(api, http_verb, responses_dict):
                 api=api,
             )
         )
+    for response_status, response_spec in iteritems(responses_dict):
+        response_schema = response_spec.get('schema')
+        if response_schema is None:
+            continue
+        validate_definition(
+            definition=response_schema,
+            deref=deref,
+            def_name='#/paths/{api}/{http_verb}/responses/{status_code}'.format(
+                http_verb=http_verb,
+                api=api,
+                status_code=response_status,
+            ),
+            visited_definitions_ids=set(),
+        )
+
+
+def validate_non_body_parameter(param, deref, def_name):
+    if 'type' not in param:
+        raise SwaggerValidationError(
+            'Non-Body parameter in `{def_name}` does not specify `type`.'.format(def_name=def_name),
+        )
+
+    if param['type'] == 'array' and 'items' not in param:
+        raise SwaggerValidationError(
+            'Non-Body array parameter in `{def_name}` does not specify `items`.'.format(def_name=def_name),
+        )
+
+
+def validate_body_parameter(param, deref, def_name):
+    if 'schema' not in param:
+        raise SwaggerValidationError(
+            'Body parameter in `{def_name}` does not specify `schema`.'.format(def_name=def_name)
+        )
+
+    validate_definition(
+        definition=param['schema'],
+        deref=deref,
+        def_name='{}/schema'.format(def_name),
+        visited_definitions_ids=set(),
+    )
+
+
+def validate_parameter(param, deref, def_name):
+    validate_default_in_parameter(param, deref)
+
+    if not is_ref(param):
+        if param['in'] == 'body':
+            validate_body_parameter(param, deref, def_name)
+        else:
+            validate_non_body_parameter(param, deref, def_name)
 
 
 def validate_apis(apis, deref):
@@ -203,6 +263,16 @@ def validate_apis(apis, deref):
         api_body = deref(api_body)
         api_params = deref(api_body.get('parameters', []))
         validate_duplicate_param(api_params, deref)
+        for idx, param in enumerate(api_params):
+            validate_parameter(
+                param=param,
+                deref=deref,
+                def_name='#/paths/{api_name}/parameters/{idx}'.format(
+                    api_name=api_name,
+                    idx=idx,
+                ),
+            )
+
         for oper_name in api_body:
             # don't treat parameters that apply to all api operations as
             # an operation
@@ -229,8 +299,18 @@ def validate_apis(apis, deref):
                 get_path_param_names(api_params, deref) +
                 get_path_param_names(oper_params, deref)))
             validate_unresolvable_path_params(api_name, all_path_params)
-            validate_defaults_in_parameters(oper_params, deref)
-            validate_responses(api_name, oper_name, oper_body['responses'])
+            for idx, param in enumerate(oper_params):
+                validate_parameter(
+                    param=param,
+                    deref=deref,
+                    def_name='#/paths/{api_name}/{oper_name}/parameters/{idx}'.format(
+                        api_name=api_name,
+                        oper_name=oper_name,
+                        idx=idx,
+                    ),
+                )
+            # Responses validation
+            validate_responses(api_name, oper_name, oper_body['responses'], deref)
 
 
 def get_collapsed_properties_type_mappings(definition, deref):
@@ -277,6 +357,10 @@ def validate_property_default(property_spec, deref):
     """
     deref_property_spec = deref(property_spec)
     if 'default' in deref_property_spec:
+        if deref_property_spec['default'] is None and deref_property_spec.get('x-nullable', False) is True:
+            # In case x-nullable property is set to true, null is a valid default
+            return
+
         validate_value_type(schema=property_spec, value=deref_property_spec['default'], deref=deref)
 
 
@@ -294,12 +378,27 @@ def validate_arrays_in_definition(definition_spec, def_name=None):
         )
 
 
-def validate_definition(definition, deref, def_name=None):
+def validate_definition(definition, deref, def_name=None, visited_definitions_ids=None):
+    """
+    :param visited_definitions_ids: set of ids of already visited definitions (after dereference)
+                                    This is used to cut recursion in case of recursive definitions
+    :type visited_definitions_ids: set
+    """
     definition = deref(definition)
 
+    if visited_definitions_ids is not None:
+        if id(definition) in visited_definitions_ids:
+            return
+        visited_definitions_ids.add(id(definition))
+
     if 'allOf' in definition:
-        for inner_definition in definition['allOf']:
-            validate_definition(inner_definition, deref)
+        for idx, inner_definition in enumerate(definition['allOf']):
+            validate_definition(
+                definition=inner_definition,
+                deref=deref,
+                def_name='{}/{}'.format(def_name, str(idx)),
+                visited_definitions_ids=visited_definitions_ids,
+            )
     else:
         required = definition.get('required', [])
         props = iterkeys(definition.get('properties', {}))
@@ -313,6 +412,14 @@ def validate_definition(definition, deref, def_name=None):
 
         validate_defaults_in_definition(definition, deref)
         validate_arrays_in_definition(definition, def_name=def_name)
+
+        for property_name, property_spec in iteritems(definition.get('properties', {})):
+            validate_definition(
+                definition=property_spec,
+                deref=deref,
+                def_name='{}/properties/{}'.format(def_name, property_name),
+                visited_definitions_ids=visited_definitions_ids,
+            )
 
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)
@@ -334,8 +441,23 @@ def validate_definitions(definitions, deref):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
+    visited_definitions_ids = set()
     for def_name, definition in iteritems(definitions):
-        validate_definition(definition, deref, def_name=def_name)
+        validate_definition(
+            definition=definition,
+            deref=deref,
+            def_name='#/definitions/{}'.format(def_name),
+            visited_definitions_ids=visited_definitions_ids,
+        )
+
+
+def validate_parameters(parameters, deref):
+    for param_name, param_spec in iteritems(parameters):
+        validate_parameter(
+            param=param_spec,
+            deref=deref,
+            def_name='#/parameters/{}'.format(param_name),
+        )
 
 
 def get_path_param_names(params, deref):

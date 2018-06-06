@@ -254,8 +254,9 @@ def default_checks_spec_dict(minimal_swagger_dict):
         {'type': 'number', 'default': 2},
         {'type': 'number', 'default': 3.4},
         {'type': 'object', 'default': {'a_random_property': 'valid'}},
-        {'type': 'array', 'default': [5, 6, 7]},
+        {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
         {'type': 'string', 'default': ''},
+        {'type': 'string', 'default': None, 'x-nullable': True},
         {'default': -1},  # if type is not defined any value is a valid value
         {'type': ['number', 'boolean'], 'default': 8},
         {'type': ['number', 'boolean'], 'default': False},
@@ -374,4 +375,58 @@ def test_type_array_without_items_succeed_fails(minimal_swagger_dict, swagger_di
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_spec(minimal_swagger_dict)
 
-    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
+
+
+INVALID_SCHEMA_OBJECT = {
+    'type': 'object',
+    'properties': {'prop': {'type': 'string', 'default': 1}},
+}
+
+
+@pytest.mark.parametrize(
+    'swagger_dict_override',
+    (
+        {
+            'definitions': {'definition_1': INVALID_SCHEMA_OBJECT},
+        },
+        {
+            'definitions': {'definition_2': {
+                'type': 'object',
+                'properties': {'prop': INVALID_SCHEMA_OBJECT},
+            }},
+        },
+        {
+            'parameters': {
+                'param_body': {'in': 'body', 'name': 'body', 'schema': INVALID_SCHEMA_OBJECT},
+            },
+        },
+        {
+            'paths': {
+                '/endpoint': {
+                    'get': {
+                        'parameters': [{'in': 'body', 'name': 'body', 'schema': INVALID_SCHEMA_OBJECT}],
+                        'responses': {
+                            '200': {'description': 'desc'},
+                        },
+                    },
+                },
+            },
+        },
+        {
+            'paths': {
+                '/endpoint': {
+                    'get': {
+                        'responses': {
+                            '200': {'description': 'desc', 'schema': INVALID_SCHEMA_OBJECT},
+                        },
+                    },
+                },
+            },
+        },
+    )
+)
+def test_highlight_inconsistent_schema_object_validation(minimal_swagger_dict, swagger_dict_override):
+    minimal_swagger_dict.update(swagger_dict_override)
+    with pytest.raises(SwaggerValidationError):
+        validate_spec(minimal_swagger_dict)

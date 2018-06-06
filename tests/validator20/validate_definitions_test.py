@@ -19,9 +19,9 @@ from swagger_spec_validator.validator20 import validate_definitions
         {'type': 'number', 'default': 2},
         {'type': 'number', 'default': 3.4},
         {'type': 'object', 'default': {'a_random_property': 'valid'}},
-        {'type': 'array', 'default': [5, 6, 7]},
-        {'type': 'string', 'default': ''},
+        {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
         {'default': -1},  # if type is not defined any value is a valid value
+        {'type': 'string', 'default': ''},
         {'type': ['number', 'boolean'], 'default': 8},
         {'type': ['number', 'boolean'], 'default': False},
     ],
@@ -121,4 +121,22 @@ def test_type_array_without_items_succeed_fails():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_definitions(definitions, lambda x: x)
 
-    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition definition_1).'
+    assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
+
+
+def test_inline_model_is_not_valid_validation_fails():
+    definitions = {
+        'definition_1': {
+            'properties': {
+                'property': {
+                    'type': 'array',
+                },
+            },
+        },
+    }
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_definitions(definitions, lambda x: x)
+
+    assert str(excinfo.value) == 'Definition of type array must define `items` property ' \
+                                 '(definition #/definitions/definition_1/properties/property).'
