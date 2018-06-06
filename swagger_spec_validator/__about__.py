@@ -12,7 +12,7 @@ __title__ = "swagger-spec-validator"
 __summary__ = "Validation of Swagger specifications"
 __uri__ = "http://github.com/Yelp/swagger_spec_validator"
 
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 
 __author__ = "John Billings"
 __email__ = "billings@yelp.com"

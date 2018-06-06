@@ -1,5 +1,11 @@
 Changelog
 =========
+2.3.0 (2018-06-06)
+------------------
+- Ensure that inline models are validated - #97
+- Ensure that parameters are validated - #97
+- Validation of defaults set to None is skipped if x-nullable is set - #97
+
 2.2.0 (2018-06-05)
 ------------------
 - Add support for reading YAML files - #74
