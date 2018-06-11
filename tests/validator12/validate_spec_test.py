@@ -11,6 +11,7 @@ import pytest
 
 from .validate_spec_url_test import make_mock_responses
 from .validate_spec_url_test import read_contents
+from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_data_type
 from swagger_spec_validator.validator12 import validate_model
@@ -40,8 +41,10 @@ def test_http_success():
 def test_file_uri_success():
     mock_string = 'swagger_spec_validator.validator12.validate_api_declaration'
     with mock.patch(mock_string) as mock_api:
-        validate_spec(get_resource_listing(),
-                      'file://{}'.format(RESOURCE_LISTING_FILE))
+        validate_spec(
+            get_resource_listing(),
+            get_uri_from_file_path(RESOURCE_LISTING_FILE),
+        )
 
         expected = read_contents(API_DECLARATION_FILE)
         mock_api.assert_called_once_with(expected)

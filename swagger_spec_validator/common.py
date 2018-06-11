@@ -5,10 +5,12 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import contextlib
+import os
 import sys
 
 import six
 from six.moves.urllib.parse import urljoin
+from six.moves.urllib.request import pathname2url
 from six.moves.urllib.request import urlopen
 from yaml import safe_load
 
@@ -28,6 +30,10 @@ def wrap_exception(method):
     return wrapper
 
 
+def get_uri_from_file_path(file_path):
+    return urljoin('file://', pathname2url(os.path.abspath(file_path)))
+
+
 def read_file(file_path):
     """
     Utility method for reading a JSON/YAML file and converting it to a Python dictionary
@@ -36,7 +42,7 @@ def read_file(file_path):
     :return: Python dictionary representation of the JSON file
     :rtype: dict
     """
-    return read_url(urljoin('file://', file_path))
+    return read_url(get_uri_from_file_path(file_path))
 
 
 def read_url(url, timeout=TIMEOUT_SEC):

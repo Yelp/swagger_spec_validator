@@ -22,6 +22,7 @@ from jsonschema import RefResolver
 from pkg_resources import resource_filename
 from six.moves.urllib.parse import urlparse
 
+from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
@@ -259,7 +260,7 @@ def validate_json(json_document, schema_path):
     schema = read_file(schema_path)
 
     resolver = RefResolver(
-        base_uri='file://{}'.format(schema_path),
+        base_uri=get_uri_from_file_path(schema_path),
         referrer=schema,
         handlers=default_handlers,
     )
