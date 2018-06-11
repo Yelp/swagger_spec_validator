@@ -8,13 +8,13 @@ import json
 import os
 
 import pytest
-from six.moves.urllib import parse as urlparse
+
+from tests.conftest import get_uri_from_file_path
 
 
 @pytest.fixture(scope='session')
 def petstore_contents():
-    my_dir = os.path.abspath(os.path.dirname(__file__))
-    with open(os.path.join(my_dir, '../data/v2.0/petstore.json')) as f:
+    with open('./tests/data/v2.0/petstore.json') as f:
         return f.read()
 
 
@@ -23,8 +23,7 @@ def petstore_dict(petstore_contents):
     return json.loads(petstore_contents)
 
 
-def get_spec_json_and_url(rel_url):
-    my_dir = os.path.abspath(os.path.dirname(__file__))
-    abs_path = os.path.realpath(os.path.join(my_dir, rel_url))
+def get_spec_json_and_url(rel_path):
+    abs_path = os.path.abspath(rel_path)
     with open(abs_path) as f:
-        return json.loads(f.read()), urlparse.urljoin('file:', abs_path)
+        return json.loads(f.read()), get_uri_from_file_path(abs_path)
