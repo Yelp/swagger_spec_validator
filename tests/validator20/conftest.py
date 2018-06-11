@@ -9,7 +9,7 @@ import os
 
 import pytest
 
-from tests.conftest import get_uri_from_file_path
+from swagger_spec_validator.common import get_uri_from_file_path
 
 
 @pytest.fixture(scope='session')

@@ -11,12 +11,12 @@ import pytest
 
 from .validate_spec_url_test import make_mock_responses
 from .validate_spec_url_test import read_contents
+from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_data_type
 from swagger_spec_validator.validator12 import validate_model
 from swagger_spec_validator.validator12 import validate_parameter
 from swagger_spec_validator.validator12 import validate_spec
-from tests.conftest import get_uri_from_file_path
 
 
 RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')

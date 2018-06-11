@@ -10,9 +10,9 @@ import os
 import mock
 import pytest
 
+from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_spec_url
-from tests.conftest import get_uri_from_file_path
 from tests.conftest import is_urlopen_error
 
 RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')

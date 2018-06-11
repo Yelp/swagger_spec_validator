@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 import os
 
 import pytest
-from six.moves.urllib.parse import urljoin
-from six.moves.urllib.request import pathname2url
 
 
 def is_urlopen_error(exception):
@@ -36,7 +34,3 @@ def change_dir():
         yield
     finally:
         os.chdir(current_directory)
-
-
-def get_uri_from_file_path(file_path):
-    return urljoin('file://', pathname2url(file_path))

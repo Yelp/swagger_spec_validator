@@ -16,6 +16,7 @@ from six import iteritems
 from six import iterkeys
 
 from swagger_spec_validator import ref_validators
+from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
@@ -121,7 +122,7 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
     schema = read_file(schema_path)
 
     schema_resolver = RefResolver(
-        base_uri='file://{}'.format(schema_path),
+        base_uri=get_uri_from_file_path(schema_path),
         referrer=schema,
         handlers=default_handlers,
     )
