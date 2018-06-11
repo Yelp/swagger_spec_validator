@@ -25,5 +25,4 @@ before_test:
 - cmd: tox --version
 
 test_script:
-- cmd: >-
-    tox
+- cmd: tox
