@@ -1,5 +1,9 @@
 Changelog
 =========
+2.3.1 (2018-06-11)
+------------------
+- Fix urlopen issue on Windows platform. Issue #99, PR #101
+
 2.3.0 (2018-06-06)
 ------------------
 - Ensure that inline models are validated - #97
