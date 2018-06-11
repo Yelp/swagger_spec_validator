@@ -12,9 +12,15 @@ from six.moves.urllib.request import pathname2url
 
 
 def is_urlopen_error(exception):
-    return '<urlopen error [Errno -2] Name or service not known>' in str(exception) or \
-           '<urlopen error [Errno 8] nodename nor servname provided, or not known' in str(exception) or \
-           '<urlopen error [Errno -5] No address associated with hostname>' in str(exception)
+    return any(
+        urlopen_error_str in str(exception)
+        for urlopen_error_str in {
+            '<urlopen error [Errno -2] Name or service not known>',
+            '<urlopen error [Errno 8] nodename nor servname provided, or not known',
+            '<urlopen error [Errno -5] No address associated with hostname>',
+            '<urlopen error [Errno 11001] getaddrinfo failed>',
+        }
+    )
 
 
 @pytest.fixture(autouse=True)
