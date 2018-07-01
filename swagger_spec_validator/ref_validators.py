@@ -10,7 +10,6 @@ import logging
 
 import jsonschema
 import six
-from jsonschema import _validators
 from jsonschema import validators
 from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
@@ -66,30 +65,31 @@ def create_dereffing_validator(instance_resolver):
     """
     visited_refs = {}
 
-    custom_validators = {
-        '$ref': _validators.ref,
-        'properties': _validators.properties_draft4,
-        'additionalProperties': _validators.additionalProperties,
-        'patternProperties': _validators.patternProperties,
-        'type': _validators.type_draft4,
-        'dependencies': _validators.dependencies,
-        'required': _validators.required_draft4,
-        'minProperties': _validators.minProperties_draft4,
-        'maxProperties': _validators.maxProperties_draft4,
-        'allOf': _validators.allOf_draft4,
-        'oneOf': _validators.oneOf_draft4,
-        'anyOf': _validators.anyOf_draft4,
-        'not': _validators.not_draft4,
+    validators_to_bound = {
+        '$ref',
+        'additionalProperties',
+        'allOf',
+        'anyOf',
+        'dependencies',
+        'maxProperties',
+        'minProperties',
+        'not',
+        'oneOf',
+        'patternProperties',
+        'properties',
+        'required',
+        'type',
     }
 
-    bound_validators = {}
-    for k, v in iteritems(custom_validators):
-        bound_validators[k] = functools.partial(
+    bound_validators = {
+        k: functools.partial(
             validator_wrapper,
             instance_resolver=instance_resolver,
             visited_refs=visited_refs,
             default_validator_callable=v,
-        )
+        ) if k in validators_to_bound else v
+        for k, v in iteritems(Draft4Validator.VALIDATORS)
+    }
 
     return validators.extend(Draft4Validator, bound_validators)
 
