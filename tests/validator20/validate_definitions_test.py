@@ -101,7 +101,7 @@ def test_multiple_types_fail():
     with pytest.raises(SwaggerValidationError) as excinfo:
         validate_definitions(definitions, lambda x: x)
 
-    assert excinfo.value.args[0] == "type must be a string; lists are not allowed (['number', 'boolean'])"
+    assert excinfo.value.args[0].startswith('type must be a string; lists are not allowed')
 
 
 def test_type_array_with_items_succeed_validation():
