@@ -392,6 +392,11 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
             return
         visited_definitions_ids.add(id(definition))
 
+    swagger_type = definition.get('type')
+    if isinstance(swagger_type, list):
+        # not valid Swagger; see https://github.com/OAI/OpenAPI-Specification/issues/458
+        raise SwaggerValidationError('type must be a string; lists are not allowed (%s)' % swagger_type)
+
     if 'allOf' in definition:
         for idx, inner_definition in enumerate(definition['allOf']):
             validate_definition(

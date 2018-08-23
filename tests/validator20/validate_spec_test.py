@@ -257,8 +257,6 @@ def default_checks_spec_dict(minimal_swagger_dict):
         {'type': 'string', 'default': ''},
         {'type': 'string', 'default': None, 'x-nullable': True},
         {'default': -1},  # if type is not defined any value is a valid value
-        {'type': ['number', 'boolean'], 'default': 8},
-        {'type': ['number', 'boolean'], 'default': False},
         {'type': 'array', 'items': {'$ref': '#/definitions/bool_string'}, 'default': [{'value': 'False'}]},
     ],
 )
