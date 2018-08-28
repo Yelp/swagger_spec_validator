@@ -22,8 +22,6 @@ from swagger_spec_validator.validator20 import validate_definitions
         {'type': 'array', 'items': {'type': 'integer'}, 'default': [5, 6, 7]},
         {'default': -1},  # if type is not defined any value is a valid value
         {'type': 'string', 'default': ''},
-        {'type': ['number', 'boolean'], 'default': 8},
-        {'type': ['number', 'boolean'], 'default': False},
     ],
 )
 def test_api_check_default_succeed(property_spec):
@@ -74,10 +72,6 @@ def test_api_check_default_succeed(property_spec):
             {'type': 'string', 'minLength': 100, 'default': 'short_string'},
             'minLength', 'short_string',
         ],
-        [
-            {'type': ['number', 'boolean'], 'default': 'not_a_number_or_boolean'},
-            'type', 'not_a_number_or_boolean',
-        ],
     ],
 )
 def test_api_check_default_fails(property_spec, validator, instance):
@@ -95,6 +89,19 @@ def test_api_check_default_fails(property_spec, validator, instance):
     validation_error = excinfo.value.args[1]
     assert validation_error.instance == instance
     assert validation_error.validator == validator
+
+
+def test_multiple_types_fail():
+    definitions = {
+        'definition_1': {
+            'type': ['number', 'boolean'],
+        },
+    }
+
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_definitions(definitions, lambda x: x)
+
+    assert excinfo.value.args[0].startswith('type must be a string; lists are not allowed')
 
 
 def test_type_array_with_items_succeed_validation():
