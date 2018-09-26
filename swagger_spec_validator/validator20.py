@@ -29,6 +29,31 @@ from swagger_spec_validator.ref_validators import validate_schema_value
 log = logging.getLogger(__name__)
 
 
+def validate_ref(ref_dict):
+    """Check if a ref_dict has siblings that will be overwritten by $ref. Raise
+    a SwaggerValidationError if extra items are found in ref_dict.
+
+    While this does not contradict the spec, it may cause confusion and mislead
+    developers. See https://stackoverflow.com/a/48114924.
+
+    :param ref_dict: A dict that may be {'$ref': '#/blah/blah', 'x-nullable': true}.
+    :type ref_dict: dict
+
+    :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
+    """
+
+    keys_to_ignore = {'x-scope', '$ref', 'description'}
+
+    if any(key for key in ref_dict.keys() if key not in keys_to_ignore):
+        raise SwaggerValidationError(
+            'Found $ref: {definition_path} with siblings that will be overwritten. '
+            'Remove siblings with keys: {siblings_keys} from {definition_path} reference.'.format(
+                definition_path=ref_dict['$ref'],
+                siblings_keys=','.join(set(ref_dict.keys()) - keys_to_ignore)
+            )
+        )
+
+
 def deref(ref_dict, resolver):
     """Dereference ref_dict (if it is indeed a ref) and return what the
     ref points to.
@@ -43,6 +68,8 @@ def deref(ref_dict, resolver):
     """
     if ref_dict is None or not is_ref(ref_dict):
         return ref_dict
+
+    validate_ref(ref_dict)
 
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):

@@ -9,6 +9,7 @@ from jsonschema.exceptions import RefResolutionError
 from jsonschema.validators import RefResolver
 from mock import Mock
 
+from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator20 import deref
 
 
@@ -33,6 +34,18 @@ def test_ref():
         }
     }
     assert deref(ref_dict, RefResolver('', definitions)) == 'bar'
+
+
+def test_invalid_ref():
+    ref_dict = {'$ref': '#/definitions/Foo', 'x-nullable': True}
+    definitions = {
+        'definitions': {
+            'Foo': 'bar'
+        }
+    }
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        deref(ref_dict, RefResolver('', definitions))
+    assert 'Remove siblings with keys' in str(excinfo.value)
 
 
 def test_ref_not_found():
