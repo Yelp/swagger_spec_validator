@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import functools
 import logging
 import string
+import warnings
 from collections import defaultdict
 
 from jsonschema.validators import Draft4Validator
@@ -20,6 +21,7 @@ from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import SwaggerValidationWarning
 from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
@@ -45,13 +47,13 @@ def validate_ref(ref_dict):
     keys_to_ignore = {'x-scope', '$ref', 'description'}
 
     if any(key for key in ref_dict.keys() if key not in keys_to_ignore):
-        raise SwaggerValidationError(
-            'Found $ref: {definition_path} with siblings that will be overwritten. '
-            'Remove siblings with keys: {siblings_keys} from {definition_path} reference.'.format(
-                definition_path=ref_dict['$ref'],
-                siblings_keys=','.join(set(ref_dict.keys()) - keys_to_ignore)
+        swagger_validation_warning = SwaggerValidationWarning(
+            'Found "$ref: {}" with siblings that will be overwritten. '
+            'See https://stackoverflow.com/a/48114924 for more information.'.format(
+                ref_dict['$ref']
             )
         )
+        warnings.warn(swagger_validation_warning)
 
 
 def deref(ref_dict, resolver):

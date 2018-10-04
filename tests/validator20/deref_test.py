@@ -5,11 +5,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import pytest
+import warnings
 from jsonschema.exceptions import RefResolutionError
 from jsonschema.validators import RefResolver
 from mock import Mock
 
 from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import SwaggerValidationWarning
 from swagger_spec_validator.validator20 import deref
 
 
@@ -43,9 +45,9 @@ def test_invalid_ref():
             'Foo': 'bar'
         }
     }
-    with pytest.raises(SwaggerValidationError) as excinfo:
+    with warnings.catch_warnings(record=True) as warnings_list:
         deref(ref_dict, RefResolver('', definitions))
-    assert 'Remove siblings with keys' in str(excinfo.value)
+        assert warnings_list[0].category == SwaggerValidationWarning
 
 
 def test_ref_not_found():

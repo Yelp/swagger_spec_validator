@@ -54,3 +54,7 @@ def read_url(url, timeout=TIMEOUT_SEC):
 class SwaggerValidationError(Exception):
     """Exception raised in case of a validation error."""
     pass
+
+class SwaggerValidationWarning(UserWarning):
+    """Warning raised during validation."""
+    pass
