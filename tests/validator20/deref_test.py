@@ -4,13 +4,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import pytest
 import warnings
+
+import pytest
 from jsonschema.exceptions import RefResolutionError
 from jsonschema.validators import RefResolver
 from mock import Mock
 
-from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import SwaggerValidationWarning
 from swagger_spec_validator.validator20 import deref
 
