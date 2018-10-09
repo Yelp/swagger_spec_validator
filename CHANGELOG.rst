@@ -1,5 +1,9 @@
 Changelog
 =========
+2.4.1 (2018-10-09)
+------------------
+- Add warning when using ``$ref`` together with other properties - PR #107
+
 2.4.0 (2018-08-28)
 ------------------
 - Disallow multiple types in schema definitions. See `OpenAPI#458 <https://github.com/OAI/OpenAPI-Specification/issues/458>`_ for context - PR #106
