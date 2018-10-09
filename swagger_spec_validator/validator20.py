@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import functools
 import logging
 import string
+import warnings
 from collections import defaultdict
 
 from jsonschema.validators import Draft4Validator
@@ -20,6 +21,7 @@ from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
+from swagger_spec_validator.common import SwaggerValidationWarning
 from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
@@ -27,6 +29,31 @@ from swagger_spec_validator.ref_validators import validate_schema_value
 
 
 log = logging.getLogger(__name__)
+
+
+def validate_ref(ref_dict):
+    """Check if a ref_dict has siblings that will be overwritten by $ref. Raise
+    a SwaggerValidationError if extra items are found in ref_dict.
+
+    While this does not contradict the spec, it may cause confusion and mislead
+    developers. See https://stackoverflow.com/a/48114924.
+
+    :param ref_dict: A dict that may be {'$ref': '#/blah/blah', 'x-nullable': true}.
+    :type ref_dict: dict
+
+    :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
+    """
+
+    keys_to_ignore = {'x-scope', '$ref', 'description'}
+
+    if any(key for key in ref_dict.keys() if key not in keys_to_ignore):
+        swagger_validation_warning = SwaggerValidationWarning(
+            'Found "$ref: {}" with siblings that will be overwritten. '
+            'See https://stackoverflow.com/a/48114924 for more information.'.format(
+                ref_dict['$ref']
+            )
+        )
+        warnings.warn(swagger_validation_warning)
 
 
 def deref(ref_dict, resolver):
@@ -43,6 +70,8 @@ def deref(ref_dict, resolver):
     """
     if ref_dict is None or not is_ref(ref_dict):
         return ref_dict
+
+    validate_ref(ref_dict)
 
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):
