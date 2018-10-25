@@ -326,8 +326,8 @@ def validate_apis(apis, deref):
             oper_params = deref(oper_body.get('parameters', []))
             validate_duplicate_param(oper_params, deref)
             all_path_params = list(set(
-                get_path_param_names(api_params, deref) +
-                get_path_param_names(oper_params, deref)))
+                get_path_param_names(api_params, deref) + get_path_param_names(oper_params, deref),
+            ))
             validate_unresolvable_path_params(api_name, all_path_params)
             for idx, param in enumerate(oper_params):
                 validate_parameter(
