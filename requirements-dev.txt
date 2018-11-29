@@ -1,6 +1,4 @@
+.
 httpretty
 mock
 pytest
-jsonschema
-pyyaml
-six
