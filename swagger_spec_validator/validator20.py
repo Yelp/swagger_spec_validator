@@ -15,6 +15,7 @@ from jsonschema.validators import RefResolver
 from pkg_resources import resource_filename
 from six import iteritems
 from six import iterkeys
+from six import string_types
 
 from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import get_uri_from_file_path
@@ -31,7 +32,7 @@ from swagger_spec_validator.ref_validators import validate_schema_value
 log = logging.getLogger(__name__)
 
 
-def validate_ref(ref_dict):
+def validate_ref(ref_dict, path):
     """Check if a ref_dict has siblings that will be overwritten by $ref. Raise
     a SwaggerValidationError if extra items are found in ref_dict.
 
@@ -43,17 +44,51 @@ def validate_ref(ref_dict):
 
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     """
-
     keys_to_ignore = {'x-scope', '$ref', 'description'}
 
-    if any(key for key in ref_dict.keys() if key not in keys_to_ignore):
-        swagger_validation_warning = SwaggerValidationWarning(
-            'Found "$ref: {}" with siblings that will be overwritten. '
-            'See https://stackoverflow.com/a/48114924 for more information.'.format(
-                ref_dict['$ref']
-            )
+    if any(key for key in iterkeys(ref_dict) if key not in keys_to_ignore):
+        warnings.warn(
+            SwaggerValidationWarning(
+                'Found "$ref: {}" with siblings that will be overwritten. '
+                'See https://stackoverflow.com/a/48114924 for more information. (path {})'.format(
+                    ref_dict['$ref'], '/'.join(path),
+                )
+            ),
         )
-        warnings.warn(swagger_validation_warning)
+
+    if ref_dict['$ref'] is None:
+        warnings.warn(
+            SwaggerValidationWarning(
+                'Identified $ref with None value. This usually represent an error on the specs even '
+                'if this does not make them invalid as the location of the reference could tolerate '
+                'a None value. (path {})'.format('/'.join(path)),
+            ),
+        )
+
+
+def validate_references(raw_spec, deref, path=None, visited_spec_ids=None):
+    if path is None:
+        path = ['#']
+
+    if visited_spec_ids is None:
+        visited_spec_ids = set()
+
+    if id(raw_spec) in visited_spec_ids:
+        return
+
+    # Register raw_spec into visited_spec_ids to prevent unbounded recursion
+    visited_spec_ids.add(id(raw_spec))
+
+    if is_ref(raw_spec):
+        validate_ref(ref_dict=raw_spec, path=path)
+        if isinstance(raw_spec['$ref'], string_types):
+            validate_references(deref(raw_spec), deref, path, visited_spec_ids)
+    elif isinstance(raw_spec, dict):
+        for k, v in iteritems(raw_spec):
+            validate_references(v, deref, path + [k], visited_spec_ids)
+    elif isinstance(raw_spec, list):
+        for k, v in enumerate(raw_spec):
+            validate_references(v, deref, path + [str(k)], visited_spec_ids)
 
 
 def deref(ref_dict, resolver):
@@ -70,8 +105,6 @@ def deref(ref_dict, resolver):
     """
     if ref_dict is None or not is_ref(ref_dict):
         return ref_dict
-
-    validate_ref(ref_dict)
 
     ref = ref_dict['$ref']
     with in_scope(resolver, ref_dict):
@@ -126,6 +159,7 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     validate_apis(apis, bound_deref)
     validate_definitions(definitions, bound_deref)
     validate_parameters(bound_deref(spec_dict.get('parameters', {})), bound_deref)
+    validate_references(spec_dict, bound_deref)
     return swagger_resolver
 
 
