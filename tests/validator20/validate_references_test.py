@@ -10,17 +10,17 @@ from swagger_spec_validator.common import SwaggerValidationWarning
 from swagger_spec_validator.validator20 import validate_references
 
 
-# @pytest.mark.parametrize(
-#     'raw_spec',
-#     [
-#         {'$ref': '#/'},
-#         {'description': 'Description sibling is acceptable', '$ref': '#/'},
-#         [{'$ref': '#/'}],
-#     ],
-# )
-# def test_validate_valid_references(recwarn, raw_spec):
-#     validate_references(raw_spec=raw_spec, deref=lambda x: x)
-#     assert len(recwarn) == 0
+@pytest.mark.parametrize(
+    'raw_spec',
+    [
+        {'$ref': '#/'},
+        {'description': 'Description sibling is acceptable', '$ref': '#/'},
+        [{'$ref': '#/'}],
+    ],
+)
+def test_validate_valid_references(recwarn, raw_spec):
+    validate_references(raw_spec=raw_spec, deref=lambda x: x)
+    assert len(recwarn) == 0
 
 
 @pytest.mark.parametrize(
