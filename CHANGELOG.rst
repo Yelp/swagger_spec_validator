@@ -1,5 +1,10 @@
 Changelog
 =========
+2.4.2 (2019-01-15)
+------------------
+- Add warning when ``$ref`` is defined to have ``None`` value - PR #111
+- Ensure that only valid references (``$ref`` attribute is present with string value) are dereferenced - PR #111
+
 2.4.1 (2018-10-09)
 ------------------
 - Add warning when using ``$ref`` together with other properties - PR #107
