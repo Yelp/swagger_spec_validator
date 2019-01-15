@@ -590,4 +590,4 @@ def validate_unresolvable_path_params(path_name, path_params):
 
 
 def is_ref(spec_dict):
-    return isinstance(spec_dict, dict) and '$ref' in spec_dict
+    return isinstance(spec_dict, dict) and isinstance(spec_dict.get('$ref'), string_types)
