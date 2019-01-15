@@ -77,8 +77,15 @@ def validate_references(raw_spec, deref, path=None, visited_spec_ids=None):
     # Register raw_spec into visited_spec_ids to prevent unbounded recursion
     visited_spec_ids.add(id(raw_spec))
 
-    if is_ref(raw_spec):
+    if isinstance(raw_spec, dict) and '$ref' in raw_spec:
+        # The additional check is needed as `is_ref` will consider raw_spec dictionaries with `$ref`
+        # attribute and string value.
+        # The goal of validate_ref is to ensure that objects that looks like a reference is actually
+        # valid by warning users about those cases.
+        # Due to _looks like_ we need to almost duplicate the check by removing the string enforcement
         validate_ref(ref_dict=raw_spec, path=path)
+
+    if is_ref(raw_spec):
         if isinstance(raw_spec['$ref'], string_types):
             validate_references(deref(raw_spec), deref, path, visited_spec_ids)
     elif isinstance(raw_spec, dict):
