@@ -1,0 +1,19 @@
+info:
+  title: Test
+  version: '1.0'
+definitions:
+  model1:
+    type: object
+    x-extends:
+      $ref: #/definitions/model2
+  model2:
+    type: object
+paths:
+  /endpoint:
+    get:
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/model1'
+swagger: '2.0'
