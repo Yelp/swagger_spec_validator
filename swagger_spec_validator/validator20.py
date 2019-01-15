@@ -86,8 +86,7 @@ def validate_references(raw_spec, deref, path=None, visited_spec_ids=None):
         validate_ref(ref_dict=raw_spec, path=path)
 
     if is_ref(raw_spec):
-        if isinstance(raw_spec['$ref'], string_types):
-            validate_references(deref(raw_spec), deref, path, visited_spec_ids)
+        validate_references(deref(raw_spec), deref, path, visited_spec_ids)
     elif isinstance(raw_spec, dict):
         for k, v in sorted(iteritems(raw_spec)):
             validate_references(v, deref, path + [k], visited_spec_ids)
