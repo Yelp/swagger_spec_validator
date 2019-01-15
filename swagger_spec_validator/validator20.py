@@ -33,10 +33,9 @@ log = logging.getLogger(__name__)
 
 
 def validate_ref(ref_dict, path):
-    """Check if a ref_dict has siblings that will be overwritten by $ref. Raise
-    a SwaggerValidationError if extra items are found in ref_dict.
+    """Check if a ref_dict has siblings that will be overwritten by $ref or $ref is None.
 
-    While this does not contradict the spec, it may cause confusion and mislead
+    While the siblings case does not contradict the spec, it may cause confusion and mislead
     developers. See https://stackoverflow.com/a/48114924.
 
     :param ref_dict: A dict that may be {'$ref': '#/blah/blah', 'x-nullable': true}.
@@ -59,9 +58,8 @@ def validate_ref(ref_dict, path):
     if ref_dict['$ref'] is None:
         warnings.warn(
             SwaggerValidationWarning(
-                'Identified $ref with None value. This usually represent an error on the specs even '
-                'if this does not make them invalid as the location of the reference could tolerate '
-                'a None value. (path {})'.format('/'.join(path)),
+                'Identified $ref with None value. This is usually an error, '
+                'although technically it might be allowed. (path: {})'.format('/'.join(path)),
             ),
         )
 

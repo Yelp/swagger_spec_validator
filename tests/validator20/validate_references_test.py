@@ -43,17 +43,15 @@ def test_validate_valid_references(recwarn, raw_spec):
         (
             {'$ref': None},
             (
-                'Identified $ref with None value. This usually represent an error on the specs even '
-                'if this does not make them invalid as the location of the reference could tolerate '
-                'a None value. (path #)',
+                'Identified $ref with None value. This is usually an error, although technically it might be allowed. '
+                '(path: #)',
             ),
         ),
         (
             {'key': {'$ref': None}},
             (
-                'Identified $ref with None value. This usually represent an error on the specs even '
-                'if this does not make them invalid as the location of the reference could tolerate '
-                'a None value. (path #/key)',
+                'Identified $ref with None value. This is usually an error, although technically it might be allowed. '
+                '(path: #/key)',
             ),
         ),
         (
@@ -61,9 +59,8 @@ def test_validate_valid_references(recwarn, raw_spec):
             (
                 'Found "$ref: None" with siblings that will be overwritten. '
                 'See https://stackoverflow.com/a/48114924 for more information. (path #/key/0)',
-                'Identified $ref with None value. This usually represent an error on the specs even '
-                'if this does not make them invalid as the location of the reference could tolerate '
-                'a None value. (path #/key/0)',
+                'Identified $ref with None value. This is usually an error, although technically it might be allowed. '
+                '(path: #/key/0)',
             ),
         ),
     ],

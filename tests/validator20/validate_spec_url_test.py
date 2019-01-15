@@ -44,9 +44,8 @@ def test_specs_with_empty_reference():
             ),
         )
 
-    assert 'Identified $ref with None value. This usually represent an error on the specs even if this does not make ' \
-           'them invalid as the location of the reference could tolerate a None value. ' \
-           '(path #/definitions/model1/x-extends)' == str(warninfo.list[0].message)
+    assert 'Identified $ref with None value. This is usually an error, although technically it might be allowed. ' \
+           '(path: #/definitions/model1/x-extends)' == str(warninfo.list[0].message)
 
 
 def test_raise_SwaggerValidationError_on_urlopen_error():
