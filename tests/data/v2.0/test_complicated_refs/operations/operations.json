@@ -14,6 +14,11 @@
             },
             "tags": [
                 "pingpong"
+            ],
+            "x-something": [
+                {
+                    "$ref": "../responses/responses.json#/pong"
+                }
             ]
         }
     }

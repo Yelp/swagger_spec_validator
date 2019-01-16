@@ -36,6 +36,11 @@ def test_success_crossref_url_json():
     validate_spec_url(urlpath)
 
 
+def test_complicated_refs_json():
+    urlpath = get_uri_from_file_path(os.path.abspath('./tests/data/v2.0/test_complicated_refs/swagger.json'))
+    validate_spec_url(urlpath)
+
+
 def test_specs_with_empty_reference():
     with pytest.warns(SwaggerValidationWarning) as warninfo:
         validate_spec_url(
