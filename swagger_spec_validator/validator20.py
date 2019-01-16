@@ -85,9 +85,15 @@ def validate_references(raw_spec, deref, path=None, visited_spec_ids=None):
         # Due to _looks like_ we need to almost duplicate the check by removing the string enforcement
         validate_ref(ref_dict=raw_spec, path=path)
 
-    if is_ref(raw_spec):
-        if isinstance(raw_spec['$ref'], string_types):
-            validate_references(deref(raw_spec), deref, path, visited_spec_ids)
+    if is_ref(raw_spec) and 'x-scope' in raw_spec:
+        # Ensure that we're following references only if they were already
+        # descended by jsonschema during initial schema validation (x-scope is present)
+        # This is mostly done to ensure that we're not causing RefResolutionError
+        # due to the fact that the reference is relative and we have no information
+        # about the base path.
+        # This could be handled differently but we thought that checking references that
+        # were actively part of the specs is a valid trade-off here
+        validate_references(deref(raw_spec), deref, path, visited_spec_ids)
     elif isinstance(raw_spec, dict):
         for k, v in sorted(iteritems(raw_spec)):
             validate_references(v, deref, path + [k], visited_spec_ids)
