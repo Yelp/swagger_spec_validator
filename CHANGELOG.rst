@@ -1,5 +1,9 @@
 Changelog
 =========
+2.4.3 (2019-01-16)
+------------------
+- Fix regression, introduced by PR #111, that was causing descending references with no scope. - PR #113
+
 2.4.2 (2019-01-15)
 ------------------
 - Add warning when ``$ref`` is defined to have ``None`` value - PR #111
