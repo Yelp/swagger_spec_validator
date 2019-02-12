@@ -1,7 +1,7 @@
 {
-    "id": "/custom_job_schema.json#",
-    "$schema": "/custom_job_schema.json#",
-    "description": "Core schema meta-schema",
+    "id": "custom_job_schema.json#",
+    "$schema": "custom_job_schema.json#",
+    "description": "Custom schema meta-schema that allows for additional simple types",
     "definitions": {
         "schemaArray": {
             "type": "array",
