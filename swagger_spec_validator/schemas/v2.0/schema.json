@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "custom_json_schema.json#",
     "additionalProperties": false,
     "definitions": {
         "apiKeySecurity": {
@@ -147,7 +147,7 @@
             "type": "object"
         },
         "default": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/default"
+            "$ref": "custom_json_schema.json#/properties/default"
         },
         "definitions": {
             "additionalProperties": {
@@ -157,20 +157,20 @@
             "type": "object"
         },
         "description": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+            "$ref": "custom_json_schema.json#/properties/description"
         },
         "enum": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/enum"
+            "$ref": "custom_json_schema.json#/properties/enum"
         },
         "examples": {
             "additionalProperties": true,
             "type": "object"
         },
         "exclusiveMaximum": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMaximum"
+            "$ref": "custom_json_schema.json#/properties/exclusiveMaximum"
         },
         "exclusiveMinimum": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMinimum"
+            "$ref": "custom_json_schema.json#/properties/exclusiveMinimum"
         },
         "externalDocs": {
             "additionalProperties": false,
@@ -204,10 +204,10 @@
             },
             "properties": {
                 "default": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/default"
+                    "$ref": "custom_json_schema.json#/properties/default"
                 },
                 "description": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+                    "$ref": "custom_json_schema.json#/properties/description"
                 },
                 "example": {},
                 "externalDocs": {
@@ -221,10 +221,10 @@
                     "type": "boolean"
                 },
                 "required": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/stringArray"
+                    "$ref": "custom_json_schema.json#/definitions/stringArray"
                 },
                 "title": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+                    "$ref": "custom_json_schema.json#/properties/title"
                 },
                 "type": {
                     "enum": [
@@ -575,13 +575,13 @@
             "type": "object"
         },
         "maxItems": {
-            "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
+            "$ref": "custom_json_schema.json#/definitions/positiveInteger"
         },
         "maxLength": {
-            "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
+            "$ref": "custom_json_schema.json#/definitions/positiveInteger"
         },
         "maximum": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/maximum"
+            "$ref": "custom_json_schema.json#/properties/maximum"
         },
         "mediaTypeList": {
             "items": {
@@ -595,16 +595,16 @@
             "type": "string"
         },
         "minItems": {
-            "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+            "$ref": "custom_json_schema.json#/definitions/positiveIntegerDefault0"
         },
         "minLength": {
-            "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+            "$ref": "custom_json_schema.json#/definitions/positiveIntegerDefault0"
         },
         "minimum": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/minimum"
+            "$ref": "custom_json_schema.json#/properties/minimum"
         },
         "multipleOf": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/multipleOf"
+            "$ref": "custom_json_schema.json#/properties/multipleOf"
         },
         "nonBodyParameter": {
             "oneOf": [
@@ -1029,7 +1029,7 @@
             "type": "object"
         },
         "pattern": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/pattern"
+            "$ref": "custom_json_schema.json#/properties/pattern"
         },
         "primitivesItems": {
             "additionalProperties": false,
@@ -1297,23 +1297,23 @@
                     "type": "array"
                 },
                 "default": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/default"
+                    "$ref": "custom_json_schema.json#/properties/default"
                 },
                 "description": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+                    "$ref": "custom_json_schema.json#/properties/description"
                 },
                 "discriminator": {
                     "type": "string"
                 },
                 "enum": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/enum"
+                    "$ref": "custom_json_schema.json#/properties/enum"
                 },
                 "example": {},
                 "exclusiveMaximum": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMaximum"
+                    "$ref": "custom_json_schema.json#/properties/exclusiveMaximum"
                 },
                 "exclusiveMinimum": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/exclusiveMinimum"
+                    "$ref": "custom_json_schema.json#/properties/exclusiveMinimum"
                 },
                 "externalDocs": {
                     "$ref": "#/definitions/externalDocs"
@@ -1337,34 +1337,34 @@
                     "default": {}
                 },
                 "maxItems": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
+                    "$ref": "custom_json_schema.json#/definitions/positiveInteger"
                 },
                 "maxLength": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
+                    "$ref": "custom_json_schema.json#/definitions/positiveInteger"
                 },
                 "maxProperties": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveInteger"
+                    "$ref": "custom_json_schema.json#/definitions/positiveInteger"
                 },
                 "maximum": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/maximum"
+                    "$ref": "custom_json_schema.json#/properties/maximum"
                 },
                 "minItems": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+                    "$ref": "custom_json_schema.json#/definitions/positiveIntegerDefault0"
                 },
                 "minLength": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+                    "$ref": "custom_json_schema.json#/definitions/positiveIntegerDefault0"
                 },
                 "minProperties": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/positiveIntegerDefault0"
+                    "$ref": "custom_json_schema.json#/definitions/positiveIntegerDefault0"
                 },
                 "minimum": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/minimum"
+                    "$ref": "custom_json_schema.json#/properties/minimum"
                 },
                 "multipleOf": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/multipleOf"
+                    "$ref": "custom_json_schema.json#/properties/multipleOf"
                 },
                 "pattern": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/pattern"
+                    "$ref": "custom_json_schema.json#/properties/pattern"
                 },
                 "properties": {
                     "additionalProperties": {
@@ -1378,16 +1378,16 @@
                     "type": "boolean"
                 },
                 "required": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/definitions/stringArray"
+                    "$ref": "custom_json_schema.json#/definitions/stringArray"
                 },
                 "title": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+                    "$ref": "custom_json_schema.json#/properties/title"
                 },
                 "type": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/type"
+                    "$ref": "custom_json_schema.json#/properties/type"
                 },
                 "uniqueItems": {
-                    "$ref": "http://json-schema.org/draft-04/schema#/properties/uniqueItems"
+                    "$ref": "custom_json_schema.json#/properties/uniqueItems"
                 },
                 "xml": {
                     "$ref": "#/definitions/xml"
@@ -1475,10 +1475,10 @@
             "type": "object"
         },
         "title": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/title"
+            "$ref": "custom_json_schema.json#/properties/title"
         },
         "uniqueItems": {
-            "$ref": "http://json-schema.org/draft-04/schema#/properties/uniqueItems"
+            "$ref": "custom_json_schema.json#/properties/uniqueItems"
         },
         "vendorExtension": {
             "additionalItems": true,
