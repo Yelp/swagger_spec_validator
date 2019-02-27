@@ -131,14 +131,11 @@ def test_complicated_refs():
 
     # Hokey verification but better than nothing:
     #   If all the files with $refs were ingested and validated and an
-    #   exception was not thrown, there should be 8 cached refs in the
-    #   resolver's store:
-    #
-    #   6 json files from tests/data/v2.0/tests_complicated_refs/*
-    #   1 yaml files from tests/data/v2.0/tests_complicated_refs/*
-    #   1 draft3 spec
-    #   1 draft4 spec
-    assert len(resolver.store) == 9
+    #   exception was not thrown, there should be 7 cached file references
+    #   in the resolver's store:
+    #       6 json files from tests/data/v2.0/tests_complicated_refs/*
+    #       1 yaml files from tests/data/v2.0/tests_complicated_refs/*
+    assert len([uri for uri in resolver.store.keys() if uri.startswith('file://')]) == 7
 
 
 def test_specs_with_discriminator():
