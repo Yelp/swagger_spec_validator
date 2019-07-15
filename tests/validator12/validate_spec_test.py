@@ -66,9 +66,8 @@ def test_validate_parameter_type_file_in_body():
         'name': 'what',
         'type': 'File',
     }
-    with pytest.raises(SwaggerValidationError) as exc:
+    with pytest.raises(SwaggerValidationError, match='Type "File" is only valid for form parameters'):
         validate_parameter(parameter, [])
-    assert 'Type "File" is only valid for form parameters' in str(exc)
 
 
 def test_validate_data_type_is_model():
@@ -84,6 +83,5 @@ def test_validate_model_matches_id():
     model_name = "mymodel"
     model_ids = ""
 
-    with pytest.raises(SwaggerValidationError) as exc:
+    with pytest.raises(SwaggerValidationError, match='model name: mymodel does not match model id: mysupermodel'):
         validate_model(model, model_name, model_ids)
-    assert 'model name: mymodel does not match model id: mysupermodel' in str(exc)
