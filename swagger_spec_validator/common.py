@@ -9,10 +9,14 @@ import os
 import sys
 
 import six
+import yaml
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url
 from six.moves.urllib.request import urlopen
-from yaml import safe_load
+try:
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
 
 
 TIMEOUT_SEC = 1
@@ -48,7 +52,7 @@ def read_file(file_path):
 def read_url(url, timeout=TIMEOUT_SEC):
     with contextlib.closing(urlopen(url, timeout=timeout)) as fh:
         # NOTE: JSON is a subset of YAML so it is safe to read JSON as it is YAML
-        return safe_load(fh.read().decode('utf-8'))
+        return yaml.load(fh.read().decode('utf-8'), Loader=SafeLoader)
 
 
 class SwaggerValidationError(Exception):
