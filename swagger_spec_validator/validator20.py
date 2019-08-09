@@ -572,7 +572,7 @@ def validate_duplicate_param(params, deref):
         param = deref(param)
         param_key = (param['name'], param['in'])
         if param_key in seen:
-            raise SwaggerValidationError("%s: %s" % (msg, param_key))
+            raise SwaggerValidationError("{}: {}".format(msg, param_key))
         seen.add(param_key)
 
 

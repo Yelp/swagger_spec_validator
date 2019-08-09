@@ -179,7 +179,7 @@ def validate_model(model, model_name, model_ids):
         except SwaggerValidationError as e:
             # Add more context to the exception and re-raise
             raise SwaggerValidationError(
-                'Model "%s", property "%s": %s' % (model_name, prop_name, str(e)))
+                'Model "{}", property "{}": {}'.format(model_name, prop_name, str(e)))
 
 
 def validate_parameter(parameter, model_ids):
@@ -195,7 +195,7 @@ def validate_operation(operation, model_ids):
         validate_data_type(operation, model_ids, allow_refs=False, allow_voids=True)
     except SwaggerValidationError as e:
         raise SwaggerValidationError(
-            'Operation "%s": %s' % (operation['nickname'], str(e)))
+            'Operation "{}": {}'.format(operation['nickname'], str(e)))
 
     for parameter in operation['parameters']:
         try:

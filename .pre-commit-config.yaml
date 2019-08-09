@@ -1,11 +1,7 @@
+repos:
 -   repo: git://github.com/pre-commit/pre-commit-hooks
-    sha: v0.8.0
+    rev: v2.3.0
     hooks:
-    -   id: autopep8-wrapper
-        args:
-        - -i
-        - --ignore=E309,E501
-        exclude: ^docs/.*$
     -   id: check-json
     -   id: check-yaml
     -   id: debug-statements
@@ -23,7 +19,7 @@
         - --autofix
         - --indent=4
 -   repo: git://github.com/asottile/reorder_python_imports
-    sha: v0.3.2
+    rev: v1.6.1
     hooks:
     -   id: reorder-python-imports
         exclude: ^(docs/.*|setup.py)$
@@ -37,6 +33,14 @@
         - --add-import
         - from __future__ import unicode_literals
 -   repo: https://github.com/asottile/pyupgrade
-    sha: v1.1.1
+    rev: v1.22.1
     hooks:
     -   id: pyupgrade
+-   repo: git://github.com/pre-commit/mirrors-autopep8
+    rev: v1.3.1
+    hooks:
+    -   id: autopep8
+        args:
+        - -i
+        - --ignore=E309,E501
+        exclude: ^docs/.*$
