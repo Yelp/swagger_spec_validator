@@ -469,7 +469,7 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
     swagger_type = definition.get('type')
     if isinstance(swagger_type, list):
         # not valid Swagger; see https://github.com/OAI/OpenAPI-Specification/issues/458
-        raise SwaggerValidationError('type must be a string; lists are not allowed (%s)' % swagger_type)
+        raise SwaggerValidationError('In definition of %s, type must be a string; lists are not allowed (%s)' % (def_name or '(no name)', swagger_type))
 
     if 'allOf' in definition:
         for idx, inner_definition in enumerate(definition['allOf']):
@@ -485,8 +485,8 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
         extra_props = list(set(required) - set(props))
         if extra_props:
             raise SwaggerValidationError(
-                "Required list has properties not defined: {}. Definition is {}.".format(
-                    extra_props, def_name or '(no name)'
+                "In definition of {}, required list has properties not defined: {}.".format(
+                    def_name or '(no name)', extra_props, 
                 )
             )
 
@@ -505,11 +505,11 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)
         discriminator = definition['discriminator']
         if discriminator not in required_props and discriminator not in not_required_props:
-            raise SwaggerValidationError('discriminator (%s) must be defined in properties' % discriminator)
+            raise SwaggerValidationError('In definition of %s, discriminator (%s) must be defined in properties' % (def_name or '(no name)', discriminator))
         if discriminator not in required_props:
-            raise SwaggerValidationError('discriminator (%s) must be a required property' % discriminator)
+            raise SwaggerValidationError('In definition of %s, discriminator (%s) must be a required property' % (def_name or '(no name)', discriminator))
         if required_props[discriminator] != 'string':
-            raise SwaggerValidationError('discriminator (%s) must be a string property' % discriminator)
+            raise SwaggerValidationError('In definition of %s, discriminator (%s) must be a string property' % (def_name or '(no name)', discriminator))
 
 
 def validate_definitions(definitions, deref):
