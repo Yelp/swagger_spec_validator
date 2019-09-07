@@ -485,8 +485,8 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
         extra_props = list(set(required) - set(props))
         if extra_props:
             raise SwaggerValidationError(
-                "Required list has properties not defined: {}".format(
-                    extra_props
+                "Required list has properties not defined: {}. Definition is {}.".format(
+                    extra_props, def_name or '(no name)'
                 )
             )
 
