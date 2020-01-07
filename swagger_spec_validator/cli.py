@@ -21,7 +21,7 @@ def _extract_error_message(exc):
     """
     try:
         return exc.args[1].args[0]
-    except IndexError:
+    except IndexError:  # pragma: no cover
         # not 100% sure it is *always* wrapped, but this should provide a
         # fallback.
         return str(exc)
