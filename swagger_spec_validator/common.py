@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import contextlib
+import functools
 import os
 import sys
 
@@ -23,6 +24,7 @@ TIMEOUT_SEC = 1
 
 
 def wrap_exception(method):
+    @functools.wraps(method)
     def wrapper(*args, **kwargs):
         try:
             return method(*args, **kwargs)
