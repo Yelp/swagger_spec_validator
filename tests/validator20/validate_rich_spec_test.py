@@ -52,9 +52,12 @@ def test_failure_on_path_parameter_used_but_not_defined(swagger_spec):
 
 def test_failure_on_unresolvable_ref_of_props_required_list(swagger_spec):
     swagger_spec['definitions']['Pet']['required'].append('bla')
-    with pytest.raises(SwaggerValidationError) as exc_info:
+    with pytest.raises(
+        SwaggerValidationError,
+        match=r".*In definition of .*, required list has properties not defined: .*",
+    ) as exc_info:
         validate_spec(swagger_spec)
-    assert ("Required list has properties not defined: {}".format(['bla']) in str(exc_info.value))
+    assert str(['bla']) in str(exc_info.value)
 
 
 def test_failure_on_unresolvable_model_reference_from_model(swagger_spec):
