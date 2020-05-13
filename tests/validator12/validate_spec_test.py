@@ -4,8 +4,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import os
-
 import mock
 import pytest
 
@@ -17,10 +15,11 @@ from swagger_spec_validator.validator12 import validate_data_type
 from swagger_spec_validator.validator12 import validate_model
 from swagger_spec_validator.validator12 import validate_parameter
 from swagger_spec_validator.validator12 import validate_spec
+from tests import TESTS_BASE_PATH
 
 
-RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')
-API_DECLARATION_FILE = os.path.abspath('tests/data/v1.2/foo/foo.json')
+RESOURCE_LISTING_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/swagger_api.json'
+API_DECLARATION_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/foo.json'
 
 
 def get_resource_listing():
