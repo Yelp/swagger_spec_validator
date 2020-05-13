@@ -5,7 +5,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-import os
 
 import mock
 import pytest
@@ -13,10 +12,12 @@ import pytest
 from swagger_spec_validator.common import get_uri_from_file_path
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.validator12 import validate_spec_url
+from tests import TESTS_BASE_PATH
 from tests.conftest import is_urlopen_error
 
-RESOURCE_LISTING_FILE = os.path.abspath('tests/data/v1.2/foo/swagger_api.json')
-API_DECLARATION_FILE = os.path.abspath('tests/data/v1.2/foo/foo.json')
+
+RESOURCE_LISTING_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/swagger_api.json'
+API_DECLARATION_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/foo.json'
 
 
 def read_contents(file_name):
