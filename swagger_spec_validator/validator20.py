@@ -19,7 +19,7 @@ from six import string_types
 
 from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import get_uri_from_file_path
-from swagger_spec_validator.common import read_file
+from swagger_spec_validator.common import read_file_and_cache
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import SwaggerValidationWarning
@@ -27,6 +27,11 @@ from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
 from swagger_spec_validator.ref_validators import validate_schema_value
+
+try:
+    from functools import lru_cache
+except ImportError:
+    from functools32 import lru_cache
 
 
 log = logging.getLogger(__name__)
@@ -174,6 +179,19 @@ def validate_spec(spec_dict, spec_url='', http_handlers=None):
     return swagger_resolver
 
 
+@lru_cache()
+def get_schema_and_resolver(schema_path):
+    schema_path = resource_filename('swagger_spec_validator', schema_path)
+    schema = read_file_and_cache(schema_path)
+
+    schema_resolver = RefResolver(
+        base_uri=get_uri_from_file_path(schema_path),
+        referrer=schema,
+        handlers=default_handlers,
+    )
+    return schema, schema_resolver
+
+
 @wrap_exception
 def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
     """Validate a json document against a json schema.
@@ -192,14 +210,7 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
         validation.
     :rtype: :class:`jsonschema.RefResolver`
     """
-    schema_path = resource_filename('swagger_spec_validator', schema_path)
-    schema = read_file(schema_path)
-
-    schema_resolver = RefResolver(
-        base_uri=get_uri_from_file_path(schema_path),
-        referrer=schema,
-        handlers=default_handlers,
-    )
+    schema, schema_resolver = get_schema_and_resolver(schema_path)
 
     spec_resolver = RefResolver(
         base_uri=spec_url,

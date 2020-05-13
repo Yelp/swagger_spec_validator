@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
+import time
 
 import pytest
 from jsonschema.validators import RefResolver
@@ -423,3 +424,11 @@ def test_highlight_inconsistent_schema_object_validation(minimal_swagger_dict, s
     minimal_swagger_dict.update(swagger_dict_override)
     with pytest.raises(SwaggerValidationError):
         validate_spec(minimal_swagger_dict)
+
+
+def test_validation_performance(minimal_swagger_dict):
+    start = time.time()
+    for _ in range(20):
+        validate_spec(minimal_swagger_dict)
+
+    assert time.time() - start < 1

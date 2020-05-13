@@ -30,6 +30,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
+        'functools32;python_version<"3"',
         'jsonschema',
         'pyyaml',
         'six',

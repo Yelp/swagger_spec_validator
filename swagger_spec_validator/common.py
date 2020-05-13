@@ -19,6 +19,11 @@ try:
 except ImportError:
     from yaml import SafeLoader
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from functools32 import lru_cache
+
 
 TIMEOUT_SEC = 1
 
@@ -49,6 +54,11 @@ def read_file(file_path):
     :rtype: dict
     """
     return read_url(get_uri_from_file_path(file_path))
+
+
+@lru_cache(maxsize=12)
+def read_file_and_cache(file_path):
+    return read_file(file_path)
 
 
 def read_url(url, timeout=TIMEOUT_SEC):
