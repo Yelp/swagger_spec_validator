@@ -12,14 +12,13 @@ from collections import defaultdict
 
 from jsonschema.validators import Draft4Validator
 from jsonschema.validators import RefResolver
-from pkg_resources import resource_filename
 from six import iteritems
 from six import iterkeys
 from six import string_types
 
 from swagger_spec_validator import ref_validators
 from swagger_spec_validator.common import get_uri_from_file_path
-from swagger_spec_validator.common import read_file
+from swagger_spec_validator.common import read_resource_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import SwaggerValidationWarning
@@ -192,8 +191,7 @@ def validate_json(spec_dict, schema_path, spec_url='', http_handlers=None):
         validation.
     :rtype: :class:`jsonschema.RefResolver`
     """
-    schema_path = resource_filename('swagger_spec_validator', schema_path)
-    schema = read_file(schema_path)
+    schema, schema_path = read_resource_file(schema_path)
 
     schema_resolver = RefResolver(
         base_uri=get_uri_from_file_path(schema_path),

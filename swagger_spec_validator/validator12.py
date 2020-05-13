@@ -19,11 +19,10 @@ import os
 import jsonschema
 import six
 from jsonschema import RefResolver
-from pkg_resources import resource_filename
 from six.moves.urllib.parse import urlparse
 
 from swagger_spec_validator.common import get_uri_from_file_path
-from swagger_spec_validator.common import read_file
+from swagger_spec_validator.common import read_resource_file
 from swagger_spec_validator.common import read_url
 from swagger_spec_validator.common import SwaggerValidationError
 from swagger_spec_validator.common import wrap_exception
@@ -256,8 +255,7 @@ def validate_json(json_document, schema_path):
     :param json_document: json document in the form of a list or dict.
     :param schema_path: package relative path of the json schema file.
     """
-    schema_path = resource_filename('swagger_spec_validator', schema_path)
-    schema = read_file(schema_path)
+    schema, schema_path = read_resource_file(schema_path)
 
     resolver = RefResolver(
         base_uri=get_uri_from_file_path(schema_path),

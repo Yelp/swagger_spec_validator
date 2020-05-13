@@ -34,6 +34,7 @@ setup(
         'pyyaml',
         'six',
     ],
+    extra_dependencies={'python_version<"3"': ["functools32"]},
     license=about['__license__'],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
