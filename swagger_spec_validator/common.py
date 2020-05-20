@@ -11,13 +11,19 @@ import sys
 
 import six
 import yaml
+from pkg_resources import resource_filename
 from six.moves.urllib.parse import urljoin
 from six.moves.urllib.request import pathname2url
 from six.moves.urllib.request import urlopen
 try:
     from yaml import CSafeLoader as SafeLoader
-except ImportError:
+except ImportError:  # pragma: no cover
     from yaml import SafeLoader
+
+try:
+    from functools import lru_cache
+except ImportError:  # pragma: no cover
+    from functools32 import lru_cache
 
 
 TIMEOUT_SEC = 1
@@ -49,6 +55,12 @@ def read_file(file_path):
     :rtype: dict
     """
     return read_url(get_uri_from_file_path(file_path))
+
+
+@lru_cache()
+def read_resource_file(resource_path):
+    schema_path = resource_filename('swagger_spec_validator', resource_path)
+    return read_file(schema_path), schema_path
 
 
 def read_url(url, timeout=TIMEOUT_SEC):
