@@ -1,5 +1,9 @@
 Changelog
 =========
+2.6.0 (2020-05-20)
+------------------
+- Improve validation performance in case of consecutive validations. - PR #132. Thanks brycedrennan for your contribution.
+
 2.5.0 (2020-02-25)
 ------------------
 - Use ``yaml.CSafeLoader`` if available - PR #122
