@@ -442,12 +442,19 @@ def validate_defaults_in_definition(definition_spec, deref):
         validate_property_default(property_spec, deref)
 
 
-def validate_arrays_in_definition(definition_spec, def_name=None):
-    if definition_spec.get('type') == 'array' and 'items' not in definition_spec:
-        raise SwaggerValidationError(
-            'Definition of type array must define `items` property{}.'.format(
-                '' if not def_name else ' (definition {})'.format(def_name),
-            ),
+def validate_arrays_in_definition(definition_spec, deref, def_name=None, visited_definitions_ids=None):
+    if definition_spec.get('type') == 'array':
+        if 'items' not in definition_spec:
+            raise SwaggerValidationError(
+                'Definition of type array must define `items` property{}.'.format(
+                    '' if not def_name else ' (definition {})'.format(def_name),
+                ),
+            )
+        validate_definition(
+            definition=definition_spec['items'],
+            deref=deref,
+            def_name='{}/items'.format(def_name),
+            visited_definitions_ids=visited_definitions_ids,
         )
 
 
@@ -489,7 +496,12 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
             )
 
         validate_defaults_in_definition(definition, deref)
-        validate_arrays_in_definition(definition, def_name=def_name)
+        validate_arrays_in_definition(
+            definition_spec=definition,
+            deref=deref,
+            def_name=def_name,
+            visited_definitions_ids=visited_definitions_ids
+        )
 
         for property_name, property_spec in iteritems(definition.get('properties', {})):
             validate_definition(
@@ -498,6 +510,14 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
                 def_name='{}/properties/{}'.format(def_name, property_name),
                 visited_definitions_ids=visited_definitions_ids,
             )
+
+    if 'additionalProperties' in definition:
+        validate_definition(
+            definition=definition.get('additionalProperties'),
+            deref=deref,
+            def_name='{}/{}'.format(def_name, 'additionalProperties'),
+            visited_definitions_ids=visited_definitions_ids,
+        )
 
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)

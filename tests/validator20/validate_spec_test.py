@@ -423,3 +423,27 @@ def test_highlight_inconsistent_schema_object_validation(minimal_swagger_dict, s
     minimal_swagger_dict.update(swagger_dict_override)
     with pytest.raises(SwaggerValidationError):
         validate_spec(minimal_swagger_dict)
+
+
+def test_additional_properties_validated(minimal_swagger_dict, default_checks_spec_dict):
+    invalid_spec = {'type': 'object', 'required': ['foo']}
+    minimal_swagger_dict['definitions']['injected_definition'] = invalid_spec
+
+    minimal_swagger_dict['definitions']['injected_definition'] = {
+        'type': 'object', 'additionalProperties': invalid_spec
+    }
+
+    with pytest.raises(SwaggerValidationError):
+        validate_spec(minimal_swagger_dict)
+
+
+def test_array_items_validated(minimal_swagger_dict, default_checks_spec_dict):
+    invalid_spec = {'type': 'object', 'required': ['foo']}
+    minimal_swagger_dict['definitions']['injected_definition'] = invalid_spec
+
+    minimal_swagger_dict['definitions']['injected_definition'] = {
+        'type': 'array', 'items': invalid_spec
+    }
+
+    with pytest.raises(SwaggerValidationError):
+        validate_spec(minimal_swagger_dict)
