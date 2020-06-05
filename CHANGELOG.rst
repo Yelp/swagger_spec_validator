@@ -1,5 +1,9 @@
 Changelog
 =========
+2.7.0 (2020-06-05)
+------------------
+- Ensure correct validation into additionalProperties and items specifications - PR #134. Thanks brycedrennan for your contribution.
+
 2.6.0 (2020-05-20)
 ------------------
 - Improve validation performance in case of consecutive validations. - PR #132. Thanks brycedrennan for your contribution.
