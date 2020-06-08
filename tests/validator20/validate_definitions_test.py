@@ -135,9 +135,8 @@ def test_type_array_without_items_succeed_fails():
 
 
 def test_type_object_additional_properties_dict_succeeds():
-    # See https://github.com/OAI/OpenAPI-Specification/issues/668
     definitions = {
-        'example': {
+        'Example': {
             'type': 'object',
             'additionalProperties': {
                 'type': 'string',
@@ -151,7 +150,7 @@ def test_type_object_additional_properties_dict_succeeds():
 def test_type_object_additional_properties_boolean_fails():
     # See https://github.com/OAI/OpenAPI-Specification/issues/668
     definitions = {
-        'example': {
+        'Example': {
             'type': 'object',
             'additionalProperties': False,
         },
@@ -160,8 +159,8 @@ def test_type_object_additional_properties_boolean_fails():
     with pytest.raises(SwaggerValidationError) as exc_info:
         validate_definitions(definitions, lambda x: x)
 
-    assert str(exc_info.value) == "Definition of #/definitions/example/additionalProperties " \
-                                  "must be a dict; got <class 'bool'>"
+    assert str(exc_info.value) == "Definition of #/definitions/Example/additionalProperties " \
+                                  "must be a dict; got bool"
 
 
 def test_inline_model_is_not_valid_validation_fails():
