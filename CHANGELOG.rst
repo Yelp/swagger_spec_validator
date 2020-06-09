@@ -1,5 +1,9 @@
 Changelog
 =========
+2.7.1 (2020-06-09)
+------------------
+- Fix: `additionalProperties` can be a boolean value  - PR #138
+
 2.7.0 (2020-06-05)
 ------------------
 - Ensure correct validation into additionalProperties and items specifications - PR #134. Thanks brycedrennan for your contribution.
