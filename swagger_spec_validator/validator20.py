@@ -516,12 +516,13 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
             )
 
     if 'additionalProperties' in definition:
-        validate_definition(
-            definition=definition.get('additionalProperties'),
-            deref=deref,
-            def_name='{}/{}'.format(def_name, 'additionalProperties'),
-            visited_definitions_ids=visited_definitions_ids,
-        )
+        if definition.get('additionalProperties') not in (True, False):
+            validate_definition(
+                definition=definition.get('additionalProperties'),
+                deref=deref,
+                def_name='{}/additionalProperties'.format(def_name),
+                visited_definitions_ids=visited_definitions_ids,
+            )
 
     if 'discriminator' in definition:
         required_props, not_required_props = get_collapsed_properties_type_mappings(definition, deref)
