@@ -1,5 +1,9 @@
 Changelog
 =========
+2.7.2 (2020-06-10)
+------------------
+- Fix recursive definition detection - PR #139
+
 2.7.1 (2020-06-09)
 ------------------
 - Fix: `additionalProperties` can be a boolean value  - PR #138
