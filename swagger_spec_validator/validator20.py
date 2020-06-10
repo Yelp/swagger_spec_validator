@@ -461,18 +461,18 @@ def validate_arrays_in_definition(definition_spec, deref, def_name=None, visited
 
 def validate_definition(definition, deref, def_name=None, visited_definitions=None):
     """
-    :param visited_definitions: set of ids of already visited definitions (after dereference)
+    :param visited_definitions: set of already visited definitions (after dereference)
                                     This is used to cut recursion in case of recursive definitions
     :type visited_definitions: set
     """
+    definition = deref(definition)
+
     if visited_definitions is not None:
         # Remove x-scope or else no two definitions will be the same
         stripped_definition = json.dumps({key: definition[key] for key in definition if key != 'x-scope'}, sort_keys=True)
         if stripped_definition in visited_definitions:
             return
         visited_definitions.add(stripped_definition)
-
-    definition = deref(definition)
 
     swagger_type = definition.get('type')
     if isinstance(swagger_type, list):
