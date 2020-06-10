@@ -134,33 +134,16 @@ def test_type_array_without_items_succeed_fails():
     assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
 
 
-def test_type_object_additional_properties_dict_succeeds():
+def test_non_dict_fails_with_informative_error_message():
     definitions = {
-        'Example': {
-            'type': 'object',
-            'additionalProperties': {
-                'type': 'string',
-            },
-        },
+        'Example': 'invalid',
     }
 
-    validate_definitions(definitions, lambda x: x)
-
-
-def test_type_object_additional_properties_boolean_fails():
-    # See https://github.com/OAI/OpenAPI-Specification/issues/668
-    definitions = {
-        'Example': {
-            'type': 'object',
-            'additionalProperties': False,
-        },
-    }
-
-    with pytest.raises(SwaggerValidationError) as exc_info:
+    with pytest.raises(
+        SwaggerValidationError,
+        match=r"Definition of #/definitions/Example must be a dict; got .*",
+    ):
         validate_definitions(definitions, lambda x: x)
-
-    assert str(exc_info.value) == "Definition of #/definitions/Example/additionalProperties " \
-                                  "must be a dict; got bool"
 
 
 def test_inline_model_is_not_valid_validation_fails():
