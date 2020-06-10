@@ -5,6 +5,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import functools
+import json
 import logging
 import string
 import warnings
@@ -281,7 +282,7 @@ def validate_responses(api, http_verb, responses_dict, deref=None):
                 api=api,
                 status_code=response_status,
             ),
-            visited_definitions_ids=set(),
+            visited_definitions=set(),
         )
 
 
@@ -307,7 +308,7 @@ def validate_body_parameter(param, deref, def_name):
         definition=param['schema'],
         deref=deref,
         def_name='{}/schema'.format(def_name),
-        visited_definitions_ids=set(),
+        visited_definitions=set(),
     )
 
 
@@ -442,7 +443,7 @@ def validate_defaults_in_definition(definition_spec, deref):
         validate_property_default(property_spec, deref)
 
 
-def validate_arrays_in_definition(definition_spec, deref, def_name=None, visited_definitions_ids=None):
+def validate_arrays_in_definition(definition_spec, deref, def_name=None, visited_definitions=None):
     if definition_spec.get('type') == 'array':
         if 'items' not in definition_spec:
             raise SwaggerValidationError(
@@ -454,22 +455,24 @@ def validate_arrays_in_definition(definition_spec, deref, def_name=None, visited
             definition=definition_spec['items'],
             deref=deref,
             def_name='{}/items'.format(def_name),
-            visited_definitions_ids=visited_definitions_ids,
+            visited_definitions=visited_definitions,
         )
 
 
-def validate_definition(definition, deref, def_name=None, visited_definitions_ids=None):
+def validate_definition(definition, deref, def_name=None, visited_definitions=None):
     """
-    :param visited_definitions_ids: set of ids of already visited definitions (after dereference)
+    :param visited_definitions: set of already visited definitions
                                     This is used to cut recursion in case of recursive definitions
-    :type visited_definitions_ids: set
+    :type visited_definitions: set
     """
-    definition = deref(definition)
-
-    if visited_definitions_ids is not None:
-        if id(definition) in visited_definitions_ids:
+    if visited_definitions is not None:
+        # Remove x-scope or else no two definitions will be the same
+        stripped_definition = json.dumps({key: definition[key] for key in definition if key != 'x-scope'}, sort_keys=True)
+        if stripped_definition in visited_definitions:
             return
-        visited_definitions_ids.add(id(definition))
+        visited_definitions.add(stripped_definition)
+
+    definition = deref(definition)
 
     swagger_type = definition.get('type')
     if isinstance(swagger_type, list):
@@ -482,7 +485,7 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
                 definition=inner_definition,
                 deref=deref,
                 def_name='{}/{}'.format(def_name, str(idx)),
-                visited_definitions_ids=visited_definitions_ids,
+                visited_definitions=visited_definitions,
             )
     else:
         required = definition.get('required', [])
@@ -500,7 +503,7 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
             definition_spec=definition,
             deref=deref,
             def_name=def_name,
-            visited_definitions_ids=visited_definitions_ids
+            visited_definitions=visited_definitions
         )
 
         for property_name, property_spec in iteritems(definition.get('properties', {})):
@@ -508,7 +511,7 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
                 definition=property_spec,
                 deref=deref,
                 def_name='{}/properties/{}'.format(def_name, property_name),
-                visited_definitions_ids=visited_definitions_ids,
+                visited_definitions=visited_definitions,
             )
 
     if 'additionalProperties' in definition:
@@ -517,7 +520,7 @@ def validate_definition(definition, deref, def_name=None, visited_definitions_id
                 definition=definition.get('additionalProperties'),
                 deref=deref,
                 def_name='{}/additionalProperties'.format(def_name),
-                visited_definitions_ids=visited_definitions_ids,
+                visited_definitions=visited_definitions,
             )
 
     if 'discriminator' in definition:
@@ -540,13 +543,13 @@ def validate_definitions(definitions, deref):
     :raises: :py:class:`swagger_spec_validator.SwaggerValidationError`
     :raises: :py:class:`jsonschema.exceptions.ValidationError`
     """
-    visited_definitions_ids = set()
+    visited_definitions = set()
     for def_name, definition in iteritems(definitions):
         validate_definition(
             definition=definition,
             deref=deref,
             def_name='#/definitions/{}'.format(def_name),
-            visited_definitions_ids=visited_definitions_ids,
+            visited_definitions=visited_definitions,
         )
 
 
