@@ -168,12 +168,14 @@ def deref_and_validate(validator, schema_element, instance, schema,
     """
     if isinstance(instance, dict) and '$ref' in instance and isinstance(instance['$ref'], six.string_types):
         ref = instance['$ref']
+        # Annotate $ref dict with scope - used by custom validations
+        # We still need to attach the scope even if this is a cycle, as otherwise there are cases
+        # with specs split into multiple files where it can't be dereferenced properly
+        attach_scope(instance, instance_resolver)
+
         if ref in visited_refs:
             log.debug("Found cycle in %s", ref)
             return
-
-        # Annotate $ref dict with scope - used by custom validations
-        attach_scope(instance, instance_resolver)
 
         with visiting(visited_refs, ref):
             with instance_resolver.resolving(ref) as target:
