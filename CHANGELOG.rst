@@ -1,5 +1,9 @@
 Changelog
 =========
+2.7.3 (2020-06-25)
+------------------
+- Fix recursive ref resolution for some specs split across multiple files - PR #140
+
 2.7.2 (2020-06-10)
 ------------------
 - Fix recursive definition detection - PR #139
