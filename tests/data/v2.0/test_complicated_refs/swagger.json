@@ -12,6 +12,9 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/answer": {
+            "$ref": "paths/paths.json#/answer"
+        },
         "/ping": {
             "$ref": "paths/paths.json#/ping"
         }

@@ -1,4 +1,35 @@
 {
+    "answer": {
+        "get": {
+            "operationId": "answer",
+            "responses": {
+                "200": {
+                    "description": "answer",
+                    "schema": {
+                        "$ref": "#/definitions/answer"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "answer": {
+            "properties": {
+                "followup_question": {
+                    "$ref": "#/definitions/question"
+                }
+            },
+            "type": "object"
+        },
+        "question": {
+            "properties": {
+                "answer": {
+                    "$ref": "#/definitions/answer"
+                }
+            },
+            "type": "object"
+        }
+    },
     "ping": {
         "get": {
             "$ref": "../operations/operations.json#/ping/get"
