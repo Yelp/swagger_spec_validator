@@ -14,7 +14,7 @@ __uri__ = "http://github.com/Yelp/swagger_spec_validator"
 
 __version__ = "2.7.3"
 
-__author__ = "John Billings"
-__email__ = "billings@yelp.com"
+__author__ = "Yelp"
+__email__ = "core-services@yelp.com"
 
 __license__ = "Apache License, Version 2.0"
