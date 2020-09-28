@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -10,6 +11,16 @@ base_dir = os.path.dirname(__file__)
 about = {}
 with open(os.path.join(base_dir, "swagger_spec_validator", "__about__.py")) as f:
     exec(f.read(), about)
+
+
+install_requires = [
+    'jsonschema',
+    'pyyaml',
+    'six',
+]
+
+if sys.version_info <= (3, 0):
+    install_requires.append('pyrsistent<0.17.0')
 
 setup(
     name=about['__title__'],
@@ -29,11 +40,7 @@ setup(
         ],
     },
     include_package_data=True,
-    install_requires=[
-        'jsonschema',
-        'pyyaml',
-        'six',
-    ],
+    install_requires=install_requires,
     extra_dependencies={'python_version<"3"': ["functools32"]},
     license=about['__license__'],
     classifiers=[
