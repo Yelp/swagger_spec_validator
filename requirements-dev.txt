@@ -1,5 +1,4 @@
 httpretty
 mock
 pytest>=3.1.0
-# For python3.5 compatibility
-zipp<3.1.0
+zipp

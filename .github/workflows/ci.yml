@@ -9,7 +9,6 @@ jobs:
       matrix:
         python:
           - py27
-          - py35
           - py36
         json:
           - default
