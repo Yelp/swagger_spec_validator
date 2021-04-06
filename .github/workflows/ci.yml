@@ -1,0 +1,38 @@
+---
+name: build
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          - py27
+          - py36
+        json:
+          - default
+          - simplejson
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - run: pip install tox
+      - run: tox -e ${{ matrix.python }}-${{ matrix.json }}
+
+  misc:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        tox:
+          - pre-commit
+          - cover
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - run: pip install tox
+      - run: tox -e ${{ matrix.tox }}

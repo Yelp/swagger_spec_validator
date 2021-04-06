@@ -1,5 +1,5 @@
 # swagger_spec_validator
-[![Build Status](https://travis-ci.org/Yelp/swagger_spec_validator.svg?branch=master)](https://travis-ci.org/Yelp/swagger_spec_validator)
+[![Build Status](https://github.com/Yelp/swagger_spec_validator/workflows/build/badge.svg?branch=master)](https://github.com/Yelp/swagger_spec_validator/actions?query=workflow%3Abuild)
 [![Coverage Status](https://coveralls.io/repos/Yelp/swagger_spec_validator/badge.svg)](https://coveralls.io/r/Yelp/swagger_spec_validator)
 [![Latest Version](https://img.shields.io/pypi/v/swagger_spec_validator.svg)](https://pypi.python.org/pypi/swagger_spec_validator/)
 
