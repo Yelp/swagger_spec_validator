@@ -256,8 +256,14 @@ def test_duplicate_operationIds_fails(apis):
         },
     ]
 )
-def test_duplicate_operationIds_succeeds_if_tags_differ(apis):
-    validate_apis(apis, lambda x: x)
+def test_duplicate_operationIds_fails_if_tags_differ(apis):
+    with pytest.raises(SwaggerValidationError) as excinfo:
+        validate_apis(apis, lambda x: x)
+
+    swagger_validation_error = excinfo.value
+    error_message = swagger_validation_error.args[0]
+
+    assert error_message == "Duplicate operationId: duplicateOperationId"
 
 
 def test_invalid_inline_models_in_responses_fails():
