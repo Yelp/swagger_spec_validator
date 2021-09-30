@@ -11,7 +11,6 @@ import logging
 import jsonschema
 import six
 from jsonschema import validators
-from jsonschema.compat import iteritems
 from jsonschema.validators import Draft4Validator
 from jsonschema.validators import RefResolver
 
@@ -88,7 +87,7 @@ def create_dereffing_validator(instance_resolver):
             visited_refs=visited_refs,
             default_validator_callable=v,
         ) if k in validators_to_bound else v
-        for k, v in iteritems(Draft4Validator.VALIDATORS)
+        for k, v in Draft4Validator.VALIDATORS.items()
     }
 
     return validators.extend(Draft4Validator, bound_validators)
