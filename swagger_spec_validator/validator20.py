@@ -9,7 +9,6 @@ import json
 import logging
 import string
 import warnings
-from collections import defaultdict
 
 from jsonschema.validators import Draft4Validator
 from jsonschema.validators import RefResolver
@@ -353,7 +352,6 @@ def validate_apis(apis, deref):
             if oper_name == 'parameters' or oper_name.startswith('x-'):
                 continue
             oper_body = deref(api_body[oper_name])
-            oper_tags = deref(oper_body.get('tags', [None]))
 
             # Check that, if this operation has an operationId defined,
             # no other operation also has that operationId.
