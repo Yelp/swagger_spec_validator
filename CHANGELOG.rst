@@ -1,5 +1,9 @@
 Changelog
 =========
+2.7.4 (2021-10-08)
+------------------
+- Make checks for unique operation ids global instead of per tag - PR #145
+
 2.7.3 (2020-06-25)
 ------------------
 - Fix recursive ref resolution for some specs split across multiple files - PR #140
