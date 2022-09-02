@@ -14,9 +14,7 @@ with open(os.path.join(base_dir, "swagger_spec_validator", "__about__.py")) as f
 
 
 install_requires = [
-    # https://github.com/Yelp/swagger_spec_validator/issues/155
-    # TODO: unpin this
-    'jsonschema<4',
+    'jsonschema',
     'pyyaml',
     'six',
 ]
