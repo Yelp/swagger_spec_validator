@@ -134,6 +134,18 @@ def test_type_array_without_items_succeed_fails():
     assert str(excinfo.value) == 'Definition of type array must define `items` property (definition #/definitions/definition_1).'
 
 
+def test_non_dict_fails_with_informative_error_message():
+    definitions = {
+        'Example': 'invalid',
+    }
+
+    with pytest.raises(
+        SwaggerValidationError,
+        match=r"Definition of #/definitions/Example must be a dict; got .*",
+    ):
+        validate_definitions(definitions, lambda x: x)
+
+
 def test_inline_model_is_not_valid_validation_fails():
     definitions = {
         'definition_1': {

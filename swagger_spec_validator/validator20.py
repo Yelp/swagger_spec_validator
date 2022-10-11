@@ -470,6 +470,10 @@ def validate_definition(definition, deref, def_name=None, visited_definitions=No
 
     definition = deref(definition)
 
+    if not isinstance(definition, dict):
+        raise SwaggerValidationError('Definition of {} must be a dict; got {}'.format(
+            def_name or '(no name)', definition.__class__.__name__))
+
     swagger_type = definition.get('type')
     if isinstance(swagger_type, list):
         # not valid Swagger; see https://github.com/OAI/OpenAPI-Specification/issues/458
