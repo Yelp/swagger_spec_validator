@@ -8,18 +8,15 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - py27
-          - py36
-        json:
-          - default
-          - simplejson
+          - py37
+          - py38
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.7
       - run: pip install tox
-      - run: tox -e ${{ matrix.python }}-${{ matrix.json }}
+      - run: tox -e ${{ matrix.python }}
 
   misc:
     runs-on: ubuntu-18.04

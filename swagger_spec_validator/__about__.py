@@ -3,9 +3,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
 __all__ = [
-    "__title__", "__summary__", "__uri__", "__version__", "__author__",
-    "__email__", "__license__"
+    "__title__",
+    "__summary__",
+    "__uri__",
+    "__version__",
+    "__author__",
+    "__email__",
+    "__license__",
 ]
 
 __title__ = "swagger-spec-validator"

@@ -27,20 +27,23 @@ def run_json_tests_with_func(json_test_paths, func):
         # e.g. "api_declarations/array_nested_fail.json"
         test_name = os.sep.join(json_test_path.split(os.sep)[-2:])
 
-        print('Testing %s...' % test_name)
+        print("Testing %s..." % test_name)
 
-        if test_name.endswith('_pass.json'):
+        if test_name.endswith("_pass.json"):
             func(test_data)
-        elif test_name.endswith('_fail.json'):
-            with pytest.raises((SwaggerValidationError, jsonschema.exceptions.ValidationError)):
+        elif test_name.endswith("_fail.json"):
+            with pytest.raises(
+                (SwaggerValidationError, jsonschema.exceptions.ValidationError)
+            ):
                 func(test_data)
 
 
 def test_main():
     run_json_tests_with_func(
-        glob.glob('./tests/data/v1.2/api_declarations/*.json'),
-        validate_api_declaration)
+        glob.glob("./tests/data/v1.2/api_declarations/*.json"), validate_api_declaration
+    )
 
     run_json_tests_with_func(
-        glob.glob('./tests/data/v1.2/resource_listings/*.json'),
-        validate_resource_listing)
+        glob.glob("./tests/data/v1.2/resource_listings/*.json"),
+        validate_resource_listing,
+    )

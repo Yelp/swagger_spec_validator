@@ -11,6 +11,7 @@ clean:
 	rm -rf swagger_validator.egg-info
 	rm -rf docs/build
 	rm -f MANIFEST
+	rm -rf .tox
 
 .PHONY: install-hooks
 install-hooks:
