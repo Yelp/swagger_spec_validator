@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Validate Swagger Specs against the Swagger 1.2 Specification.  The
 validator aims to check for full compliance with the Specification.
@@ -8,11 +7,7 @@ validation, augmented with custom validation code where necessary.
 
 https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md
 """
-from __future__ import absolute_import
 from __future__ import annotations
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import logging
 import os

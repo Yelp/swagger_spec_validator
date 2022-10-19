@@ -1,16 +1,13 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.3.0
     hooks:
     -   id: check-json
     -   id: check-yaml
     -   id: debug-statements
     -   id: end-of-file-fixer
     -   id: fix-encoding-pragma
-        exclude: ^docs/.*$
-    -   id: flake8
-        args: ['--ignore', 'E203,E231,E501,W503']
-        exclude: ^docs/.*$
+        args: [--remove]
     -   id: name-tests-test
     -   id: trailing-whitespace
     -   id: requirements-txt-fixer
@@ -20,19 +17,14 @@ repos:
         - --autofix
         - --indent=4
 -   repo: https://github.com/asottile/reorder_python_imports
-    rev: v1.6.1
+    rev: v3.8.5
     hooks:
     -   id: reorder-python-imports
         exclude: ^(docs/.*|setup.py)$
-        args:
-        - --add-import
-        - from __future__ import absolute_import
-        - --add-import
-        - from __future__ import division
-        - --add-import
-        - from __future__ import print_function
-        - --add-import
-        - from __future__ import unicode_literals
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.1.0
+    hooks:
+    -   id: pyupgrade
 -   repo: http://github.com/psf/black
     rev: 22.10.0
     hooks:
