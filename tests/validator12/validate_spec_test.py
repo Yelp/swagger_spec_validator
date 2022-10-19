@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from unittest import mock
 
-import mock
 import pytest
 
 from .validate_spec_url_test import make_mock_responses
@@ -18,8 +13,8 @@ from swagger_spec_validator.validator12 import validate_spec
 from tests import TESTS_BASE_PATH
 
 
-RESOURCE_LISTING_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/swagger_api.json'
-API_DECLARATION_FILE = TESTS_BASE_PATH + '/data/v1.2/foo/foo.json'
+RESOURCE_LISTING_FILE = TESTS_BASE_PATH + "/data/v1.2/foo/swagger_api.json"
+API_DECLARATION_FILE = TESTS_BASE_PATH + "/data/v1.2/foo/foo.json"
 
 
 def get_resource_listing():
@@ -30,15 +25,14 @@ def test_http_success():
     mock_responses = make_mock_responses([API_DECLARATION_FILE])
 
     with mock.patch(
-        'swagger_spec_validator.validator12.read_url',
-        side_effect=mock_responses
+        "swagger_spec_validator.validator12.read_url", side_effect=mock_responses
     ) as mock_read_url:
-        validate_spec(get_resource_listing(), 'http://localhost/api-docs')
-        mock_read_url.assert_called_once_with('http://localhost/api-docs/foo')
+        validate_spec(get_resource_listing(), "http://localhost/api-docs")
+        mock_read_url.assert_called_once_with("http://localhost/api-docs/foo")
 
 
 def test_file_uri_success():
-    mock_string = 'swagger_spec_validator.validator12.validate_api_declaration'
+    mock_string = "swagger_spec_validator.validator12.validate_api_declaration"
     with mock.patch(mock_string) as mock_api:
         validate_spec(
             get_resource_listing(),
@@ -51,9 +45,9 @@ def test_file_uri_success():
 
 def test_validate_parameter_type_file_in_form():
     parameter = {
-        'paramType': 'form',
-        'name': 'what',
-        'type': 'File',
+        "paramType": "form",
+        "name": "what",
+        "type": "File",
     }
     # lack of errors is success
     validate_parameter(parameter, [])
@@ -61,18 +55,20 @@ def test_validate_parameter_type_file_in_form():
 
 def test_validate_parameter_type_file_in_body():
     parameter = {
-        'paramType': 'body',
-        'name': 'what',
-        'type': 'File',
+        "paramType": "body",
+        "name": "what",
+        "type": "File",
     }
-    with pytest.raises(SwaggerValidationError, match='Type "File" is only valid for form parameters'):
+    with pytest.raises(
+        SwaggerValidationError, match='Type "File" is only valid for form parameters'
+    ):
         validate_parameter(parameter, [])
 
 
 def test_validate_data_type_is_model():
-    model_id = 'MyModelId'
-    model_ids = [model_id, 'OtherModelId']
-    obj = {'type': model_id}
+    model_id = "MyModelId"
+    model_ids = [model_id, "OtherModelId"]
+    obj = {"type": model_id}
     # lack of error is success
     validate_data_type(obj, model_ids, allow_refs=False)
 
@@ -82,5 +78,8 @@ def test_validate_model_matches_id():
     model_name = "mymodel"
     model_ids = ""
 
-    with pytest.raises(SwaggerValidationError, match='model name: mymodel does not match model id: mysupermodel'):
+    with pytest.raises(
+        SwaggerValidationError,
+        match="model name: mymodel does not match model id: mysupermodel",
+    ):
         validate_model(model, model_name, model_ids)

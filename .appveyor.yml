@@ -1,17 +1,13 @@
 version: '{build}'
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 environment:
   matrix:
   # Available python versions and their locations on https://www.appveyor.com/docs/build-environment/#python
-  - PYTHON: C:\Python27-x64
-    TOXENV: py27-default
-  - PYTHON: C:\Python27-x64
-    TOXENV: py27-simplejson
-  - PYTHON: C:\Python35-x64
-    TOXENV: py35-default
-  - PYTHON: C:\Python36-x64
-    TOXENV: py36-default
+  - PYTHON: C:\Python37-x64
+    TOXENV: py37-default
+  - PYTHON: C:\Python38-x64
+    TOXENV: py38-default
 
 build: off
 

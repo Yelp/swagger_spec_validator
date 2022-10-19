@@ -1,4 +1,8 @@
 httpretty
 mock
+mypy
 pytest>=3.1.0
+types-jsonschema
+types-pyyaml
+types-setuptools
 zipp

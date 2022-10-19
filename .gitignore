@@ -6,6 +6,7 @@
 .pytest_cache/
 .python-version
 .tox
+.vscode/
 build/
 dist/
 docs/build
