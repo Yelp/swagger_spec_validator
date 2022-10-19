@@ -1,5 +1,11 @@
 Changelog
 =========
+3.0.0 (2022-10-19)
+------------------
+- Add type annotations - PR #157
+- Drop py2 and py36 support - PR #157
+- Drop simplejson - PR #157
+
 2.7.4 (2021-10-08)
 ------------------
 - Make checks for unique operation ids global instead of per tag - PR #145
