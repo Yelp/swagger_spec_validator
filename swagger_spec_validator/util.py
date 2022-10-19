@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import logging
 from types import ModuleType
 from typing import Any
-from typing import Dict
 
 from swagger_spec_validator import validator12
 from swagger_spec_validator import validator20
@@ -13,7 +14,7 @@ from swagger_spec_validator.common import wrap_exception
 log = logging.getLogger(__name__)
 
 
-def get_validator(spec_json: Dict[str, Any], origin: str = "unknown") -> ModuleType:
+def get_validator(spec_json: dict[str, Any], origin: str = "unknown") -> ModuleType:
     """
     :param spec_json: Dict representation of the json API spec
     :param origin: filename or url of the spec - only use for error messages

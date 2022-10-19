@@ -8,7 +8,6 @@ import warnings
 from typing import Any
 from typing import Callable
 from typing import cast
-from typing import Dict
 from typing import Iterable
 from typing import TYPE_CHECKING
 
@@ -181,13 +180,14 @@ def validate_spec(
     )
 
     bound_deref = functools.partial(deref, resolver=swagger_resolver)
-    spec_dict = cast(Dict[Any, Any], bound_deref(spec_dict))
+    spec_dict = cast("dict[Any, Any]", bound_deref(spec_dict))
     apis = bound_deref(spec_dict["paths"])
     definitions = bound_deref(spec_dict.get("definitions", {}))
-    validate_apis(cast(Dict[Any, Any], apis), bound_deref)
-    validate_definitions(cast(Dict[Any, Any], definitions), bound_deref)
+    validate_apis(cast("dict[Any, Any]", apis), bound_deref)
+    validate_definitions(cast("dict[Any, Any]", definitions), bound_deref)
     validate_parameters(
-        cast(Dict[Any, Any], bound_deref(spec_dict.get("parameters", {}))), bound_deref
+        cast("dict[Any, Any]", bound_deref(spec_dict.get("parameters", {}))),
+        bound_deref,
     )
     validate_references(spec_dict, bound_deref)
     return swagger_resolver
@@ -228,7 +228,7 @@ def validate_json(
 
     spec_resolver = RefResolver(
         base_uri=spec_url,
-        referrer=cast(Dict[str, Any], spec_dict),
+        referrer=cast("dict[str, Any]", spec_dict),
         handlers=http_handlers or default_handlers,
     )
 
@@ -590,7 +590,7 @@ def validate_definition(
     if "additionalProperties" in definition:
         if definition.get("additionalProperties") not in (True, False):
             validate_definition(
-                definition=cast(Dict[str, Any], definition["additionalProperties"]),
+                definition=cast("dict[str, Any]", definition["additionalProperties"]),
                 deref=deref,
                 def_name="{}/additionalProperties".format(def_name),
                 visited_definitions=visited_definitions,
