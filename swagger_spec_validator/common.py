@@ -8,17 +8,13 @@ from typing import Callable
 from typing import Dict
 from typing import Tuple
 from typing import TypeVar
-
-if sys.version_info < (3, 10):
-    from typing_extensions import ParamSpec
-else:
-    from typing import ParamSpec
-
-import yaml
-from pkg_resources import resource_filename
 from urllib.parse import urljoin
 from urllib.request import pathname2url
 from urllib.request import urlopen
+
+import yaml
+from pkg_resources import resource_filename
+from typing_extensions import ParamSpec
 
 try:
     from yaml import CSafeLoader as SafeLoader
