@@ -1,5 +1,4 @@
 import os
-import sys
 
 from setuptools import find_packages, setup
 
@@ -13,11 +12,8 @@ with open(os.path.join(base_dir, "swagger_spec_validator", "__about__.py")) as f
 install_requires = [
     "jsonschema",
     "pyyaml",
-    "six",
 ]
 
-if sys.version_info <= (3, 0):
-    install_requires.append("pyrsistent<0.17.0")
 
 setup(
     name=about["__title__"],
