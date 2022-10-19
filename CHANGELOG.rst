@@ -1,5 +1,10 @@
 Changelog
 =========
+3.0.1 (2022-10-19)
+------------------
+- Add py.typed marker - PR #158
+- Enforce python_requires>=3.7
+
 3.0.0 (2022-10-19)
 ------------------
 - Add type annotations - PR #157
