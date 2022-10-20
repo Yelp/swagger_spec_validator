@@ -1,5 +1,9 @@
 Changelog
 =========
+3.0.2 (2022-10-20)
+------------------
+- Fix location of py.typed file
+
 3.0.1 (2022-10-19)
 ------------------
 - Add py.typed marker - PR #158
