@@ -27,8 +27,10 @@ setup(
         "swagger_spec_validator": [
             "swagger_spec_validator/schemas/v1.2/*",
             "swagger_spec_validator/schemas/v2.0/*",
+            "py.typed",
         ],
     },
+    python_requires=">=3.7",
     include_package_data=True,
     install_requires=install_requires,
     license=about["__license__"],
