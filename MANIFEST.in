@@ -3,3 +3,4 @@ include LICENSE.txt
 # Required by python 2.6 even though we include these in our setup.py
 include swagger_spec_validator/schemas/v1.2/*
 include swagger_spec_validator/schemas/v2.0/*
+include swagger_spec_validator/py.typed
