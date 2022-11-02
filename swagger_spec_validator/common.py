@@ -7,7 +7,6 @@ import sys
 from functools import lru_cache
 from typing import Any
 from typing import Callable
-from typing import Tuple
 from typing import TypeVar
 from urllib.parse import urljoin
 from urllib.request import pathname2url
