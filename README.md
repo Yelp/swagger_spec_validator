@@ -7,12 +7,24 @@
 
 Swagger Spec Validator is a Python library that validates Swagger Specs against the [Swagger 1.2](https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md) or [Swagger 2.0](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md) specification.  The validator aims to check for full compliance with the Specification.
 
-## Example Usage
+## Installation
 
-Validate a spec from a url:
+    $ pip install swagger_spec_validator
+
+## Usage
+
+Validate a spec from a URL:
+
+### Command Line Tool
+
+```bash
+$ swagger-spec-validator http://petstore.swagger.io/v2/swagger.json
+Validation successful!
+```
+
+### Python API
 
 ```python
-
 from swagger_spec_validator import validate_spec_url
 
 # example for swagger spec v1.2
@@ -25,10 +37,6 @@ validate_spec_url('http://petstore.swagger.io/v2/swagger.json')
 ## Documentation
 
 More documentation is available at http://swagger_spec_validator.readthedocs.org
-
-## Installation
-
-    $ pip install swagger_spec_validator
 
 ## Contributing
 
