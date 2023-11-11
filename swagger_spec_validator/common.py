@@ -13,7 +13,7 @@ from urllib.request import pathname2url
 from urllib.request import urlopen
 
 import yaml
-from pkg_resources import resource_filename
+import importlib.resources
 from typing_extensions import ParamSpec
 
 try:
@@ -55,8 +55,9 @@ def read_file(file_path: str) -> dict[str, Any]:
 
 @lru_cache()
 def read_resource_file(resource_path: str) -> tuple[dict[str, Any], str]:
-    schema_path = resource_filename("swagger_spec_validator", resource_path)
-    return read_file(schema_path), schema_path
+    ref = importlib.resources.files('swagger_spec_validator') / resource_path
+    with importlib.resources.as_file(ref) as path:
+        return read_file(path), path
 
 
 def read_url(url: str, timeout: float = TIMEOUT_SEC) -> dict[str, Any]:

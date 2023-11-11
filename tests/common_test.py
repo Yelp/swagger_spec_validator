@@ -1,7 +1,7 @@
 import uuid
 from unittest import mock
 
-from pkg_resources import resource_filename
+import importlib.resources
 
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_resource_file
@@ -19,5 +19,5 @@ def test_read_resource_file(monkeypatch):
         read_resource_file(resource_path)
 
     m.assert_called_once_with(
-        resource_filename("swagger_spec_validator", resource_path)
+        importlib.resources.files("swagger_spec_validator")
     )
