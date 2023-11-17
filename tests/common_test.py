@@ -19,5 +19,5 @@ def test_read_resource_file(monkeypatch):
         read_resource_file(resource_path)
 
     m.assert_called_once_with(
-        importlib.resources.files("swagger_spec_validator")
+        importlib.resources.files("swagger_spec_validator") / resource_path
     )
