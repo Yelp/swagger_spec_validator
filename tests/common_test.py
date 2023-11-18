@@ -1,7 +1,11 @@
+import importlib.resources
 import uuid
 from unittest import mock
 
-import importlib.resources
+try:
+    from importlib.resources import files  # ignore: type
+except ImportError:  # pragma: cover
+    from importlib_resources import files  # ignore: type
 
 from swagger_spec_validator.common import read_file
 from swagger_spec_validator.common import read_resource_file
@@ -18,6 +22,4 @@ def test_read_resource_file(monkeypatch):
         read_resource_file(resource_path)
         read_resource_file(resource_path)
 
-    m.assert_called_once_with(
-        importlib.resources.files("swagger_spec_validator")
-    )
+    m.assert_called_once_with(files("swagger_spec_validator") / resource_path)

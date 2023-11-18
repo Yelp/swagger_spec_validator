@@ -13,6 +13,7 @@ install_requires = [
     "jsonschema",
     "pyyaml",
     "typing-extensions",
+    "importlib-resources",
 ]
 
 
