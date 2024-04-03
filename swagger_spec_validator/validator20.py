@@ -27,7 +27,7 @@ from swagger_spec_validator.common import wrap_exception
 from swagger_spec_validator.ref_validators import default_handlers
 from swagger_spec_validator.ref_validators import in_scope
 from swagger_spec_validator.ref_validators import validate_schema_value
-
+from swagger_spec_validator.json_schema_constants import LOCAL_JSON_SCHEMA_STORE
 
 log = logging.getLogger(__name__)
 
@@ -224,12 +224,14 @@ def validate_json(
         base_uri=get_uri_from_file_path(schema_path),
         referrer=schema,
         handlers=default_handlers,
+        store=LOCAL_JSON_SCHEMA_STORE,
     )
 
     spec_resolver = RefResolver(
         base_uri=spec_url,
         referrer=cast("dict[str, Any]", spec_dict),
         handlers=http_handlers or default_handlers,
+        store=LOCAL_JSON_SCHEMA_STORE,
     )
 
     ref_validators.validate(
