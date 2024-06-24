@@ -12,8 +12,8 @@ from urllib.parse import urljoin
 from urllib.request import pathname2url
 from urllib.request import urlopen
 
+import importlib_resources
 import yaml
-import importlib.resources
 from typing_extensions import ParamSpec
 
 try:
@@ -55,8 +55,8 @@ def read_file(file_path: str) -> dict[str, Any]:
 
 @lru_cache()
 def read_resource_file(resource_path: str) -> tuple[dict[str, Any], str]:
-    ref = importlib.resources.files('swagger_spec_validator') / resource_path
-    with importlib.resources.as_file(ref) as path:
+    ref = importlib_resources.files("swagger_spec_validator") / resource_path
+    with importlib_resources.as_file(ref) as path:
         return read_file(path), path
 
 
