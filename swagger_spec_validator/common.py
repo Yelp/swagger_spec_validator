@@ -53,7 +53,7 @@ def read_file(file_path: str) -> dict[str, Any]:
     return read_url(get_uri_from_file_path(file_path))
 
 
-@lru_cache()
+@lru_cache
 def read_resource_file(resource_path: str) -> tuple[dict[str, Any], str]:
     ref = importlib_resources.files("swagger_spec_validator") / resource_path
     with importlib_resources.as_file(ref) as path:

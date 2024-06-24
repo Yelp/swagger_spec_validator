@@ -350,7 +350,7 @@ def validate_body_parameter(
     validate_definition(
         definition=param["schema"],
         deref=deref,
-        def_name="{}/schema".format(def_name),
+        def_name=f"{def_name}/schema",
         visited_definitions=set(),
     )
 
@@ -403,7 +403,7 @@ def validate_apis(apis: dict[str, Any], deref: Callable) -> None:
             if operation_id is not None:
                 if operation_id in operation_id_set:
                     raise SwaggerValidationError(
-                        "Duplicate operationId: {}".format(operation_id)
+                        f"Duplicate operationId: {operation_id}"
                     )
                 operation_id_set.add(operation_id)
 
@@ -508,13 +508,13 @@ def validate_arrays_in_definition(
         if "items" not in definition_spec:
             raise SwaggerValidationError(
                 "Definition of type array must define `items` property{}.".format(
-                    "" if not def_name else " (definition {})".format(def_name),
+                    "" if not def_name else f" (definition {def_name})",
                 ),
             )
         validate_definition(
             definition=definition_spec["items"],
             deref=deref,
-            def_name="{}/items".format(def_name),
+            def_name=f"{def_name}/items",
             visited_definitions=visited_definitions,
         )
 
@@ -556,7 +556,7 @@ def validate_definition(
             validate_definition(
                 definition=inner_definition,
                 deref=deref,
-                def_name="{}/{}".format(def_name, str(idx)),
+                def_name=f"{def_name}/{str(idx)}",
                 visited_definitions=visited_definitions,
             )
     else:
@@ -583,7 +583,7 @@ def validate_definition(
             validate_definition(
                 definition=property_spec,
                 deref=deref,
-                def_name="{}/properties/{}".format(def_name, property_name),
+                def_name=f"{def_name}/properties/{property_name}",
                 visited_definitions=visited_definitions,
             )
 
@@ -592,7 +592,7 @@ def validate_definition(
             validate_definition(
                 definition=cast("dict[str, Any]", definition["additionalProperties"]),
                 deref=deref,
-                def_name="{}/additionalProperties".format(def_name),
+                def_name=f"{def_name}/additionalProperties",
                 visited_definitions=visited_definitions,
             )
 
@@ -638,7 +638,7 @@ def validate_definitions(definitions: dict[str, Any], deref: Callable) -> None:
         validate_definition(
             definition=definition,
             deref=deref,
-            def_name="#/definitions/{}".format(def_name),
+            def_name=f"#/definitions/{def_name}",
             visited_definitions=visited_definitions,
         )
 
@@ -648,7 +648,7 @@ def validate_parameters(parameters: dict[str, Any], deref: Callable) -> None:
         validate_parameter(
             param=param_spec,
             deref=deref,
-            def_name="#/parameters/{}".format(param_name),
+            def_name=f"#/parameters/{param_name}",
         )
 
 
@@ -680,7 +680,7 @@ def validate_duplicate_param(params: list[Any], deref: Callable) -> None:
         param = deref(param)
         param_key = (param["name"], param["in"])
         if param_key in seen:
-            raise SwaggerValidationError("{}: {}".format(msg, param_key))
+            raise SwaggerValidationError(f"{msg}: {param_key}")
         seen.add(param_key)
 
 

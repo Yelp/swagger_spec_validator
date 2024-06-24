@@ -190,7 +190,7 @@ def validate_model(
         except SwaggerValidationError as e:
             # Add more context to the exception and re-raise
             raise SwaggerValidationError(
-                'Model "{}", property "{}": {}'.format(model_name, prop_name, str(e))
+                f'Model "{model_name}", property "{prop_name}": {str(e)}'
             )
 
 
