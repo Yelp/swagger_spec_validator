@@ -19,7 +19,7 @@ jobs:
         python-version: 3.12
 
     - name: Install Python dependencies
-      run: pip install wheel
+      run: pip install wheel setuptools
 
     - name: Create a Wheel file and source distribution
       run: python setup.py sdist bdist_wheel
