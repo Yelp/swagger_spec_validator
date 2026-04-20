@@ -1,4 +1,5 @@
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -13,8 +14,10 @@ install_requires = [
     "jsonschema",
     "pyyaml",
     "typing-extensions",
-    "importlib-resources >= 1.3",
 ]
+
+if sys.version_info < (3, 9, 0):
+    install_requires.append("importlib-resources >= 1.3")
 
 
 setup(
